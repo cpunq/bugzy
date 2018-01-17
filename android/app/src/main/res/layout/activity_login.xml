@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/diagonal_background">
+<ImageView
+    android:layout_width="180dp"
+    android:layout_height="180dp"
+    android:src="@drawable/logo"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="50dp"
+    android:id="@+id/imageView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/login_into_your_account"
+        android:id="@+id/textView"
+        android:textColor="@color/notification_action_color_filter"
+        android:layout_marginTop="128dp"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_button"
+        android:gravity="center"
+        android:text="@string/log_in"
+        android:layout_margin="20dp"
+        android:textColor="@android:color/white"
+        android:background="@color/login_button_bg"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/edittext_user_email"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:hint="chapuuser@bluestacks.com"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:hint="**********"
+        android:id="@+id/edittext_user_password"
+        android:layout_below="@+id/edittext_user_email"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

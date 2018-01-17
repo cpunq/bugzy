@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.bluestacks.bugzy.HomeActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginRight="10dp">
+                <ImageView
+                    android:id="@+id/edit_button"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/edit"
+                    android:background="@android:color/transparent"/>
+                <ImageView
+                    android:id="@+id/assign_button"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/transfer"
+                    android:background="@android:color/transparent"/>
+                <ImageView
+                    android:id="@+id/close_button"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/close"
+                    android:background="@android:color/transparent"/>
+            </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_home" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:tint="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:src="@android:drawable/ic_input_add" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/colorPrimary"/>
+    <item android:gravity="end" >
+        <bitmap android:gravity="right" android:src="@drawable/nav_bg_pat" android:alpha="0.2"></bitmap>
+    </item>
+
+</layer-list>
