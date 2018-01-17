@@ -1,1 +1,1 @@
-# My project's README
+# Open source android client for FogBugz 
