@@ -23,7 +23,7 @@ import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefHelper_;
+import com.bluestacks.bugzy.utils.PrefsHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -35,6 +35,8 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -42,9 +44,7 @@ import retrofit2.Response;
  * Created by msharma on 22/06/17.
  */
 @EFragment(R.layout.activity_main)
-public class PeopleFragment extends Fragment{
-
-
+public class PeopleFragment extends Fragment implements Injectable{
     @ViewById(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
@@ -59,12 +59,9 @@ public class PeopleFragment extends Fragment{
     private String mAccessToken;
     private static PeopleFragment mFragment;
 
+    @Inject PrefsHelper mPrefs;
+    @Inject FogbugzApiService mApiClient;
 
-    @Pref
-    PrefHelper_ mPrefs;
-
-
-    private FogbugzApiService mApiClient;
     private RecyclerAdapter mAdapter;
 
     public static PeopleFragment getInstance() {
@@ -81,7 +78,6 @@ public class PeopleFragment extends Fragment{
     protected void onViewsReady() {
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mApiClient = FogbugzApiFactory.getApiClient(getActivity());
         getToken();
     }
 
@@ -89,11 +85,11 @@ public class PeopleFragment extends Fragment{
     @Background
     protected void getToken() {
 
-        if(TextUtils.isEmpty(mPrefs.accessToken().get())) {
+        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
            redirectLogin();
         }
         else{
-            mAccessToken = mPrefs.accessToken().get();
+            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
             mCases = mApiClient.listPeople(mAccessToken);
 

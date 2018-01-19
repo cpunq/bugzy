@@ -33,7 +33,7 @@ import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefHelper_;
+import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bumptech.glide.Glide;
 import com.guardanis.imageloader.ImageRequest;
 import com.squareup.picasso.Picasso;
@@ -57,6 +57,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -67,7 +69,7 @@ import static android.R.attr.width;
  * Created by msharma on 12/07/17.
  */
 @EFragment(R.layout.case_details)
-public class CaseDetailsFragment extends Fragment {
+public class CaseDetailsFragment extends Fragment implements Injectable{
 
     @ViewById(R.id.main_container)
     protected LinearLayout mContainer;
@@ -124,17 +126,18 @@ public class CaseDetailsFragment extends Fragment {
         }
     }
 
-    @Pref
-    PrefHelper_ mPrefs;
+    @Inject
+    PrefsHelper mPrefs;
 
 
-    private FogbugzApiService mApiClient;
+    @Inject FogbugzApiService mApiClient;
     private RecyclerAdapter mAdapter;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Bundle extras = getArguments();
         mFogBugzId = extras.getString("bug_id");
         mCase = (Case) extras.getSerializable("bug");
@@ -143,25 +146,24 @@ public class CaseDetailsFragment extends Fragment {
     @AfterViews
     protected void onViewsReady() {
 
-        token = mPrefs.accessToken().get();
+        token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
         mRealm = Realm.getDefaultInstance();
         showLoading();
         mParentActivity = (HomeActivity)getActivity();
         mParentActivity.hideFab();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mApiClient = FogbugzApiFactory.getApiClient(getActivity());
         getToken();
     }
 
     @Background
     protected void getToken() {
         mRealm = Realm.getDefaultInstance();
-        if(TextUtils.isEmpty(mPrefs.accessToken().get())) {
+        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             mParentActivity.redirectLogin();
         }
         else{
-            mAccessToken = mPrefs.accessToken().get();
+            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
             mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority,sStatus,sProject,sFixFor,sArea,sPersonAssignedTo,sPersonOpenedBy,events");
             updateToken(mCase);

@@ -21,7 +21,7 @@ import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefHelper_;
+import com.bluestacks.bugzy.utils.PrefsHelper;
 
 
 import org.androidannotations.annotations.AfterViews;
@@ -34,11 +34,13 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
 @EActivity
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @ViewById(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
@@ -51,20 +53,15 @@ public class MainActivity extends AppCompatActivity {
     private String mAccessToken;
 
 
-    @Pref
-    PrefHelper_ mPrefs;
+    @Inject PrefsHelper mPrefs;
+    @Inject FogbugzApiService mApiClient;
 
-
-    private FogbugzApiService mApiClient;
     private RecyclerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
     }
 
 
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onViewsReady() {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mApiClient = FogbugzApiFactory.getApiClient(this);
         getToken();
     }
 
@@ -80,13 +76,13 @@ public class MainActivity extends AppCompatActivity {
     @Background
     protected void getToken() {
 
-        if(TextUtils.isEmpty(mPrefs.accessToken().get())) {
+        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             me =  mApiClient.loginWithEmail("manish@bluestacks.com","junQfood_2708");
             try{
                 String result = me.execute().body().getAuthToken();
                 Log.d("Token : " , result);
-                mPrefs.accessToken().put(result);
-                mPrefs.isUserLoggedIn().put(true);
+                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN,result);
+                mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
                 mAccessToken = result;
             }
             catch (IOException e) {
@@ -94,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else{
-            mAccessToken = mPrefs.accessToken().get();
+            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
+            mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
             mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority");
 

@@ -10,33 +10,31 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.HomeActivity_;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.User;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefHelper_;
+import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bluestacks.bugzy.utils.Utils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 
-/**
- * Created by msharma on 20/06/17.
- */
 @EActivity
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
-    @Pref
-    PrefHelper_ mPrefs;
+    @Inject PrefsHelper mPrefs;
+    @Inject FogbugzApiService mApiClient;
 
     @ViewById(R.id.edittext_user_email)
     protected EditText mUserEmail;
@@ -47,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     @ViewById(R.id.login_button)
     protected Button mLoginButton;
 
-    private FogbugzApiService mApiClient;
     private Call<User> me;
     private String mAccessToken;
 
@@ -57,14 +54,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
     }
 
-
     @AfterViews
     protected void onViewsReady() {
         mAccessToken = getAccessToken();
         if(isLoggedIn()) {
             redirectHome();
         }
-        mApiClient = FogbugzApiFactory.getApiClient(this);
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,13 +80,13 @@ public class LoginActivity extends AppCompatActivity {
     @Background
     protected void attemptLogin(String email,String password) {
 
-        if(TextUtils.isEmpty(mPrefs.accessToken().get())) {
+        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
             me =  mApiClient.loginWithEmail(email,password);
             try{
                 String result = me.execute().body().getAuthToken();
                 Log.d("Token : " , result);
-                mPrefs.accessToken().put(result);
-                mPrefs.isUserLoggedIn().put(true);
+                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, result);
+                mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
                 mAccessToken = result;
                 redirectHome();
             }
@@ -108,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String getAccessToken() {
-        return mPrefs.accessToken().getOr("");
+        return mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
     }
 
     private boolean isLoggedIn() {

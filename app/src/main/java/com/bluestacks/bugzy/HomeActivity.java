@@ -18,7 +18,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -33,29 +32,29 @@ import com.bluestacks.bugzy.models.resp.MeResponse;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.ui.CaseDetailsFragment;
 import com.bluestacks.bugzy.ui.LoginActivity_;
 import com.bluestacks.bugzy.ui.MyCasesFragment;
 import com.bluestacks.bugzy.ui.PeopleFragment;
-import com.bluestacks.bugzy.utils.PrefHelper_;
+import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
 @EActivity
-public class HomeActivity extends AppCompatActivity
+public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Person me;
@@ -69,10 +68,11 @@ public class HomeActivity extends AppCompatActivity
     private ImageView mEdit,mAssign,mClose;
     private Context context;
     private FloatingActionButton fab;
-    @Pref
-    PrefHelper_ mPrefs;
 
-    private FogbugzApiService mApiClient;
+    @Inject
+    PrefsHelper mPrefs;
+
+    @Inject FogbugzApiService mApiClient;
     private String mAccessToken;
 
 
@@ -87,7 +87,6 @@ public class HomeActivity extends AppCompatActivity
     protected void onViewsReady() {
 
         mFragmentManager = getSupportFragmentManager();
-        mApiClient = FogbugzApiFactory.getApiClient(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         mEdit = (ImageView) toolbar.findViewById(R.id.edit_button);
         mAssign = (ImageView) toolbar.findViewById(R.id.assign_button);
@@ -133,12 +132,12 @@ public class HomeActivity extends AppCompatActivity
 
     @Background
     protected void getDetails() {
-
-        if(TextUtils.isEmpty(mPrefs.accessToken().get())) {
+        String token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
+        if(TextUtils.isEmpty(token)) {
           redirectLogin();
         }
         else{
-            mAccessToken = mPrefs.accessToken().get();
+            mAccessToken = token;
 
           meResponse = mApiClient.getMyDetails(mAccessToken);
 
@@ -147,9 +146,9 @@ public class HomeActivity extends AppCompatActivity
 
                 if(resp.isSuccessful()) {
                     me = resp.body().getPerson();
-                    mPrefs.userName().put(me.getFullname());
-                    mPrefs.userEmail().put(me.getEmail());
-                    mPrefs.personId().put(me.getPersonid());
+                    mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
+                    mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
+                    mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid());
                     updateUserInfo();
 
                 }
@@ -189,10 +188,6 @@ public class HomeActivity extends AppCompatActivity
             }
         }
     }
-
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -244,14 +239,13 @@ public class HomeActivity extends AppCompatActivity
 
     @UiThread
     protected void updateUserInfo() {
-        String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+mPrefs.personId().get()+"&pg=pgAvatar&pxSize=140";
+        String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+mPrefs.getString(PrefsHelper.Key.PERSON_ID)+"&pg=pgAvatar&pxSize=140";
         ImageRequest.create(navigationView.getHeaderView(0).findViewById(R.id.pro))
                 .setTargetUrl(img_path)
                 .setFadeTransition(150)
                 .execute();
-
-        mUserName.setText(mPrefs.userName().get());
-        mUserEmail.setText(mPrefs.userEmail().get());
+        mUserName.setText(mPrefs.getString(PrefsHelper.Key.USER_NAME));
+        mUserEmail.setText(mPrefs.getString(PrefsHelper.Key.USER_EMAIL));
     }
     public void redirectLogin() {
         Intent mLogin = new Intent(this,LoginActivity_.class);

@@ -14,7 +14,6 @@ import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefHelper_;
 import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;
 
@@ -29,7 +28,7 @@ import io.realm.Realm;
  * Created by msharma on 09/08/17.
  */
 @EFragment(R.layout.imageview_fullscreen)
-public class FullScreenImageFragment extends Fragment{
+public class FullScreenImageFragment extends Fragment implements Injectable{
 
     private static FullScreenImageFragment mFragment;
 
@@ -49,13 +48,6 @@ public class FullScreenImageFragment extends Fragment{
             return mFragment;
         }
     }
-
-    @Pref
-    PrefHelper_ mPrefs;
-
-
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
