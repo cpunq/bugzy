@@ -1,11 +1,7 @@
 package com.bluestacks.bugzy;
 
-import com.bluestacks.bugzy.di.DaggerNetComponent;
-import com.bluestacks.bugzy.di.NetComponent;
 
-import android.content.ComponentName;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
