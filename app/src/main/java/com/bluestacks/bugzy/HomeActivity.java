@@ -34,7 +34,7 @@ import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.ui.CaseDetailsFragment;
-import com.bluestacks.bugzy.ui.LoginActivity_;
+import com.bluestacks.bugzy.ui.LoginActivity;
 import com.bluestacks.bugzy.ui.MyCasesFragment;
 import com.bluestacks.bugzy.ui.PeopleFragment;
 import com.bluestacks.bugzy.utils.PrefsHelper;
@@ -248,7 +248,7 @@ public class HomeActivity extends BaseActivity
         mUserEmail.setText(mPrefs.getString(PrefsHelper.Key.USER_EMAIL));
     }
     public void redirectLogin() {
-        Intent mLogin = new Intent(this,LoginActivity_.class);
+        Intent mLogin = new Intent(this,LoginActivity.class);
         startActivity(mLogin);
         finish();
     }

@@ -205,7 +205,7 @@ public class PeopleFragment extends Fragment implements Injectable{
     }
 
     private void redirectLogin() {
-        Intent mLogin = new Intent(getActivity(),LoginActivity_.class);
+        Intent mLogin = new Intent(getActivity(),LoginActivity.class);
         startActivity(mLogin);
         getActivity().finish();
     }

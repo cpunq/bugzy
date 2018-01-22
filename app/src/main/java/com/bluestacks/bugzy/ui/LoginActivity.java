@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.HomeActivity_;
 import com.bluestacks.bugzy.R;
@@ -19,30 +20,27 @@ import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bluestacks.bugzy.utils.Utils;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
-
 import java.io.IOException;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 
-@EActivity
 public class LoginActivity extends BaseActivity {
 
     @Inject PrefsHelper mPrefs;
     @Inject FogbugzApiService mApiClient;
+    @Inject AppExecutors mAppExecutors;
 
-    @ViewById(R.id.edittext_user_email)
+    @BindView(R.id.edittext_user_email)
     protected EditText mUserEmail;
 
-    @ViewById(R.id.edittext_user_password)
+    @BindView(R.id.edittext_user_password)
     protected EditText mPassWord;
 
-    @ViewById(R.id.login_button)
+    @BindView(R.id.login_button)
     protected Button mLoginButton;
 
     private Call<User> me;
@@ -52,14 +50,20 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+        onViewsReady();
     }
 
-    @AfterViews
-    protected void onViewsReady() {
+    @Override
+    protected void onResume() {
+        super.onResume();
         mAccessToken = getAccessToken();
         if(isLoggedIn()) {
             redirectHome();
         }
+    }
+
+    protected void onViewsReady() {
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,15 +75,18 @@ public class LoginActivity extends BaseActivity {
                     Snackbar.make(mPassWord,"Invalid Password",Snackbar.LENGTH_LONG).show();
                 }
                 else {
-                    attemptLogin(mUserEmail.getText().toString(),mPassWord.getText().toString());
+                    mAppExecutors.networkIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            attemptLogin(mUserEmail.getText().toString(),mPassWord.getText().toString());
+                        }
+                    });
                 }
             }
         });
     }
 
-    @Background
     protected void attemptLogin(String email,String password) {
-
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
             me =  mApiClient.loginWithEmail(email,password);
             try{
