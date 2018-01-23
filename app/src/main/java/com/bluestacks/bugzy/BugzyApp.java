@@ -11,8 +11,6 @@ import com.bluestacks.bugzy.di.NetComponent;
 import com.bluestacks.bugzy.di.NetModule;
 import com.bluestacks.bugzy.models.resp.Person;
 
-import org.androidannotations.annotations.EApplication;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,7 +21,6 @@ import dagger.android.HasActivityInjector;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-@EApplication
 public class BugzyApp extends Application implements HasActivityInjector {
     private NetComponent mNetComponent;
     public List<Person> persons;
