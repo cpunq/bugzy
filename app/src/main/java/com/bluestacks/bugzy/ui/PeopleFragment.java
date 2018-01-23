@@ -95,7 +95,12 @@ public class PeopleFragment extends Fragment implements Injectable{
         super.onActivityCreated(savedInstanceState);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        getToken();
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                getToken();
+            }
+        });
     }
 
     @WorkerThread
