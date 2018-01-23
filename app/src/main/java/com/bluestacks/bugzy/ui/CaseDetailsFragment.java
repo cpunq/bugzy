@@ -144,7 +144,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         mParentActivity.hideFab();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        getToken();
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                getToken();
+            }
+        });
     }
 
     @WorkerThread
