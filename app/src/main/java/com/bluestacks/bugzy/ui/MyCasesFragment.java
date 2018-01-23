@@ -1,9 +1,12 @@
 package com.bluestacks.bugzy.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,58 +20,59 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.ListCasesResponse;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by msharma on 22/06/17.
- */
-@EFragment(R.layout.activity_main)
 public class MyCasesFragment extends Fragment implements Injectable {
+    @Inject
+    PrefsHelper mPrefs;
 
+    @Inject
+    FogbugzApiService mApiClient;
 
+    @Inject
+    AppExecutors mAppExecutors;
 
-    @ViewById(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
-    @ViewById(R.id.progressBar)
+    @BindView(R.id.progressBar)
     protected ProgressBar mProgress;
 
+    /**
+     * - will refer to mAppExecutor.mainThread()
+     */
+    private Executor mMainThreadExecutor;
     private LinearLayoutManager mLinearLayoutManager;
-
     private Call<User> me;
     private Call<ListCasesResponse> mCases;
     private ListCasesResponse myCases;
     private String mAccessToken;
     private static MyCasesFragment mFragment;
     private HomeActivity mParentActivity;
-
+    private RecyclerAdapter mAdapter;
 
     public static MyCasesFragment getInstance() {
         if(mFragment == null) {
-            mFragment = new MyCasesFragment_();
+            mFragment = new MyCasesFragment();
             return mFragment;
         }
         else {
@@ -76,19 +80,37 @@ public class MyCasesFragment extends Fragment implements Injectable {
         }
     }
 
-    @Inject PrefsHelper mPrefs;
-    @Inject FogbugzApiService mApiClient;
-    private RecyclerAdapter mAdapter;
-
-    @AfterViews
-    protected void onViewsReady() {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         mParentActivity = (HomeActivity)getActivity();
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_main, null);
+        ButterKnife.bind(this, v);
+        return v;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mMainThreadExecutor = mAppExecutors.mainThread();
         mParentActivity.hideActionIcons();
         mParentActivity.showFab();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         if(myCases == null) {
-            getToken();
+            mAppExecutors.networkIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getToken();
+                }
+            });
         }
         else {
             showContent();
@@ -97,20 +119,22 @@ public class MyCasesFragment extends Fragment implements Injectable {
     }
 
 
-    @Background
+    @WorkerThread
     protected void getToken() {
-
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             mParentActivity.redirectLogin();
         }
         else{
             mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-
             mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority,sStatus,sProject,sFixFor,sArea,sPersonAssignedTo,sPersonOpenedBy,events");
 
-
             try {
-                showLoading();
+                mMainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        showLoading();
+                    }
+                });
                 Response<ListCasesResponse> resp = mCases.execute();
 
                 if(resp.isSuccessful()) {
@@ -118,7 +142,12 @@ public class MyCasesFragment extends Fragment implements Injectable {
                     for(Case s : myCases.getCases()) {
                         Log.d("Bug id" ,String.valueOf(s.getIxBug()));
                     }
-                    updateToken(myCases.getCases());
+                    mMainThreadExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateToken(myCases.getCases());
+                        }
+                    });
                     Log.d("Cases List " , myCases.toString());
                 }
                 else {
@@ -127,7 +156,12 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
             }
             catch(ConnectivityInterceptor.NoConnectivityException e){
-                showConnectivityError();
+                mMainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        showConnectivityError();
+                    }
+                });
             }
             catch (IOException e) {
                 Log.d("Cases","Call Failed");

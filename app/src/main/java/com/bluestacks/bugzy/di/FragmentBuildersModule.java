@@ -2,7 +2,7 @@ package com.bluestacks.bugzy.di;
 
 import com.bluestacks.bugzy.ui.CaseDetailsFragment_;
 import com.bluestacks.bugzy.ui.FullScreenImageFragment_;
-import com.bluestacks.bugzy.ui.MyCasesFragment_;
+import com.bluestacks.bugzy.ui.MyCasesFragment;
 import com.bluestacks.bugzy.ui.PeopleFragment_;
 
 import dagger.Module;
@@ -17,7 +17,7 @@ public abstract class FragmentBuildersModule {
     abstract FullScreenImageFragment_ contributeUserFragment();
 
     @ContributesAndroidInjector
-    abstract MyCasesFragment_ contributeSearchFragment();
+    abstract MyCasesFragment contributeSearchFragment();
 
     @ContributesAndroidInjector
     abstract PeopleFragment_ contributePeopleFragment();
