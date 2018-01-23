@@ -2,6 +2,8 @@ package com.bluestacks.bugzy.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -86,6 +88,7 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    @WorkerThread
     protected void attemptLogin(String email,String password) {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
             me =  mApiClient.loginWithEmail(email,password);
@@ -95,7 +98,12 @@ public class LoginActivity extends BaseActivity {
                 mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, result);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
                 mAccessToken = result;
-                redirectHome();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        redirectHome();
+                    }
+                });
             }
             catch (IOException e) {
                 Log.d(Const.TAG,"Error logging in ");
@@ -103,6 +111,8 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+
+    @UiThread
     private void redirectHome() {
         Intent mHome  = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(mHome);
