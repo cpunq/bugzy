@@ -42,13 +42,9 @@ android {
     }
 }
 
-def AAVersion = '4.3.1'
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
-    implementation "org.androidannotations:androidannotations-api:$AAVersion"
     implementation('com.squareup.retrofit2:converter-simplexml:2.3.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
