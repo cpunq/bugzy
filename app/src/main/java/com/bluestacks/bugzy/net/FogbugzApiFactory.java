@@ -15,9 +15,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 
-/**
- * Created by msharma on 16/06/17.
- */
 public class FogbugzApiFactory {
 
 

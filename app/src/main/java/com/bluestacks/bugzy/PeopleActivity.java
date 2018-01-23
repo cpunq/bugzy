@@ -37,9 +37,6 @@ import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by msharma on 20/06/17.
- */
 @EActivity
 public class PeopleActivity extends BaseActivity{
 

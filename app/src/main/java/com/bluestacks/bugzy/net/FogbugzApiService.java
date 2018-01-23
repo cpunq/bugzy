@@ -11,9 +11,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-/**
- * Created by msharma on 06/06/17.
- */
 public interface FogbugzApiService {
 
     @POST("api.asp?cmd=logon")
