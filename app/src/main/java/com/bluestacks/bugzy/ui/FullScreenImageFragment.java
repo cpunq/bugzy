@@ -1,38 +1,26 @@
 package com.bluestacks.bugzy.ui;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.common.Const;
-import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-import io.realm.Realm;
-
-/**
- * Created by msharma on 09/08/17.
- */
-@EFragment(R.layout.imageview_fullscreen)
 public class FullScreenImageFragment extends Fragment implements Injectable{
 
     private static FullScreenImageFragment mFragment;
 
-    @ViewById(R.id.full_image)
+    @BindView(R.id.full_image)
     protected ZoomageView mFullImage;
 
     private HomeActivity mParentActivity;
@@ -41,7 +29,7 @@ public class FullScreenImageFragment extends Fragment implements Injectable{
 
     public static FullScreenImageFragment getInstance() {
         if(mFragment == null) {
-            mFragment = new FullScreenImageFragment_();
+            mFragment = new FullScreenImageFragment();
             return mFragment;
         }
         else {
@@ -50,19 +38,33 @@ public class FullScreenImageFragment extends Fragment implements Injectable{
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mParentActivity = (HomeActivity)getActivity();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getArguments();
         mImagePath = extras.getParcelable("img_src");
-        mParentActivity = (HomeActivity)getActivity();
         //Log.d(Const.TAG,"Image Path is : " + mImagePath);
     }
 
-    @AfterViews
-    protected void onViewsReady() {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.imageview_fullscreen, null);
+        ButterKnife.bind(this, v);
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mParentActivity.hideFab();
-       mFullImage.setImageBitmap(mImagePath);
-       mParentActivity.hideActionIcons();
+        mFullImage.setImageBitmap(mImagePath);
+        mParentActivity.hideActionIcons();
     }
 
 }

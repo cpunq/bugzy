@@ -2,11 +2,12 @@ package com.bluestacks.bugzy.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,33 +23,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
-import com.bluestacks.bugzy.common.RealmController;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.CaseEvent;
 import com.bluestacks.bugzy.models.resp.ListCasesResponse;
 import com.bluestacks.bugzy.models.resp.User;
-import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bumptech.glide.Glide;
-import com.guardanis.imageloader.ImageRequest;
-import com.squareup.picasso.Picasso;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,51 +44,44 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import retrofit2.Call;
-import retrofit2.Response;
 
-import static android.R.attr.width;
-
-/**
- * Created by msharma on 12/07/17.
- */
-@EFragment(R.layout.case_details)
 public class CaseDetailsFragment extends Fragment implements Injectable{
 
-    @ViewById(R.id.main_container)
+    @BindView(R.id.main_container)
     protected LinearLayout mContainer;
 
-    @ViewById(R.id.priority_indicator)
+    @BindView(R.id.priority_indicator)
     protected LinearLayout mPriorityIndicator;
 
-    @ViewById(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
-    @ViewById(R.id.progressBar)
+    @BindView(R.id.progressBar)
     protected ProgressBar mProgress;
 
-    @ViewById(R.id.textview_bug_id)
+    @BindView(R.id.textview_bug_id)
     protected TextView mBugId;
 
-    @ViewById(R.id.textview_bug_title)
+    @BindView(R.id.textview_bug_title)
     protected TextView mBugTitle;
 
-    @ViewById(R.id.textview_active_status)
+    @BindView(R.id.textview_active_status)
     protected TextView mActiveStatus;
 
-    @ViewById(R.id.textview_assigned_to)
+    @BindView(R.id.textview_assigned_to)
     protected TextView mAssignedTo;
 
-    @ViewById(R.id.textview_milestone)
+    @BindView(R.id.textview_milestone)
     protected TextView mMileStone;
 
-    @ViewById(R.id.textview_required_merge)
+    @BindView(R.id.textview_required_merge)
     protected TextView mRequiredMerge;
 
-
     private LinearLayoutManager mLinearLayoutManager;
-
     private Call<User> me;
     private Call<ListCasesResponse> mCases;
     private ListCasesResponse myCases;
@@ -114,11 +92,20 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     private String mFogBugzId;
     private Realm mRealm;
     public static String token;
+    private RecyclerAdapter mAdapter;
 
+    @Inject
+    PrefsHelper mPrefs;
+
+    @Inject
+    FogbugzApiService mApiClient;
+
+    @Inject
+    AppExecutors mAppExecutors;
 
     public static CaseDetailsFragment getInstance() {
         if(mFragment == null) {
-            mFragment = new CaseDetailsFragment_();
+            mFragment = new CaseDetailsFragment();
             return mFragment;
         }
         else {
@@ -126,37 +113,41 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         }
     }
 
-    @Inject
-    PrefsHelper mPrefs;
-
-
-    @Inject FogbugzApiService mApiClient;
-    private RecyclerAdapter mAdapter;
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mParentActivity = (HomeActivity)getActivity();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle extras = getArguments();
         mFogBugzId = extras.getString("bug_id");
         mCase = (Case) extras.getSerializable("bug");
     }
 
-    @AfterViews
-    protected void onViewsReady() {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.case_details, null);
+        ButterKnife.bind(this, v);
+        return v;
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
         mRealm = Realm.getDefaultInstance();
         showLoading();
-        mParentActivity = (HomeActivity)getActivity();
         mParentActivity.hideFab();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         getToken();
     }
 
-    @Background
+    @WorkerThread
     protected void getToken() {
         mRealm = Realm.getDefaultInstance();
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
@@ -166,7 +157,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
             mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
             mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority,sStatus,sProject,sFixFor,sArea,sPersonAssignedTo,sPersonOpenedBy,events");
-            updateToken(mCase);
+            mAppExecutors.mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    updateToken(mCase);
+                }
+            });
 //            try {
 //                showLoading();
 //                Response<ListCasesResponse> resp = mCases.execute();
