@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
-import com.bluestacks.bugzy.HomeActivity_;
+import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.User;
@@ -104,7 +104,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void redirectHome() {
-        Intent mHome  = new Intent(LoginActivity.this, HomeActivity_.class);
+        Intent mHome  = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(mHome);
         this.finish();
     }

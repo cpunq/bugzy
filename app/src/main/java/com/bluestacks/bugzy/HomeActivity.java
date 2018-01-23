@@ -3,7 +3,8 @@ package com.bluestacks.bugzy;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -40,57 +41,68 @@ import com.bluestacks.bugzy.ui.PeopleFragment;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
-
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-@EActivity
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Person me;
     private Call<MeResponse> meResponse;
     private Call<User> user;
-    private NavigationView navigationView;
+
     private TextView mUserName;
     private TextView mUserEmail;
     private FragmentManager mFragmentManager;
     private Fragment mCurrentFragment;
-    private ImageView mEdit,mAssign,mClose;
     private Context context;
-    private FloatingActionButton fab;
+    private String mAccessToken;
+
+    @BindView(R.id.nav_view)
+    protected NavigationView navigationView;
+
+    @BindView(R.id.edit_button)
+    protected ImageView mEdit;
+
+    @BindView(R.id.assign_button)
+    protected ImageView mAssign;
+
+    @BindView(R.id.close_button)
+    protected ImageView mClose;
+
+    @BindView(R.id.fab)
+    protected FloatingActionButton fab;
 
     @Inject
     PrefsHelper mPrefs;
 
-    @Inject FogbugzApiService mApiClient;
-    private String mAccessToken;
+    @Inject
+    FogbugzApiService mApiClient;
 
+    @Inject
+    AppExecutors mAppExecutors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        ButterKnife.bind(this);
         context = this;
+        onViewsReady();
     }
 
-    @AfterViews
     protected void onViewsReady() {
-
         mFragmentManager = getSupportFragmentManager();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mEdit = (ImageView) toolbar.findViewById(R.id.edit_button);
-        mAssign = (ImageView) toolbar.findViewById(R.id.assign_button);
-        mClose = (ImageView) toolbar.findViewById(R.id.close_button);
+
+
         mEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,7 +118,6 @@ public class HomeActivity extends BaseActivity
         hideActionIcons();
         setSupportActionBar(toolbar);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,17 +131,21 @@ public class HomeActivity extends BaseActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-            navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(this);
 
-            onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
-            mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-            mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
-            getDetails();
+        onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
+        mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                getDetails();
+            }
+        });
     }
 
 
-    @Background
+    @WorkerThread
     protected void getDetails() {
         String token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
         if(TextUtils.isEmpty(token)) {
@@ -149,7 +164,12 @@ public class HomeActivity extends BaseActivity
                     mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
                     mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
                     mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid());
-                    updateUserInfo();
+                    mAppExecutors.mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateUserInfo();
+                        }
+                    });
 
                 }
                 else {
@@ -158,7 +178,12 @@ public class HomeActivity extends BaseActivity
 
             }
             catch(ConnectivityInterceptor.NoConnectivityException e){
-                showConnectivityError();
+                mAppExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        showConnectivityError();
+                    }
+                });
             }
             catch (IOException e) {
                 Log.d("Cases","Call Failed");

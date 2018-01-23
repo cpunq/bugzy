@@ -18,7 +18,7 @@
 
         </activity>
         <activity
-            android:name=".HomeActivity_"
+            android:name=".HomeActivity"
             android:label="@string/my_cases"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
