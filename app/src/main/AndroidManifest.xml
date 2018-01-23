@@ -14,7 +14,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PeopleActivity_">
+        <activity android:name=".PeopleActivity">
 
         </activity>
         <activity
@@ -39,7 +39,7 @@
 
         </activity>
         <activity
-            android:name="MainActivity_"
+            android:name="MainActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

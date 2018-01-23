@@ -2,8 +2,9 @@ package com.bluestacks.bugzy;
 
 
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,61 +20,62 @@ import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.ListCasesResponse;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiFactory;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
-
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-@EActivity
 public class MainActivity extends BaseActivity {
 
-    @ViewById(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
     private LinearLayoutManager mLinearLayoutManager;
-
     private Call<User> me;
     private Call<ListCasesResponse> mCases;
     private ListCasesResponse myCases;
     private String mAccessToken;
-
-
-    @Inject PrefsHelper mPrefs;
-    @Inject FogbugzApiService mApiClient;
-
     private RecyclerAdapter mAdapter;
+
+    @Inject
+    PrefsHelper mPrefs;
+
+    @Inject
+    FogbugzApiService mApiClient;
+
+    @Inject
+    AppExecutors mAppExecutors;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        onViewsReady();
     }
 
-
-    @AfterViews
     protected void onViewsReady() {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        getToken();
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                getToken();
+            }
+        });
     }
 
 
-    @Background
+    @WorkerThread
     protected void getToken() {
 
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
@@ -103,7 +105,12 @@ public class MainActivity extends BaseActivity {
                     for(Case s : myCases.getCases()) {
                         Log.d("Bug id",String.valueOf(s.getIxBug()));
                     }
-                    updateToken(myCases.getCases());
+                    mAppExecutors.mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateToken(myCases.getCases());
+                        }
+                    });
                     Log.d("Cases List " , myCases.toString());
                 }
                 else {
@@ -112,7 +119,12 @@ public class MainActivity extends BaseActivity {
 
             }
             catch(ConnectivityInterceptor.NoConnectivityException e){
-                showConnectivityError();
+                mAppExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        showConnectivityError();
+                    }
+                });
             }
             catch (IOException e) {
                 Log.d("Cases","Call Failed");

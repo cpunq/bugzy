@@ -2,8 +2,6 @@ package com.bluestacks.bugzy.di;
 
 
 import com.bluestacks.bugzy.BugzyApp;
-import com.bluestacks.bugzy.MainActivity;
-import com.bluestacks.bugzy.MainActivity_;
 
 import javax.inject.Singleton;
 

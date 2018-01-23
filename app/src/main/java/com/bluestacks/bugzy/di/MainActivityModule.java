@@ -1,8 +1,8 @@
 package com.bluestacks.bugzy.di;
 
 import com.bluestacks.bugzy.HomeActivity;
-import com.bluestacks.bugzy.MainActivity_;
-import com.bluestacks.bugzy.PeopleActivity_;
+import com.bluestacks.bugzy.MainActivity;
+import com.bluestacks.bugzy.PeopleActivity;
 import com.bluestacks.bugzy.ui.LoginActivity;
 
 import dagger.Module;
@@ -14,10 +14,10 @@ public abstract class MainActivityModule {
     abstract LoginActivity contributeLoginActivity();
 
     @ContributesAndroidInjector
-    abstract MainActivity_ contributeMainActivity();
+    abstract MainActivity contributeMainActivity();
 
     @ContributesAndroidInjector
-    abstract PeopleActivity_ contributePeopleActivity();
+    abstract PeopleActivity contributePeopleActivity();
 
     @ContributesAndroidInjector(modules = FragmentBuildersModule.class)
     abstract HomeActivity contributeHomeActivity();
