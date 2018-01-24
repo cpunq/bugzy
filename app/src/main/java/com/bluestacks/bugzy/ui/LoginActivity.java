@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,9 @@ import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
-import com.bluestacks.bugzy.models.resp.User;
+import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.resp.LoginData;
+import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bluestacks.bugzy.utils.Utils;
@@ -45,7 +46,6 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_button)
     protected Button mLoginButton;
 
-    private Call<User> me;
     private String mAccessToken;
 
     @Override
@@ -91,9 +91,9 @@ public class LoginActivity extends BaseActivity {
     @WorkerThread
     protected void attemptLogin(String email,String password) {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
-            me =  mApiClient.loginWithEmail(email,password);
+            Call<Response<LoginData>> response = mApiClient.loginWithEmail(new LoginRequest(email, password));
             try{
-                String result = me.execute().body().getAuthToken();
+                String result = response.execute().body().getData().getToken();
                 Log.d("Token : " , result);
                 mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, result);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);

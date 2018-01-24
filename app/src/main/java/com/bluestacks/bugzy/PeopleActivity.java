@@ -38,7 +38,6 @@ public class PeopleActivity extends BaseActivity{
     protected RecyclerView mRecyclerView;
 
     private LinearLayoutManager mLinearLayoutManager;
-    private Call<User> me;
     private Call<ListPeopleResponse> mCases;
     private ListPeopleResponse myCases;
     private String mAccessToken;
@@ -75,17 +74,7 @@ public class PeopleActivity extends BaseActivity{
     @WorkerThread
     protected void getToken() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            me =  mApiClient.loginWithEmail("manish@bluestacks.com","junQfood_2708");
-            try{
-                String result = me.execute().body().getAuthToken();
-                Log.d("Token : " , result);
-                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN,result);
-                mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
-                mAccessToken = result;
-            }
-            catch (IOException e) {
-
-            }
+            Log.d("no","not Logged in");
         }
         else{
             mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
