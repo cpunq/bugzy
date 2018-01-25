@@ -139,7 +139,7 @@ public class HomeActivity extends BaseActivity
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                getDetails();
+//                getDetails();
             }
         });
     }
