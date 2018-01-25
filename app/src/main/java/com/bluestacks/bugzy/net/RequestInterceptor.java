@@ -1,17 +1,13 @@
 package com.bluestacks.bugzy.net;
 
 import com.bluestacks.bugzy.utils.PrefsHelper;
-import com.bluestacks.bugzy.utils.Utils;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import java.io.IOException;
 
-import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -20,7 +16,6 @@ import okio.Buffer;
 
 
 public class RequestInterceptor implements Interceptor {
-
     private PrefsHelper mPrefsHelper;
 
     public RequestInterceptor(PrefsHelper prefsHelper) {
@@ -35,15 +30,10 @@ public class RequestInterceptor implements Interceptor {
             return chain.proceed(chain.request());
         }
         RequestBody requestBody = this.processApplicationJsonRequestBody(chain.request().body(), token);
-
-
-        String afterProcess = bodyToString(requestBody);
-
         Request.Builder requestBuilder = chain.request().newBuilder();
         Request newRequest = requestBuilder
                 .post(requestBody)
                 .build();
-
         return chain.proceed(newRequest);
     }
 
