@@ -1,99 +1,80 @@
 package com.bluestacks.bugzy.models.resp;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
+import com.google.gson.annotations.SerializedName;
+
 import org.simpleframework.xml.Root;
 
-/**
- * Created by msharma on 20/06/17.
- */
 @Root
 public class Person {
 
-    @Element(name = "ixPerson",required = false)
-    String personid;
+    @SerializedName( "ixPerson")
+    int personid;
 
-    @Element(name = "sFullName",required = false)
+    @SerializedName( "sFullName")
     String fullname;
 
-    @Element(name = "sEmail",required = false)
+    @SerializedName( "sEmail")
     String email;
 
-    @Element(name = "sPhone",required = false)
+    @SerializedName( "sPhone")
     String phone;
 
-    @Element(name = "fAdministrator",required = false)
+    @SerializedName( "fAdministrator")
     boolean administrator;
 
-    @Element(name = "fCommunity",required = false)
+    @SerializedName( "fCommunity")
     boolean community;
 
-    @Element(name = "fVirtual",required = false)
+    @SerializedName( "fVirtual")
     boolean virtual;
 
-    @Element(name = "fDeleted",required = false)
+    @SerializedName( "fDeleted")
     boolean deleted;
 
-    @Element(name = "fNotify",required = false)
+    @SerializedName( "fNotify")
     boolean notify;
 
-    @Element(name = "sHomepage",required = false)
+    @SerializedName( "sHomepage")
     String homepage;
 
-    @Element(name = "sLocale",required = false)
+    @SerializedName( "sLocale")
     String locale;
 
-    @Element(name = "sLanguage",required = false)
+    @SerializedName( "sLanguage")
     String language;
 
-    @Element(name = "sTimeZoneKey",required = false)
+    @SerializedName( "sTimeZoneKey")
     String timezonekey;
 
-    @Element(name = "sLDAPUid",required = false)
+    @SerializedName( "sLDAPUid")
     String LDAPUid;
 
-    @Element(name = "dtLastActivity",required = false)
+    @SerializedName( "dtLastActivity")
     String lastactivity;
 
-    @Element(name = "fRecurseBugChildren",required = false)
+    @SerializedName( "fRecurseBugChildren")
     boolean recursebugchildren;
 
-    @Element(name = "fPaletteExpanded",required = false)
+    @SerializedName( "fPaletteExpanded")
     boolean paletteexpanded;
 
-    @Element(name = "ixBugWorkingOn",required = false)
-    String bugworkingon;
+    @SerializedName( "ixBugWorkingOn")
+    int bugworkingon;
 
-    @Element(name = "sFrom",required = false)
+    @SerializedName( "sFrom")
     String from;
 
-    @Element(name = "sSnippetKey",required = false)
+    @SerializedName( "sSnippetKey")
     String snippetkey;
 
-    @Element(name = "nType",required = false)
-    String type;
+    @SerializedName( "nType")
+    int type;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getSnippetkey() {
-        return snippetkey;
-    }
-
-    public void setSnippetkey(String snippetkey) {
-        this.snippetkey = snippetkey;
-    }
-
-    public String getPersonid() {
+    public int getPersonid() {
         return personid;
     }
 
-    public void setPersonid(String personid) {
+    public void setPersonid(int personid) {
         this.personid = personid;
     }
 
@@ -225,11 +206,11 @@ public class Person {
         this.paletteexpanded = paletteexpanded;
     }
 
-    public String getBugworkingon() {
+    public int getBugworkingon() {
         return bugworkingon;
     }
 
-    public void setBugworkingon(String bugworkingon) {
+    public void setBugworkingon(int bugworkingon) {
         this.bugworkingon = bugworkingon;
     }
 
@@ -239,5 +220,21 @@ public class Person {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getSnippetkey() {
+        return snippetkey;
+    }
+
+    public void setSnippetkey(String snippetkey) {
+        this.snippetkey = snippetkey;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

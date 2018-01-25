@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluestacks.bugzy.models.resp.MeResponse;
+import com.bluestacks.bugzy.models.resp.MyDetailsData;
+import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
@@ -55,7 +57,6 @@ public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Person me;
-    private Call<MeResponse> meResponse;
     private Call<User> user;
 
     private TextView mUserName;
@@ -139,7 +140,7 @@ public class HomeActivity extends BaseActivity
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
-//                getDetails();
+                getDetails();
             }
         });
     }
@@ -153,17 +154,16 @@ public class HomeActivity extends BaseActivity
         }
         else{
             mAccessToken = token;
-
-          meResponse = mApiClient.getMyDetails(mAccessToken);
+            Call<com.bluestacks.bugzy.models.Response<MyDetailsData>> response = mApiClient.getMyDetails(new MyDetailsRequest());
 
             try {
-                Response<MeResponse> resp = meResponse.execute();
+                Response<com.bluestacks.bugzy.models.Response<MyDetailsData>> resp = response.execute();
 
                 if(resp.isSuccessful()) {
-                    me = resp.body().getPerson();
+                    me = resp.body().getData().getPerson();
                     mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
                     mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
-                    mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid());
+                    mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid()+"");
                     mAppExecutors.mainThread().execute(new Runnable() {
                         @Override
                         public void run() {

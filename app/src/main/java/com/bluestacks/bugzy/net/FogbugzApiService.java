@@ -7,6 +7,8 @@ import com.bluestacks.bugzy.models.resp.ListPeopleResponse;
 import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.models.resp.MeResponse;
+import com.bluestacks.bugzy.models.resp.MyDetailsData;
+import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.User;
 
 import retrofit2.Call;
@@ -39,6 +41,6 @@ public interface FogbugzApiService {
     @GET("api.asp?cmd=listPeople")
     Call<ListPeopleResponse> listPeople(@Query("token") String token);
 
-    @GET("api.asp?cmd=viewPerson")
-    Call<MeResponse> getMyDetails(@Query("token") String token);
+    @POST("/f/api/0/jsonapi")
+    Call<Response<MyDetailsData>> getMyDetails(@Body MyDetailsRequest request);
 }

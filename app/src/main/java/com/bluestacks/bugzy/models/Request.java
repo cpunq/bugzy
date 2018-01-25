@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.models;
 
+
 public abstract class Request {
    private String cmd;
 
