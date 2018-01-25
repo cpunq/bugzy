@@ -29,7 +29,7 @@ import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.CaseEvent;
-import com.bluestacks.bugzy.models.resp.ListCasesResponse;
+import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
@@ -83,8 +83,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
 
     private LinearLayoutManager mLinearLayoutManager;
     private Call<User> me;
-    private Call<ListCasesResponse> mCases;
-    private ListCasesResponse myCases;
+    private ListCasesData myCases;
     private String mAccessToken;
     private Case mCase;
     private static CaseDetailsFragment mFragment;
@@ -161,7 +160,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         else{
             mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
-            mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority,sStatus,sProject,sFixFor,sArea,sPersonAssignedTo,sPersonOpenedBy,events");
             mAppExecutors.mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -170,7 +168,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
             });
 //            try {
 //                showLoading();
-//                Response<ListCasesResponse> resp = mCases.execute();
+//                Response<ListCasesData> resp = mCases.execute();
 //                if(resp.isSuccessful()) {
 //                    myCases = resp.body();
 //                    for(com.bluestacks.bugzy.models.resp.Case s : myCases.getCases()) {
@@ -205,7 +203,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
 //        }
         mParentActivity.showActionIcons();
         mParentActivity.setTitle(String.valueOf(mCase.getIxBug()));
-        List<CaseEvent> evs = mCase.getCaseevents().getCaseEvents();
+        List<CaseEvent> evs = mCase.getCaseevents();
         Collections.reverse(evs);
         mAdapter = new RecyclerAdapter(evs);
         mRecyclerView.setAdapter(mAdapter);

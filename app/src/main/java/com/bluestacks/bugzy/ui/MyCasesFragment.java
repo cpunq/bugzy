@@ -1,6 +1,5 @@
 package com.bluestacks.bugzy.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,14 +22,17 @@ import android.widget.Toast;
 import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
+import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.ListCasesResponse;
+import com.bluestacks.bugzy.models.resp.ListCasesData;
+import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -39,7 +41,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
-import retrofit2.Response;
 
 public class MyCasesFragment extends Fragment implements Injectable {
     @Inject
@@ -63,8 +64,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
     private Executor mMainThreadExecutor;
     private LinearLayoutManager mLinearLayoutManager;
     private Call<User> me;
-    private Call<ListCasesResponse> mCases;
-    private ListCasesResponse myCases;
+    private List<Case> myCases;
     private String mAccessToken;
     private static MyCasesFragment mFragment;
     private HomeActivity mParentActivity;
@@ -114,7 +114,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
         }
         else {
             showContent();
-            updateToken(myCases.getCases());
+            updateToken(myCases);
         }
     }
 
@@ -126,7 +126,15 @@ public class MyCasesFragment extends Fragment implements Injectable {
         }
         else{
             mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-            mCases = mApiClient.listCases(mAccessToken,"sTitle,ixPriority,sStatus,sProject,sFixFor,sArea,sPersonAssignedTo,sPersonOpenedBy,events");
+
+            String[] cols =new String[]{
+                    "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
+            };
+
+            ListCasesRequest request = new ListCasesRequest(cols);
+
+
+            Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
 
             try {
                 mMainThreadExecutor.execute(new Runnable() {
@@ -135,17 +143,17 @@ public class MyCasesFragment extends Fragment implements Injectable {
                         showLoading();
                     }
                 });
-                Response<ListCasesResponse> resp = mCases.execute();
+                retrofit2.Response<Response<ListCasesData>> resp = cases.execute();
 
                 if(resp.isSuccessful()) {
-                    myCases = resp.body();
-                    for(Case s : myCases.getCases()) {
+                    myCases = resp.body().getData().getCases();
+                    for(Case s : myCases) {
                         Log.d("Bug id" ,String.valueOf(s.getIxBug()));
                     }
                     mMainThreadExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            updateToken(myCases.getCases());
+                            updateToken(myCases);
                         }
                     });
                     Log.d("Cases List " , myCases.toString());

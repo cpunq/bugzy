@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
+import com.bluestacks.bugzy.net.RequestInterceptor;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 
 import android.app.Application;
@@ -34,11 +35,12 @@ public class NetModule {
     }
 
     @Provides @Singleton
-    FogbugzApiService provideFogBugzService(Application application) {
+    FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
+
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(mBaseUrl)
@@ -49,7 +51,9 @@ public class NetModule {
                 .client(
                         httpClient.addInterceptor(
                                 new ConnectivityInterceptor(application.getApplicationContext())
-                        ).build()
+                        )
+                                .addInterceptor(new RequestInterceptor(prefsHelper))
+                                .build()
                 )
                 .build();
         return retrofit.create(FogbugzApiService.class);

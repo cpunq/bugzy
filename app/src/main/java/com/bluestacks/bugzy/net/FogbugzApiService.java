@@ -1,7 +1,8 @@
 package com.bluestacks.bugzy.net;
 
 import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.ListCasesResponse;
+import com.bluestacks.bugzy.models.resp.ListCasesData;
+import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.ListPeopleResponse;
 import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
@@ -17,7 +18,7 @@ import retrofit2.http.Query;
 
 public interface FogbugzApiService {
 
-    @POST("/f/api/0/jsonapi?cmd=logon")
+    @POST("/f/api/0/jsonapi")
     Call<Response<LoginData>> loginWithEmail(@Body LoginRequest loginRequest);
 
     @GET("api.asp?cmd=logon")
@@ -30,10 +31,10 @@ public interface FogbugzApiService {
     User login(@Query("email") String email, @Query("password") String password);
 
     @GET("api.asp?cmd=listCases")
-    Call<ListCasesResponse> listCases(@Query("token") String token);
+    Call<ListCasesData> listCases(@Query("token") String token);
 
-    @GET("api.asp?cmd=listCases")
-    Call<ListCasesResponse> listCases(@Query("token") String token,@Query("cols") String cols);
+    @POST("/f/api/0/jsonapi")
+    Call<Response<ListCasesData>> listCases(@Body ListCasesRequest request);
 
     @GET("api.asp?cmd=listPeople")
     Call<ListPeopleResponse> listPeople(@Query("token") String token);

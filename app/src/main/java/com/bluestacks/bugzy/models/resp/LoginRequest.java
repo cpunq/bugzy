@@ -1,18 +1,16 @@
 package com.bluestacks.bugzy.models.resp;
 
 
-public class LoginRequest {
-    protected final String cmd = "logon";
+import com.bluestacks.bugzy.models.Request;
+
+public class LoginRequest extends Request {
     protected String email;
     protected String password;
 
     public LoginRequest(String email, String password) {
+        super("logon");
         this.email = email;
         this.password = password;
-    }
-
-    public String getCmd() {
-        return cmd;
     }
 
     public String getEmail() {

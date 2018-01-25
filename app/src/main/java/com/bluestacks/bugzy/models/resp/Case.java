@@ -1,55 +1,74 @@
 package com.bluestacks.bugzy.models.resp;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by msharma on 19/06/17.
- */
-@Root
 public class Case implements Serializable {
-
-
-
-    @Attribute(name = "ixBug",required = false)
     int ixBug;
 
-    @Attribute(name = "operations",required = false)
-    String operations;
+    @SerializedName( "operations")
+    List<String> operations;
 
-    @Element(name = "sTitle",required = false)
+    @SerializedName("sTitle")
     String title;
 
-    @Element(name = "ixPriority",required = false)
+    @SerializedName( "ixPriority")
     int priority;
 
-    @Element(name = "sFixFor",required = false , data = true)
+    @SerializedName( "sFixFor")
     String fixFor;
 
-    @Element(name = "sProject",required = false)
+    @SerializedName( "sProject")
     String projectName;
 
-    @Element(name = "sArea",required = false)
+    @SerializedName( "sArea")
     String projectArea;
 
-    @Element(name = "sStatus", required = false)
+    @SerializedName( "sStatus")
     String status;
 
-    @Element(name = "sPersonAssignedTo",required = false)
+    @SerializedName( "sPersonAssignedTo")
     String personAssignedTo;
 
-    @Element(name = "sPersonOpenedBy",required = false)
+    @SerializedName( "sPersonOpenedBy")
     String personOpenedBy;
 
-    @Element(name = "events",required = false)
-    CaseEvents caseevents;
+    @SerializedName( "events")
+    List<CaseEvent> caseevents;
 
+    public int getIxBug() {
+        return ixBug;
+    }
+
+    public void setIxBug(int ixBug) {
+        this.ixBug = ixBug;
+    }
+
+    public List<String> getOperations() {
+        return operations;
+    }
+
+    public void setOperations(List<String> operations) {
+        this.operations = operations;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
     public String getFixFor() {
         return fixFor;
@@ -75,6 +94,14 @@ public class Case implements Serializable {
         this.projectArea = projectArea;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getPersonAssignedTo() {
         return personAssignedTo;
     }
@@ -91,52 +118,11 @@ public class Case implements Serializable {
         this.personOpenedBy = personOpenedBy;
     }
 
-    public CaseEvents getCaseevents() {
+    public List<CaseEvent> getCaseevents() {
         return caseevents;
     }
 
-    public void setCaseevents(CaseEvents caseevents) {
+    public void setCaseevents(List<CaseEvent> caseevents) {
         this.caseevents = caseevents;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getIxBug() {
-        return ixBug;
-    }
-
-    public void setIxBug(int ixBug) {
-        this.ixBug = ixBug;
-    }
-
-    public String getOperations()
-    {
-        return operations;
-    }
-
-    public void setOperations(String operations) {
-        this.operations = operations;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
