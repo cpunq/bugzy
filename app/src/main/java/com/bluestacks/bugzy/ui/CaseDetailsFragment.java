@@ -45,7 +45,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class CaseDetailsFragment extends Fragment implements Injectable{
 
@@ -86,7 +85,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     private static CaseDetailsFragment mFragment;
     private HomeActivity mParentActivity;
     private String mFogBugzId;
-    private Realm mRealm;
     public static String token;
     private RecyclerAdapter mAdapter;
 
@@ -135,7 +133,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-        mRealm = Realm.getDefaultInstance();
         showLoading();
         mParentActivity.hideFab();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
@@ -150,7 +147,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
 
     @WorkerThread
     protected void getToken() {
-        mRealm = Realm.getDefaultInstance();
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             mParentActivity.redirectLogin();
         }

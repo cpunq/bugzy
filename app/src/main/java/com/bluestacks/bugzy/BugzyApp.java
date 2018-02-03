@@ -18,8 +18,6 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class BugzyApp extends Application implements HasActivityInjector {
     private NetComponent mNetComponent;
@@ -30,13 +28,6 @@ public class BugzyApp extends Application implements HasActivityInjector {
     @Override
     public void onCreate() {
         super.onCreate();
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
-                .name(Realm.DEFAULT_REALM_NAME)
-                .schemaVersion(0)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(realmConfiguration);
-
         DaggerNetComponent.builder()
                 // list of modules that are part of this component need to be created here too
                 .appModule(new AppModule(this)) // This also corresponds to the name of your module: %component_name%Module
