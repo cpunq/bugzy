@@ -26,13 +26,11 @@ import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
-import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -63,7 +61,6 @@ public class MyCasesFragment extends Fragment implements Injectable {
      */
     private Executor mMainThreadExecutor;
     private LinearLayoutManager mLinearLayoutManager;
-    private Call<User> me;
     private List<Case> myCases;
     private String mAccessToken;
     private static MyCasesFragment mFragment;

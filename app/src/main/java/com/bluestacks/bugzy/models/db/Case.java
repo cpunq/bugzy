@@ -1,17 +1,7 @@
 package com.bluestacks.bugzy.models.db;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
+public class Case {
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-/**
- * Created by msharma on 12/07/17.
- */
-public class Case extends RealmObject {
-
-    @PrimaryKey
     private int bugId;
 
     private String operations;

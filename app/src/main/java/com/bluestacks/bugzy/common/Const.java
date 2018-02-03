@@ -1,8 +1,5 @@
 package com.bluestacks.bugzy.common;
 
-/**
- * Created by msharma on 06/06/17.
- */
 public class Const {
 
     public static final String API_BASE_URL                         = "https://bluestacks.fogbugz.com";

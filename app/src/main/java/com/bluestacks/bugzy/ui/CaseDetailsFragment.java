@@ -30,7 +30,6 @@ import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.CaseEvent;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
-import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bumptech.glide.Glide;
@@ -47,7 +46,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import retrofit2.Call;
 
 public class CaseDetailsFragment extends Fragment implements Injectable{
 
@@ -82,7 +80,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     protected TextView mRequiredMerge;
 
     private LinearLayoutManager mLinearLayoutManager;
-    private Call<User> me;
     private ListCasesData myCases;
     private String mAccessToken;
     private Case mCase;
@@ -166,41 +163,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                     updateToken(mCase);
                 }
             });
-//            try {
-//                showLoading();
-//                Response<ListCasesData> resp = mCases.execute();
-//                if(resp.isSuccessful()) {
-//                    myCases = resp.body();
-//                    for(com.bluestacks.bugzy.models.resp.Case s : myCases.getCases()) {
-//                        Log.d("Bug id" ,String.valueOf(s.getIxBug()));
-//                    }
-//                    updateToken(myCases.getCases());
-//                    Log.d("Cases List " , myCases.toString());
-//                }
-//                else {
-//                    Log.d("Call Failed " , resp.errorBody().toString());
-//                }
-//                //Case bug_info = mRealm.where(Case.class).equalTo("bugId", Integer.parseInt(mFogBugzId)).findFirst();
-//                //List<CaseEvent> caseEvents = mRealm.where(CaseEvent.class).findAll();
-//                //updateToken(bug_info,caseEvents);
-//            }
-//            catch(ConnectivityInterceptor.NoConnectivityException e){
-//                showConnectivityError();
-//            }
-//            catch (IOException e) {
-//                Log.d("Cases","Call Failed");
-//            }
         }
     }
 
     @UiThread
     protected void updateToken(Case caseEvents) {
         showContent();
-//        for(Case s : caseEvents) {
-//            if(mFogBugzId.equals(String.valueOf(s.getIxBug()))) {
-//                mCase = s;
-//            }
-//        }
         mParentActivity.showActionIcons();
         mParentActivity.setTitle(String.valueOf(mCase.getIxBug()));
         List<CaseEvent> evs = mCase.getCaseevents();
@@ -389,13 +357,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
             else {
                 mImageAttachment.setVisibility(View.GONE);
             }
-
         }
-
-
     }
-
-
-
-
 }

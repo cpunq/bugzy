@@ -1,18 +1,10 @@
 package com.bluestacks.bugzy.utils;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.bluestacks.bugzy.models.resp.Case;
-
-/**
- * Created by msharma on 19/06/17.
- */
 public class Utils {
 
    public static boolean isOnline(Context context) {

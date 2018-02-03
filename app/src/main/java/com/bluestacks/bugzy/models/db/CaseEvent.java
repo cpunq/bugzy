@@ -1,12 +1,6 @@
 package com.bluestacks.bugzy.models.db;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-/**
- * Created by msharma on 12/07/17.
- */
-public class CaseEvent extends RealmObject {
+public class CaseEvent {
 
     private String bugEvent;
     private String eventType;
@@ -18,9 +12,7 @@ public class CaseEvent extends RealmObject {
     private String eventDescription;
     private String content;
 
-    @PrimaryKey
     private int bugId;
-
 
     public int getBugId() {
         return bugId;
