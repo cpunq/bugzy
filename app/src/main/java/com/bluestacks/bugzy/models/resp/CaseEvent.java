@@ -1,119 +1,105 @@
 package com.bluestacks.bugzy.models.resp;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by msharma on 26/07/17.
- */
-@Root(name = "event")
 public class CaseEvent {
-
-    @Attribute(name = "ixBugEvent", required = false)
-    String bugEventAttr;
-
-    @Attribute(name = "ixBug", required = false)
+    @SerializedName( "ixBug")
     String bug_id;
 
-
-    @Element(name = "sFileName",required = false)
+    @SerializedName( "sFileName")
     String filename;
 
-    @Element(name = "ixBugEvent" , required = false)
+    @SerializedName( "ixBugEvent" )
     String bugEvent;
 
-    @Element(name = "evt", required = false)
+    @SerializedName( "evt")
     String evt;
 
-    @Element(name = "sVerb", required = false)
+    @SerializedName( "sVerb")
     String verb;
 
-    @Element(name = "ixPerson" , required = false)
+    @SerializedName( "ixPerson" )
     String personid;
 
-    @Element(name = "ixPersonAssignedTo", required = false)
+    @SerializedName( "ixPersonAssignedTo")
     String personAssignedTo;
 
-    @Element(name = "dt" , required = false)
+    @SerializedName( "dt" )
     String date;
 
-    @Element(name = "sURL", required = false)
+    @SerializedName( "sURL")
     String url;
 
-    @Element(name = "s", required = false)
+    @SerializedName( "s")
     String content;
 
-    @Element(name = "fEmail", required = false)
+    @SerializedName( "fEmail")
     boolean fEmail;
 
-    @Element(name = "fHTML", required = false)
+    @SerializedName( "fHTML")
     boolean fHTML;
 
-    @Element(name = "fExternal", required = false)
+    @SerializedName( "fExternal")
     boolean fExternal;
 
-    @Element(name = "sChanges", required = false)
+    @SerializedName( "sChanges")
     String sChanges;
 
-    @Element(name = "sFormat", required = false)
+    @SerializedName( "sFormat")
     String sFormat;
 
-    @Element(name = "attachment", required = false)
+    @SerializedName( "attachment")
     String attachment;
 
-    @ElementList(name = "rgAttachments", required = false)
+    @SerializedName( "rgAttachments")
     List<Attachment> sAttachments;
 
-    @Element(name = "sFrom", required = false)
+    @SerializedName( "sFrom")
     String sFrom;
 
-    @Element(name = "sTo", required = false)
+    @SerializedName( "sTo")
     String sTo;
 
-    @Element(name = "sCC", required = false)
+    @SerializedName( "sCC")
     String sCC;
 
-    @Element(name = "sBCC", required = false)
+    @SerializedName( "sBCC")
     String sBCC;
 
-    @Element(name = "sReplyTo", required = false)
+    @SerializedName( "sReplyTo")
     String sReplyTo;
 
-    @Element(name = "sSubject", required = false)
+    @SerializedName( "sSubject")
     String sSubject;
 
-    @Element(name = "sDate", required = false)
+    @SerializedName( "sDate")
     String sDate;
 
-    @Element(name = "sBodyText", required = false)
+    @SerializedName( "sBodyText")
     String sBodyText;
 
-    @Element(name = "sBodyHTML", required = false)
+    @SerializedName( "sBodyHTML")
     String sBodyHTML;
 
-    @Element(name = "sMessageId", required = false)
+    @SerializedName( "sMessageId")
     String sMessageId;
 
-    @Element(name = "evtDescription", required = false)
+    @SerializedName( "evtDescription")
     String eventDescription;
 
-    @Element(name = "bEmail", required = false)
+    @SerializedName( "bEmail")
     String bEmail;
 
-    @Element(name = "bExternal", required = false)
+    @SerializedName( "bExternal")
     String bExternal;
 
-    @Element(name = "sPerson", required = false)
+    @SerializedName( "sPerson")
     String sPerson;
 
-    @Element(name = "sHtml", required = false)
+    @SerializedName( "sHtml")
     String contentHtml;
-
-
 
     public String getBugEvent() {
         return bugEvent;
@@ -249,14 +235,6 @@ public class CaseEvent {
 
     public void setContentHtml(String contentHtml) {
         this.contentHtml = contentHtml;
-    }
-
-    public String getBugEventAttr() {
-        return bugEventAttr;
-    }
-
-    public void setBugEventAttr(String bugEventAttr) {
-        this.bugEventAttr = bugEventAttr;
     }
 
     public String getBug_id() {

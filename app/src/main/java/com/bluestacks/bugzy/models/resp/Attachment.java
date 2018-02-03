@@ -1,17 +1,12 @@
 package com.bluestacks.bugzy.models.resp;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by msharma on 27/07/17.
- */
-@Root(name = "attachment")
 public class Attachment {
-    @Element(name = "sFileName",required = false)
+    @SerializedName("sFileName")
     String filename;
 
-    @Element(name = "sURL", required = false)
+    @SerializedName("sURL")
     String url;
 
     public String getFilename() {
