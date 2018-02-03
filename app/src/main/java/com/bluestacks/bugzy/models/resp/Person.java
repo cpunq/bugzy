@@ -2,11 +2,7 @@ package com.bluestacks.bugzy.models.resp;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.simpleframework.xml.Root;
-
-@Root
 public class Person {
-
     @SerializedName( "ixPerson")
     int personid;
 

@@ -1,6 +1,5 @@
 package com.bluestacks.bugzy.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,9 +22,10 @@ import android.widget.Toast;
 import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.ListPeopleResponse;
+import com.bluestacks.bugzy.models.Request;
+import com.bluestacks.bugzy.models.resp.ListPeopleData;
+import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.models.resp.User;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
@@ -49,9 +49,7 @@ public class PeopleFragment extends Fragment implements Injectable{
     protected ProgressBar mProgressBar;
 
     private LinearLayoutManager mLinearLayoutManager;
-    private Call<User> me;
-    private Call<ListPeopleResponse> mCases;
-    private ListPeopleResponse myCases;
+    private List<Person> people;
     private String mAccessToken;
     private static PeopleFragment mFragment;
     private RecyclerAdapter mAdapter;
@@ -105,14 +103,12 @@ public class PeopleFragment extends Fragment implements Injectable{
 
     @WorkerThread
     protected void getToken() {
-
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
            redirectLogin();
         }
         else{
-            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-
-            mCases = mApiClient.listPeople(mAccessToken);
+            ListPeopleRequest request = new ListPeopleRequest();
+            Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mApiClient.listPeople(new ListPeopleRequest());
 
             try {
                 mMainExecutor.execute(new Runnable() {
@@ -121,21 +117,20 @@ public class PeopleFragment extends Fragment implements Injectable{
                         showLoading();
                     }
                 });
-                Response<ListPeopleResponse> resp = mCases.execute();
-
+                Response<com.bluestacks.bugzy.models.Response<ListPeopleData>> resp = call.execute();
                 if(resp.isSuccessful()) {
-                    myCases = resp.body();
-                    for(Person s : myCases.getPersons()) {
+                    people = resp.body().getData().getPersons();
+                    for(Person s : people) {
                         Log.d("Bug id",String.valueOf(s.getPersonid()));
                     }
-                    ((BugzyApp)getActivity().getApplication()).persons = myCases.getPersons();
+                    ((BugzyApp)getActivity().getApplication()).persons = people;
                     mMainExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            updateToken(myCases.getPersons());
+                            updatePeople(people);
                         }
                     });
-                    Log.d("Cases List " , myCases.toString());
+                    Log.d("Cases List " , people.toString());
                 }
                 else {
                     Log.d("Call Failed ", resp.errorBody().toString());
@@ -154,12 +149,10 @@ public class PeopleFragment extends Fragment implements Injectable{
                 Log.d("Cases","Call Failed");
             }
         }
-
-
     }
 
     @UiThread
-    protected void updateToken(List<Person> persons) {
+    protected void updatePeople(List<Person> persons) {
         mAdapter = new RecyclerAdapter(persons);
         mRecyclerView.setAdapter(mAdapter);
         showContent();

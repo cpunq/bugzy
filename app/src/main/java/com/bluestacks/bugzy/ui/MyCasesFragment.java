@@ -132,8 +132,6 @@ public class MyCasesFragment extends Fragment implements Injectable {
             };
 
             ListCasesRequest request = new ListCasesRequest(cols);
-
-
             Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
 
             try {
