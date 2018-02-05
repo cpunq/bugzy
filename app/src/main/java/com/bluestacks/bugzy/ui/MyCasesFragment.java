@@ -1,5 +1,7 @@
 package com.bluestacks.bugzy.ui;
 
+import com.google.gson.Gson;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,6 +47,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @Inject
     FogbugzApiService mApiClient;
+
+    @Inject
+    Gson mGson;
 
     @Inject
     AppExecutors mAppExecutors;
@@ -104,85 +109,99 @@ public class MyCasesFragment extends Fragment implements Injectable {
             mAppExecutors.networkIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    getToken();
+                    fetchCases();
                 }
             });
         }
         else {
-            showContent();
-            updateToken(myCases);
+            showCases(myCases);
         }
     }
 
-
     @WorkerThread
-    protected void getToken() {
+    protected void fetchCases() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             mParentActivity.redirectLogin();
+            return;
         }
-        else{
-            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
+        mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
-            String[] cols =new String[]{
-                    "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
-            };
+        String[] cols =new String[]{
+                "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
+        };
 
-            ListCasesRequest request = new ListCasesRequest(cols);
-            Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
+        ListCasesRequest request = new ListCasesRequest(cols);
+        Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
 
-            try {
-                mMainThreadExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showLoading();
-                    }
-                });
-                retrofit2.Response<Response<ListCasesData>> resp = cases.execute();
-
-                if(resp.isSuccessful()) {
-                    myCases = resp.body().getData().getCases();
-                    for(Case s : myCases) {
-                        Log.d("Bug id" ,String.valueOf(s.getIxBug()));
-                    }
-                    mMainThreadExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateToken(myCases);
-                        }
-                    });
-                    Log.d("Cases List " , myCases.toString());
+        try {
+            mMainThreadExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    showLoading();
                 }
-                else {
-                    Log.d("Call Failed " , resp.errorBody().toString());
-                }
+            });
+            retrofit2.Response<Response<ListCasesData>> req = cases.execute();
+            final Response<ListCasesData> response;
 
+            if(req.isSuccessful()) {
+                response = req.body();
+            } else {
+                String stringbody = req.errorBody().string();
+                response = mGson.fromJson(stringbody, Response.class);
+                Log.d("Call Failed " , req.errorBody().toString());
             }
-            catch(ConnectivityInterceptor.NoConnectivityException e){
-                mMainThreadExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showConnectivityError();
-                    }
-                });
-            }
-            catch (IOException e) {
-                Log.d("Cases","Call Failed");
-            }
+            mMainThreadExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onCasesResponse(response);
+                }
+            });
+        } catch(ConnectivityInterceptor.NoConnectivityException e){
+            Log.d("Cases","NoConnectivity");
+            mMainThreadExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onCasesResponse(null);
+                }
+            });
+        } catch (IOException e) {
+            Log.d("Cases","Call Failed");
+            mMainThreadExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onCasesResponse(null);
+                }
+            });
         }
-
-
     }
 
     @UiThread
-    protected void updateToken(List<Case> cases) {
+    private void onCasesResponse(Response<ListCasesData> response) {
+        hideLoading();
+        if (response == null) {
+            showError("Could not fetch cases");
+            return;
+        }
+        if (response.getErrors().size() > 0) {
+            showError(response.getErrors().get(0).getMessage());
+            return;
+        }
+        // All good
+        myCases = response.getData().getCases();
+        Log.d("Cases List " , myCases.toString());
+        showCases(myCases);
+    }
+
+    @UiThread
+    protected void showCases(List<Case> cases) {
         showContent();
         mAdapter = new RecyclerAdapter(cases);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @UiThread
-    protected void showConnectivityError() {
-        Toast.makeText(getActivity(),"No internet",Toast.LENGTH_LONG).show();
+    private void hideLoading() {
+        mProgress.setVisibility(View.GONE);
     }
 
     @UiThread
@@ -197,7 +216,12 @@ public class MyCasesFragment extends Fragment implements Injectable {
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-
+    @UiThread
+    private void showError(String message) {
+//        mProgress.setVisibility(View.GONE);
+//        mRecyclerView.setVisibility(View.GONE);
+        Toast.makeText(getActivity(),"No internet",Toast.LENGTH_LONG).show();
+    }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
 
