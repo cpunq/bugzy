@@ -45,8 +45,6 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_button)
     protected Button mLoginButton;
 
-    private String mAccessToken;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +56,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAccessToken = getAccessToken();
         if(isLoggedIn()) {
             redirectHome();
         }
@@ -76,6 +73,7 @@ public class LoginActivity extends BaseActivity {
                     Snackbar.make(mPassWord,"Invalid Password",Snackbar.LENGTH_LONG).show();
                 }
                 else {
+                    setInteractionEnabled(false);
                     mAppExecutors.networkIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -87,16 +85,21 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    private void setInteractionEnabled(boolean set) {
+        mLoginButton.setEnabled(set);
+        mPassWord.setEnabled(set);
+        mUserEmail.setEnabled(set);
+    }
+
     @WorkerThread
     protected void attemptLogin(String email,String password) {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
             Call<Response<LoginData>> response = mApiClient.loginWithEmail(new LoginRequest(email, password));
             try{
-                String result = response.execute().body().getData().getToken();
-                Log.d("Token : " , result);
-                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, result);
+                String token = response.execute().body().getData().getToken();
+                Log.d("Token : " , token);
+                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
-                mAccessToken = result;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -106,6 +109,12 @@ public class LoginActivity extends BaseActivity {
             }
             catch (IOException e) {
                 Log.d(Const.TAG,"Error logging in ");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setInteractionEnabled(true);
+                    }
+                });
             }
         }
     }
@@ -123,6 +132,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isLoggedIn() {
-        return !TextUtils.isEmpty(mAccessToken);
+        return !TextUtils.isEmpty(getAccessToken());
     }
 }
