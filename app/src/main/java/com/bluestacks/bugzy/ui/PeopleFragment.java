@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluestacks.bugzy.utils.AppExecutors;
-import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
 import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
@@ -82,7 +81,7 @@ public class PeopleFragment extends Fragment implements Injectable{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_main, null);
+        View v = inflater.inflate(R.layout.fragment_recyclerview, null);
         ButterKnife.bind(this, v);
         return v;
     }
