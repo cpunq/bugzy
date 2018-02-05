@@ -21,7 +21,6 @@ import dagger.android.HasActivityInjector;
 
 public class BugzyApp extends Application implements HasActivityInjector {
     private NetComponent mNetComponent;
-    public List<Person> persons;
 
     @Inject DispatchingAndroidInjector<Activity> mActivityInjector;
 
