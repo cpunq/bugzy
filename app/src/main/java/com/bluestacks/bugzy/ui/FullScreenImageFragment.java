@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.jsibbold.zoomage.ZoomageView;
 

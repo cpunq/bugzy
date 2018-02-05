@@ -1,6 +1,6 @@
 package com.bluestacks.bugzy.di;
 
-import com.bluestacks.bugzy.HomeActivity;
+import com.bluestacks.bugzy.ui.HomeActivity;
 import com.bluestacks.bugzy.ui.LoginActivity;
 
 import dagger.Module;

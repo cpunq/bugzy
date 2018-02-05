@@ -13,7 +13,6 @@ import android.widget.EditText;
 
 import com.bluestacks.bugzy.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
-import com.bluestacks.bugzy.HomeActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.Response;

@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy;
+package com.bluestacks.bugzy.ui;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,15 +29,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluestacks.bugzy.AppExecutors;
+import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.net.ConnectivityInterceptor;
 import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.ui.CaseDetailsFragment;
-import com.bluestacks.bugzy.ui.LoginActivity;
-import com.bluestacks.bugzy.ui.MyCasesFragment;
-import com.bluestacks.bugzy.ui.PeopleFragment;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
