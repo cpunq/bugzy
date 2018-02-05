@@ -1,5 +1,7 @@
 package com.bluestacks.bugzy.ui;
 
+import com.google.gson.Gson;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
@@ -35,6 +37,7 @@ public class LoginActivity extends BaseActivity {
     @Inject PrefsHelper mPrefs;
     @Inject FogbugzApiService mApiClient;
     @Inject AppExecutors mAppExecutors;
+    @Inject Gson gson;
 
     @BindView(R.id.edittext_user_email)
     protected EditText mUserEmail;
@@ -94,16 +97,21 @@ public class LoginActivity extends BaseActivity {
     @WorkerThread
     protected void attemptLogin(String email,String password) {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, ""))) {
-            Call<Response<LoginData>> response = mApiClient.loginWithEmail(new LoginRequest(email, password));
+            Call<Response<LoginData>> request = mApiClient.loginWithEmail(new LoginRequest(email, password));
             try{
-                String token = response.execute().body().getData().getToken();
-                Log.d("Token : " , token);
-                mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
-                mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
+                retrofit2.Response<Response<LoginData>> r = request.execute();
+                final Response<LoginData> body;
+
+                if (r.isSuccessful()) {
+                    body = r.body();
+                } else {
+                    String stringbody = r.errorBody().string();
+                    body = gson.fromJson(stringbody, Response.class);
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        redirectHome();
+                        onLoginResponse(body);
                     }
                 });
             }
@@ -112,11 +120,45 @@ public class LoginActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setInteractionEnabled(true);
+                        onLoginResponse(null);
                     }
                 });
             }
         }
+    }
+
+    @UiThread
+    private void showMessage(String message) {
+        // Send mLoginButton as the view to find parent from
+        showMessage(mLoginButton, message);
+    }
+
+    @UiThread
+    private void showMessage(View v, String message) {
+        Snackbar.make(v,message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @UiThread
+    private void onLoginResponse(Response<LoginData> response) {
+        // Set the interaction to be enabled again
+        setInteractionEnabled(true);
+        if (response == null) {
+            // Some funny error
+            showMessage("Error logging in");
+            return;
+        }
+        // Check for other errors
+        if (response.getErrors().size() > 0) {
+            showMessage(response.getErrors().get(0).getMessage());
+            return;
+        }
+
+        // All good
+        String token = response.getData().getToken();
+        Log.d("Token : " , token);
+        mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
+        mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
+        redirectHome();
     }
 
 

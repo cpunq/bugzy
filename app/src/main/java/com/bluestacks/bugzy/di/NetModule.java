@@ -33,12 +33,19 @@ public class NetModule {
         return new PrefsHelper(application.getApplicationContext());
     }
 
-    @Provides @Singleton
-    FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    @Provides
+    @Singleton
+    Gson provideGson() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
+        return gson;
+    }
+
+    @Provides @Singleton
+    FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson) {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
 
 
         Retrofit.Builder builder = new Retrofit.Builder()
