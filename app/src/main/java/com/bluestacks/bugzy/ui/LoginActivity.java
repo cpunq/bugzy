@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.bluestacks.bugzy.AppExecutors;
+import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bluestacks.bugzy;
+package com.bluestacks.bugzy.utils;
 
 import android.os.Handler;
 import android.os.Looper;

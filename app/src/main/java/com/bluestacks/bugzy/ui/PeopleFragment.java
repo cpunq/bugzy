@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluestacks.bugzy.AppExecutors;
+import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;

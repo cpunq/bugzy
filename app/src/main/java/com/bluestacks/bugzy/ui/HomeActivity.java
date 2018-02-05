@@ -29,7 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluestacks.bugzy.AppExecutors;
+import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
