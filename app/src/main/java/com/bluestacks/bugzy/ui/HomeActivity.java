@@ -232,17 +232,12 @@ public class HomeActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
             mCurrentFragment = MyCasesFragment.getInstance();
 
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
             mCurrentFragment = PeopleFragment.getInstance();
-        } else if (id == R.id.nav_slideshow) {
-            mCurrentFragment = CaseDetailsFragment.getInstance();
-            Bundle arg = new Bundle();
-            arg.putString("bug_id","9605");
-            mCurrentFragment.setArguments(arg);
         }
 
         // Insert the fragment by replacing any existing fragment
