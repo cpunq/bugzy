@@ -121,6 +121,7 @@ public class PeopleFragment extends Fragment implements Injectable{
                     for(Person s : people) {
                         Log.d("Bug id",String.valueOf(s.getPersonid()));
                     }
+                    ((BugzyApp)getActivity().getApplication()).persons = people;
                     mMainExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
