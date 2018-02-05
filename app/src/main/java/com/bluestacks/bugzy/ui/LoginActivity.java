@@ -34,7 +34,6 @@ import retrofit2.Call;
 
 public class LoginActivity extends BaseActivity {
 
-    @Inject PrefsHelper mPrefs;
     @Inject FogbugzApiService mApiClient;
     @Inject AppExecutors mAppExecutors;
     @Inject Gson gson;
@@ -167,13 +166,5 @@ public class LoginActivity extends BaseActivity {
         Intent mHome  = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(mHome);
         this.finish();
-    }
-
-    private String getAccessToken() {
-        return mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
-    }
-
-    private boolean isLoggedIn() {
-        return !TextUtils.isEmpty(getAccessToken());
     }
 }

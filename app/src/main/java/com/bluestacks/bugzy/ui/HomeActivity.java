@@ -53,13 +53,11 @@ import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private Person me;
     private TextView mUserName;
     private TextView mUserEmail;
     private FragmentManager mFragmentManager;
     private Fragment mCurrentFragment;
     private Context context;
-    private String mAccessToken;
 
     @BindView(R.id.nav_view)
     protected NavigationView navigationView;
@@ -75,9 +73,6 @@ public class HomeActivity extends BaseActivity
 
     @BindView(R.id.fab)
     protected FloatingActionButton fab;
-
-    @Inject
-    PrefsHelper mPrefs;
 
     @Inject
     FogbugzApiService mApiClient;
@@ -140,52 +135,43 @@ public class HomeActivity extends BaseActivity
         });
     }
 
-
     @WorkerThread
     protected void getDetails() {
-        String token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
-        if(TextUtils.isEmpty(token)) {
+        if(!isLoggedIn()) {
           redirectLogin();
+          return;
         }
-        else{
-            mAccessToken = token;
-            Call<com.bluestacks.bugzy.models.Response<MyDetailsData>> response = mApiClient.getMyDetails(new MyDetailsRequest());
+        Call<com.bluestacks.bugzy.models.Response<MyDetailsData>> req = mApiClient.getMyDetails(new MyDetailsRequest());
 
-            try {
-                Response<com.bluestacks.bugzy.models.Response<MyDetailsData>> resp = response.execute();
-
-                if(resp.isSuccessful()) {
-                    me = resp.body().getData().getPerson();
-                    mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
-                    mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
-                    mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid()+"");
-                    mAppExecutors.mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateUserInfo();
-                        }
-                    });
-
-                }
-                else {
-                    Log.d("Call Failed ", resp.errorBody().toString());
-                }
-
-            }
-            catch(ConnectivityInterceptor.NoConnectivityException e){
+        try {
+            Response<com.bluestacks.bugzy.models.Response<MyDetailsData>> resp = req.execute();
+            if(resp.isSuccessful()) {
+                Person me = resp.body().getData().getPerson();
+                mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
+                mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
+                mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid()+"");
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        showConnectivityError();
+                        updateUserInfo();
                     }
                 });
+            } else {
+                Log.d("Call Failed ", resp.errorBody().toString());
             }
-            catch (IOException e) {
-                Log.d("Cases","Call Failed");
-            }
+
         }
-
-
+        catch(ConnectivityInterceptor.NoConnectivityException e){
+            mAppExecutors.mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    showConnectivityError();
+                }
+            });
+        }
+        catch (IOException e) {
+            Log.d("Cases","Call Failed");
+        }
     }
 
     @UiThread
@@ -234,14 +220,11 @@ public class HomeActivity extends BaseActivity
 
         if (id == R.id.nav_home) {
             mCurrentFragment = MyCasesFragment.getInstance();
-
-            // Handle the camera action
         } else if (id == R.id.nav_gallery) {
             mCurrentFragment = PeopleFragment.getInstance();
         }
 
         // Insert the fragment by replacing any existing fragment
-
         mFragmentManager.beginTransaction()
                 .replace(R.id.container_frame, mCurrentFragment)
                 .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.exit_to_right, R.anim.exit_to_left)
@@ -362,6 +345,4 @@ public class HomeActivity extends BaseActivity
             mItemDate.setText(String.valueOf(person.getFullname()));
         }
     }
-
-
 }
