@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 
 public class MyCasesFragment extends Fragment implements Injectable {
+    private static final String PARAM_FILTER = "filter";
     @Inject
     PrefsHelper mPrefs;
 
@@ -69,19 +70,28 @@ public class MyCasesFragment extends Fragment implements Injectable {
     private Executor mMainThreadExecutor;
     private LinearLayoutManager mLinearLayoutManager;
     private List<Case> myCases;
-    private String mAccessToken;
+    private String mFilter;
     private static MyCasesFragment mFragment;
     private HomeActivity mParentActivity;
     private RecyclerAdapter mAdapter;
 
-    public static MyCasesFragment getInstance() {
+    public static MyCasesFragment getInstance(String filter) {
         if(mFragment == null) {
             mFragment = new MyCasesFragment();
+            Bundle args = new Bundle();
+            args.putString(PARAM_FILTER, filter);
+            mFragment.setArguments(args);
             return mFragment;
         }
         else {
             return mFragment;
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFilter = getArguments().getString(PARAM_FILTER);
     }
 
     @Override
@@ -127,13 +137,12 @@ public class MyCasesFragment extends Fragment implements Injectable {
             mParentActivity.redirectLogin();
             return;
         }
-        mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
 
         String[] cols =new String[]{
                 "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
         };
 
-        ListCasesRequest request = new ListCasesRequest(cols);
+        ListCasesRequest request = new ListCasesRequest(cols, mFilter);
         Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
 
         try {

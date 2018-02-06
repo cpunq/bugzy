@@ -207,7 +207,7 @@ public class HomeActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            mCurrentFragment = MyCasesFragment.getInstance();
+            mCurrentFragment = MyCasesFragment.getInstance("");
         } else if (id == R.id.nav_gallery) {
             mCurrentFragment = PeopleFragment.getInstance();
         }
