@@ -76,16 +76,11 @@ public class MyCasesFragment extends Fragment implements Injectable {
     private RecyclerAdapter mAdapter;
 
     public static MyCasesFragment getInstance(String filter) {
-        if(mFragment == null) {
-            mFragment = new MyCasesFragment();
-            Bundle args = new Bundle();
-            args.putString(PARAM_FILTER, filter);
-            mFragment.setArguments(args);
-            return mFragment;
-        }
-        else {
-            return mFragment;
-        }
+        mFragment = new MyCasesFragment();
+        Bundle args = new Bundle();
+        args.putString(PARAM_FILTER, filter);
+        mFragment.setArguments(args);
+        return mFragment;
     }
 
     @Override

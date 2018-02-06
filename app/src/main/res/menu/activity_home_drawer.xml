@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+           android:id="@+id/group_filters"
+           android:orderInCategory="1">
+
         <item
-                android:id="@+id/nav_home"
-                android:icon="@android:drawable/ic_menu_report_image"
-                android:title="Home" />
-        <item
-                android:id="@+id/nav_gallery"
+                android:id="@+id/nav_people"
                 android:icon="@drawable/ic_menu_gallery"
+                android:orderInCategory="2"
                 android:title="People" />
+
     </group>
 
-    <group>
+    <group
+            android:orderInCategory="2">
 
         <item
                 android:id="@+id/logout"

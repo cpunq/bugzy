@@ -1,6 +1,10 @@
 package com.bluestacks.bugzy.net;
 
+import com.google.gson.JsonElement;
+
 import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.resp.FiltersData;
+import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
@@ -27,4 +31,7 @@ public interface FogbugzApiService {
 
     @POST("/f/api/0/jsonapi")
     Call<Response<MyDetailsData>> getMyDetails(@Body MyDetailsRequest request);
+
+    @POST("/f/api/0/jsonapi")
+    Call<Response<JsonElement>> getFilters(@Body FiltersRequest request);
 }

@@ -13,7 +13,8 @@ public class PrefsHelper {
         USER_EMAIL,
         USER_NAME,
         PERSON_ID,
-        ACCESS_TOKEN
+        ACCESS_TOKEN,
+        FILTERS_LIST
     }
 
     public PrefsHelper(Context context) {

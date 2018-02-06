@@ -1,5 +1,11 @@
 package com.bluestacks.bugzy.ui;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +20,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +37,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.resp.Filter;
+import com.bluestacks.bugzy.models.resp.FiltersData;
+import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.BugzyApp;
@@ -40,7 +53,13 @@ import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
+import org.json.JSONArray;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -48,7 +67,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
-import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,6 +75,10 @@ public class HomeActivity extends BaseActivity
     private FragmentManager mFragmentManager;
     private Fragment mCurrentFragment;
     private Context context;
+    private List<Filter> mFilters;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
     @BindView(R.id.nav_view)
     protected NavigationView navigationView;
@@ -78,6 +100,9 @@ public class HomeActivity extends BaseActivity
 
     @Inject
     AppExecutors mAppExecutors;
+
+    @Inject
+    Gson mGson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,22 +141,158 @@ public class HomeActivity extends BaseActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
         mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
         mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
+
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //Lock the drawer
+        showFiltersIfAvailable();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         showUserInfoIfAvailable();
+    }
+
+    private void showFiltersIfAvailable() {
+        List<Filter> filters = getFilters();
+        if (getFilters() != null) {
+            // Available, show these filters
+            showFilters(filters);
+            // And continue fetching from net
+        }
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                fetchFilters();
+            }
+        });
+    }
+
+    private List<Filter> getFilters() {
+        String filterString = mPrefs.getString(PrefsHelper.Key.FILTERS_LIST);
+        if (TextUtils.isEmpty(filterString)) {
+            return null;
+        }
+        Type typeOfObjectsList = new TypeToken<ArrayList<Filter>>() {}.getType();
+        List<Filter> filters = mGson.fromJson(filterString, typeOfObjectsList);
+        return filters;
+    }
+
+    @WorkerThread
+    private void fetchFilters() {
+//        FiltersData data = new FiltersData();
+//        List<Filter> filters = new ArrayList<>();
+//        for (int i = 0 ; i < 5 ; i++) {
+//            Filter f = new Filter();
+//            f.setFilter((100 + i) + "");
+//            f.setText("My Cases + " + i);
+//            f.setType("Shared");
+//            filters.add(f);
+//        }
+//        data.setFilters(filters);
+//        Response<FiltersData> response = new Response<>(data);
+//        onFiltersResponse(response);
+
+        Call<com.bluestacks.bugzy.models.Response<JsonElement>> req = mApiClient.getFilters(new FiltersRequest());
+        try {
+            retrofit2.Response<Response<JsonElement>> resp = req.execute();
+            if(resp.isSuccessful()) {
+                JsonElement body = resp.body().getData();
+                Log.d("HomeActivity", body.toString());
+                JsonArray filtersjson = body.getAsJsonObject().getAsJsonArray("filters");
+                final List<Filter> filters = new ArrayList<>();
+                for (int i = 0 ; i < filtersjson.size() ; i++) {
+                    JsonElement d = filtersjson.get(i);
+                    try {
+                        Filter f = mGson.fromJson(d, Filter.class);
+                        // Set it on disk
+                        filters.add(f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("HomeActivity", d.toString());
+                }
+
+                mPrefs.setString(PrefsHelper.Key.FILTERS_LIST, mGson.toJson(filters));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showFilters(filters);
+                    }
+                });
+            }
+        } catch(ConnectivityInterceptor.NoConnectivityException e) {
+            Log.d("Connectivitity Error ", "Error");
+        } catch (IOException e) {
+            Log.d("Cases","Call Failed");
+        }
+    }
+
+    @UiThread
+    private void onFiltersResponse(Response<FiltersData> response) {
+        if (response == null) {
+            // Show Error
+            return;
+        }
+//        showFilters(response.getData().getFilters());
+    }
+
+    HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
+
+    @UiThread
+    private void showFilters(List<Filter> filters) {
+
+        if (mFilters != null) {
+            // Filters already present, clear the list and add new
+            for (Filter filter : mFilters) {
+                int id = filter.getFilter().hashCode();
+                if (mFiltersMap.containsKey(id)) {
+                    navigationView.getMenu().removeItem(id);
+                }
+            }
+            // Removed
+        }
+
+        mFiltersMap.clear();
+        mFilters = filters;
+
+        int i = 0;
+        MenuItem myCasesItem = null;
+        for (Filter filter : mFilters) {
+            // Only showing shared/saved filters
+            if (!filter.getType().equals("shared") && !filter.getType().equals("saved")) {
+                // Skip this, as a filter with same name already exists
+                // TODO: think about this skipping, as there can be filters with different
+                // TODO: types but same names
+                continue;
+            }
+            MenuItem mi;
+            int id = filter.getFilter().hashCode();
+
+            if (filter.getText().toLowerCase().contains("my cases")) {
+                // Ensuring that my cases item appears on the top
+                mi = navigationView.getMenu().add(R.id.group_filters, id , 0, filter.getText());
+                myCasesItem = mi;
+            } else {
+                mi = navigationView.getMenu().add(R.id.group_filters, id, 1, filter.getText());
+            }
+            mi.setCheckable(true);
+            mFiltersMap.put(id, filter);
+        }
+        // Unlock the drawer
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        if (myCasesItem != null) {
+            onNavigationItemSelected(myCasesItem.setChecked(true));
+        }
     }
 
     @UiThread
@@ -155,10 +316,10 @@ public class HomeActivity extends BaseActivity
           redirectLogin();
           return;
         }
-        Call<com.bluestacks.bugzy.models.Response<MyDetailsData>> req = mApiClient.getMyDetails(new MyDetailsRequest());
+        Call<Response<MyDetailsData>> req = mApiClient.getMyDetails(new MyDetailsRequest());
 
         try {
-            Response<com.bluestacks.bugzy.models.Response<MyDetailsData>> resp = req.execute();
+            retrofit2.Response<Response<MyDetailsData>> resp = req.execute();
             if(resp.isSuccessful()) {
                 Person me = resp.body().getData().getPerson();
                 mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
@@ -221,10 +382,14 @@ public class HomeActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            mCurrentFragment = MyCasesFragment.getInstance("");
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_people) {
             mCurrentFragment = PeopleFragment.getInstance();
+        } else {
+            // Check if its a filter
+            if (mFiltersMap.containsKey(item.getItemId())) {
+                //its from a filter
+                mCurrentFragment = MyCasesFragment.getInstance(mFiltersMap.get(item.getItemId()).getFilter());
+            }
         }
 
         // Insert the fragment by replacing any existing fragment
@@ -233,8 +398,7 @@ public class HomeActivity extends BaseActivity
                 .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.exit_to_right, R.anim.exit_to_left)
                 .commit();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -320,7 +484,6 @@ public class HomeActivity extends BaseActivity
         public int getItemCount() {
             return mPersons.size();
         }
-
 
     }
 
