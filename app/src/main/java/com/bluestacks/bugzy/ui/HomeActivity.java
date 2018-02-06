@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
@@ -162,21 +160,11 @@ public class HomeActivity extends BaseActivity
 
         }
         catch(ConnectivityInterceptor.NoConnectivityException e){
-            mAppExecutors.mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    showConnectivityError();
-                }
-            });
+            Log.d("Connectivitity Error ", "Error");
         }
         catch (IOException e) {
             Log.d("Cases","Call Failed");
         }
-    }
-
-    @UiThread
-    protected void showConnectivityError() {
-        Toast.makeText(this,"No internet",Toast.LENGTH_LONG).show();
     }
 
     @Override
