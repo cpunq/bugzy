@@ -19,8 +19,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.Response;
@@ -59,6 +59,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @BindView(R.id.progressBar)
     protected ProgressBar mProgress;
+
+    @BindView(R.id.viewError)
+    protected ErrorView mErrorView;
 
     /**
      * - will refer to mAppExecutor.mainThread()
@@ -208,19 +211,22 @@ public class MyCasesFragment extends Fragment implements Injectable {
     protected void showLoading() {
         mProgress.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
     }
 
     @UiThread
     protected void showContent() {
         mProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mErrorView.setVisibility(View.GONE);
     }
 
     @UiThread
     private void showError(String message) {
-//        mProgress.setVisibility(View.GONE);
-//        mRecyclerView.setVisibility(View.GONE);
-        Toast.makeText(getActivity(),"No internet",Toast.LENGTH_LONG).show();
+        mProgress.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.VISIBLE);
+        mErrorView.setErrorText(message);
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
