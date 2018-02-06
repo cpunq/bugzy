@@ -1,5 +1,7 @@
 package com.bluestacks.bugzy.ui;
 
+import com.google.gson.Gson;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
@@ -47,6 +50,9 @@ public class PeopleFragment extends Fragment implements Injectable{
     @BindView(R.id.progressBar)
     protected ProgressBar mProgressBar;
 
+    @BindView(R.id.viewError)
+    protected ErrorView mErrorView;
+
     private LinearLayoutManager mLinearLayoutManager;
     private List<Person> people;
     private String mAccessToken;
@@ -59,6 +65,9 @@ public class PeopleFragment extends Fragment implements Injectable{
 
     @Inject
     FogbugzApiService mApiClient;
+
+    @Inject
+    Gson mGson;
 
     @Inject
     AppExecutors mAppExecutors;
@@ -95,59 +104,73 @@ public class PeopleFragment extends Fragment implements Injectable{
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                getToken();
+                fetchPeople();
             }
         });
     }
 
     @WorkerThread
-    protected void getToken() {
+    protected void fetchPeople() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
            redirectLogin();
+           return;
         }
-        else{
-            ListPeopleRequest request = new ListPeopleRequest();
-            Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mApiClient.listPeople(new ListPeopleRequest());
+        Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mApiClient.listPeople(new ListPeopleRequest());
 
-            try {
-                mMainExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showLoading();
-                    }
-                });
-                Response<com.bluestacks.bugzy.models.Response<ListPeopleData>> resp = call.execute();
-                if(resp.isSuccessful()) {
-                    people = resp.body().getData().getPersons();
-                    for(Person s : people) {
-                        Log.d("Bug id",String.valueOf(s.getPersonid()));
-                    }
-                    ((BugzyApp)getActivity().getApplication()).persons = people;
-                    mMainExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            updatePeople(people);
-                        }
-                    });
-                    Log.d("Cases List " , people.toString());
+        try {
+            mMainExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    showLoading();
                 }
-                else {
-                    Log.d("Call Failed ", resp.errorBody().toString());
+            });
+            Response<com.bluestacks.bugzy.models.Response<ListPeopleData>> resp = call.execute();
+            final com.bluestacks.bugzy.models.Response<ListPeopleData> body;
+            if(resp.isSuccessful()) {
+                body = resp.body();
+            } else {
+                Log.d("Call Failed ", resp.errorBody().toString());
+                String stringbody = resp.errorBody().string();
+                body = mGson.fromJson(stringbody, com.bluestacks.bugzy.models.Response.class);
+            }
+            mMainExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onPeopleResponse(body);
                 }
-
-            }
-            catch(ConnectivityInterceptor.NoConnectivityException e){
-                mMainExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showConnectivityError();
-                    }
-                });
-            }
-            catch (IOException e) {
-                Log.d("Cases","Call Failed");
-            }
+            });
+        } catch(ConnectivityInterceptor.NoConnectivityException e){
+            mMainExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onPeopleResponse(null);
+                }
+            });
+        } catch (IOException e) {
+            Log.d("Cases","Call Failed");
+            mMainExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    onPeopleResponse(null);
+                }
+            });
         }
+    }
+
+    protected void onPeopleResponse(com.bluestacks.bugzy.models.Response<ListPeopleData> response) {
+        hideLoading();
+        if (response == null) {
+            showError("Could not fetch people");
+            return;
+        }
+        if (response.getErrors().size() > 0) {
+            showError(response.getErrors().get(0).getMessage());
+            return;
+        }
+        people = response.getData().getPersons();
+        ((BugzyApp)getActivity().getApplication()).persons = people;
+        updatePeople(people);
+        Log.d("Cases List " , people.toString());
     }
 
     @UiThread
@@ -158,22 +181,30 @@ public class PeopleFragment extends Fragment implements Injectable{
     }
 
     @UiThread
+    private void hideLoading() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @UiThread
     protected void showLoading() {
         mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
     }
 
     @UiThread
     protected void showContent() {
         mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mErrorView.setVisibility(View.GONE);
     }
 
-    @UiThread
-    protected void showConnectivityError() {
-        Toast.makeText(getActivity(),"No internet",Toast.LENGTH_LONG).show();
+    protected void showError(String message) {
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.VISIBLE);
+        mErrorView.setErrorText(message);
     }
-
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
 
@@ -198,8 +229,6 @@ public class PeopleFragment extends Fragment implements Injectable{
         public int getItemCount() {
             return mPersons.size();
         }
-
-
     }
 
     public static class BugHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -228,7 +257,6 @@ public class PeopleFragment extends Fragment implements Injectable{
             mItemDate.setText(String.valueOf(person.getFullname()));
             mItemDescription.setText(person.getEmail());
             mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
-
         }
     }
 
