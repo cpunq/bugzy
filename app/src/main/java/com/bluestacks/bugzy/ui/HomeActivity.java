@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,7 +101,7 @@ public class HomeActivity extends BaseActivity
                 d.setCancelable(false);
                 d.setContentView(R.layout.edit_dialog);
                 RecyclerView sd = (RecyclerView) d.findViewById(R.id.recyclerView);
-                sd.setAdapter(new RecyclerAdapter(((BugzyApp)getApplication()).persons));
+                sd.setAdapter(new RecyclerAdapter(((BugzyApp) getApplication()).persons));
                 d.show();
             }
         });
@@ -125,16 +126,31 @@ public class HomeActivity extends BaseActivity
         onNavigationItemSelected(navigationView.getMenu().getItem(0).setChecked(true));
         mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
         mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                getDetails();
-            }
-        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showUserInfoIfAvailable();
+    }
+
+    @UiThread
+    private void showUserInfoIfAvailable() {
+        if (TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.PERSON_ID))) {
+            // No userinfo, fetch from network
+            mAppExecutors.networkIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    fetchUserInfo();
+                }
+            });
+            return;
+        }
+        showUserInfo();
     }
 
     @WorkerThread
-    protected void getDetails() {
+    protected void fetchUserInfo() {
         if(!isLoggedIn()) {
           redirectLogin();
           return;
@@ -151,13 +167,12 @@ public class HomeActivity extends BaseActivity
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        updateUserInfo();
+                        showUserInfo();
                     }
                 });
             } else {
                 Log.d("Call Failed ", resp.errorBody().toString());
             }
-
         }
         catch(ConnectivityInterceptor.NoConnectivityException e){
             Log.d("Connectivitity Error ", "Error");
@@ -224,7 +239,7 @@ public class HomeActivity extends BaseActivity
     }
 
     @UiThread
-    protected void updateUserInfo() {
+    protected void showUserInfo() {
         String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+mPrefs.getString(PrefsHelper.Key.PERSON_ID)+"&pg=pgAvatar&pxSize=140";
         ImageRequest.create(navigationView.getHeaderView(0).findViewById(R.id.pro))
                 .setTargetUrl(img_path)
