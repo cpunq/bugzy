@@ -82,7 +82,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     private String mAccessToken;
     private Case mCase;
     private static CaseDetailsFragment mFragment;
-    private HomeActivity mParentActivity;
+    private MyCasesFragment.CasesFragmentActivityContract mParentActivity;
     private String mFogBugzId;
     public static String token;
     private RecyclerAdapter mAdapter;
@@ -109,7 +109,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mParentActivity = (HomeActivity)getActivity();
+        if (context instanceof MyCasesFragment.CasesFragmentActivityContract) {
+            mParentActivity = (MyCasesFragment.CasesFragmentActivityContract)context;
+        }
     }
 
     @Override
@@ -147,25 +149,24 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     @WorkerThread
     protected void getToken() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            mParentActivity.redirectLogin();
+            return;
         }
-        else{
-            mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-
-            mAppExecutors.mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    updateToken(mCase);
-                }
-            });
-        }
+        mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
+        mAppExecutors.mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                updateToken(mCase);
+            }
+        });
     }
 
     @UiThread
     protected void updateToken(Case caseEvents) {
         showContent();
+
         mParentActivity.showActionIcons();
         mParentActivity.setTitle(String.valueOf(mCase.getIxBug()));
+
         List<CaseEvent> evs = mCase.getCaseevents();
         Collections.reverse(evs);
         mAdapter = new RecyclerAdapter(evs);
@@ -212,8 +213,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         mContainer.setVisibility(View.VISIBLE);
     }
 
-
-
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
 
         private List<CaseEvent> mBugs;
@@ -240,8 +239,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                     break;
             }
 
-            return new BugHolder(inflatedView,mParentActivity,mParentActivity);
-
+            return new BugHolder(inflatedView, getContext(), mParentActivity);
         }
 
         @Override
@@ -275,10 +273,10 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         private ImageView mImageAttachment;
         private CaseEvent mBug;
         private Context mContext;
-        private HomeActivity homeActivity;
+        private MyCasesFragment.CasesFragmentActivityContract homeActivity;
 
         //4
-        public BugHolder (View v,Context context,HomeActivity activity) {
+        public BugHolder (View v,Context context,MyCasesFragment.CasesFragmentActivityContract activity) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
@@ -344,7 +342,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                             arg.putParcelable("img_src",bitmap);
                             d.setArguments(arg);
 
-                            homeActivity.setFragment(d);
+                            homeActivity.setContentFragment(d, true);
                         }
                     });
                 }

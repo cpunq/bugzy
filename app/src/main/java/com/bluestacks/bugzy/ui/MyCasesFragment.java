@@ -42,7 +42,16 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 
 public class MyCasesFragment extends Fragment implements Injectable {
+    public static interface CasesFragmentActivityContract extends NavigationActivityBehavior {
+        public void hideActionIcons();
+
+        public void showActionIcons();
+
+        public void showFab();
+        public void hideFab();
+    }
     private static final String PARAM_FILTER = "filter";
+    private static final String PARAM_FILTER_TEXT = "filter_text";
     @Inject
     PrefsHelper mPrefs;
 
@@ -71,14 +80,16 @@ public class MyCasesFragment extends Fragment implements Injectable {
     private LinearLayoutManager mLinearLayoutManager;
     private List<Case> myCases;
     private String mFilter;
+    private String mFilterText;
     private static MyCasesFragment mFragment;
-    private HomeActivity mParentActivity;
+    private CasesFragmentActivityContract mParentActivity;
     private RecyclerAdapter mAdapter;
 
-    public static MyCasesFragment getInstance(String filter) {
+    public static MyCasesFragment getInstance(String filter, String filterText) {
         mFragment = new MyCasesFragment();
         Bundle args = new Bundle();
         args.putString(PARAM_FILTER, filter);
+        args.putString(PARAM_FILTER_TEXT, filterText);
         mFragment.setArguments(args);
         return mFragment;
     }
@@ -87,12 +98,15 @@ public class MyCasesFragment extends Fragment implements Injectable {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFilter = getArguments().getString(PARAM_FILTER);
+        mFilterText = getArguments().getString(PARAM_FILTER_TEXT);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mParentActivity = (HomeActivity)getActivity();
+        if (context instanceof CasesFragmentActivityContract) {
+            mParentActivity = (CasesFragmentActivityContract) context;
+        }
     }
 
 
@@ -109,8 +123,11 @@ public class MyCasesFragment extends Fragment implements Injectable {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMainThreadExecutor = mAppExecutors.mainThread();
-        mParentActivity.hideActionIcons();
-        mParentActivity.showFab();
+        if (mParentActivity != null) {
+            mParentActivity.onContentFragmentsActivityCreated(this, mFilterText);
+            mParentActivity.hideActionIcons();
+            mParentActivity.showFab();
+        }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         if(myCases == null) {
@@ -129,10 +146,8 @@ public class MyCasesFragment extends Fragment implements Injectable {
     @WorkerThread
     protected void fetchCases() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            mParentActivity.redirectLogin();
             return;
         }
-
         String[] cols =new String[]{
                 "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
         };
@@ -243,7 +258,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
         public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bug_item_row, parent, false);
-            return new BugHolder(inflatedView,mParentActivity);
+            return new BugHolder(inflatedView, mParentActivity);
         }
 
         @Override
@@ -265,27 +280,30 @@ public class MyCasesFragment extends Fragment implements Injectable {
         private TextView mItemDescription;
         private LinearLayout mPriority;
         private Case mBug;
-        private HomeActivity mActivity;
+        @Nullable
+        private NavigationActivityBehavior mNavigationBehavior;
 
         //4
-        public BugHolder (View v,HomeActivity a) {
+        public BugHolder (View v, NavigationActivityBehavior a) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
             mPriority = (LinearLayout) v.findViewById(R.id.priority);
-            mActivity = a;
+            mNavigationBehavior = a;
             v.setOnClickListener(this);
         }
 
         //5
         @Override
         public void onClick(View v) {
-                Fragment d = CaseDetailsFragment.getInstance();
-                Bundle arg = new Bundle();
-                arg.putString("bug_id",String.valueOf(mBug.getIxBug()));
-                arg.putSerializable("bug",mBug);
-                d.setArguments(arg);
-                mActivity.setFragment(d);
+            Fragment d = CaseDetailsFragment.getInstance();
+            Bundle arg = new Bundle();
+            arg.putString("bug_id",String.valueOf(mBug.getIxBug()));
+            arg.putSerializable("bug",mBug);
+            d.setArguments(arg);
+            if (mNavigationBehavior != null) {
+                mNavigationBehavior.setContentFragment(d, true);
+            }
         }
 
         public void bindData(Case bug) {

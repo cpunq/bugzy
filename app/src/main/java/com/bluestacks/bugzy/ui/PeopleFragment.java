@@ -2,6 +2,7 @@ package com.bluestacks.bugzy.ui;
 
 import com.google.gson.Gson;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class PeopleFragment extends Fragment implements Injectable{
     private static PeopleFragment mFragment;
     private RecyclerAdapter mAdapter;
     protected Executor mMainExecutor;
+    private NavigationActivityBehavior mNavigationBehavior;
 
     @Inject
     PrefsHelper mPrefs;
@@ -82,6 +84,14 @@ public class PeopleFragment extends Fragment implements Injectable{
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof NavigationActivityBehavior) {
+            mNavigationBehavior = (NavigationActivityBehavior)context;
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMainExecutor = mAppExecutors.mainThread();
@@ -98,6 +108,9 @@ public class PeopleFragment extends Fragment implements Injectable{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (mNavigationBehavior != null) {
+            mNavigationBehavior.onContentFragmentsActivityCreated(this, "People");
+        }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mAppExecutors.networkIO().execute(new Runnable() {

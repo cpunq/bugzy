@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -72,7 +73,8 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 
 public class HomeActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MyCasesFragment.CasesFragmentActivityContract {
+    public static final String TAG = HomeActivity.class.getName();
     private TextView mUserName;
     private TextView mUserEmail;
     private FragmentManager mFragmentManager;
@@ -86,14 +88,14 @@ public class HomeActivity extends BaseActivity
     @BindView(R.id.nav_view)
     protected NavigationView navigationView;
 
-    @BindView(R.id.edit_button)
-    protected ImageView mEdit;
-
-    @BindView(R.id.assign_button)
-    protected ImageView mAssign;
-
-    @BindView(R.id.close_button)
-    protected ImageView mClose;
+//    @BindView(R.id.edit_button)
+//    protected ImageView mEdit;
+//
+//    @BindView(R.id.assign_button)
+//    protected ImageView mAssign;
+//
+//    @BindView(R.id.close_button)
+//    protected ImageView mClose;
 
     @BindView(R.id.fab)
     protected FloatingActionButton fab;
@@ -128,30 +130,9 @@ public class HomeActivity extends BaseActivity
     protected void onViewsReady() {
         mFragmentManager = getSupportFragmentManager();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
-        mEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Dialog d = new Dialog(context);
-                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                d.setCancelable(false);
-                d.setContentView(R.layout.edit_dialog);
-                RecyclerView sd = (RecyclerView) d.findViewById(R.id.recyclerView);
-                sd.setAdapter(new RecyclerAdapter(((BugzyApp) getApplication()).persons));
-                d.show();
-            }
-        });
         hideActionIcons();
         setSupportActionBar(toolbar);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -210,6 +191,12 @@ public class HomeActivity extends BaseActivity
 
         // If filters are already present, just show a toast, or snackbar
         Snackbar.make(mContentContainer, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onAttachFragment(android.app.Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Log.d(TAG, "onAttachFragment" + fragment.getClass().getName());
     }
 
     @UiThread
@@ -431,30 +418,25 @@ public class HomeActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
 
         if (id == R.id.nav_people) {
-            mCurrentFragment = PeopleFragment.getInstance();
+            fragment = PeopleFragment.getInstance();
         } else {
             // Check if its a filter
             if (mFiltersMap.containsKey(item.getItemId())) {
                 //its from a filter
-                mCurrentFragment = MyCasesFragment.getInstance(mFiltersMap.get(item.getItemId()).getFilter());
+                Filter f = mFiltersMap.get(item.getItemId());
+                fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
             }
         }
 
-        // Insert the fragment by replacing any existing fragment
-        mFragmentManager.beginTransaction()
-                .replace(R.id.container_frame, mCurrentFragment)
-                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.exit_to_right, R.anim.exit_to_left)
-                .commit();
-
+        setContentFragment(fragment, true);
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -475,39 +457,64 @@ public class HomeActivity extends BaseActivity
         finish();
     }
 
-    public void setFragment(Fragment fragment) {
+    @Override
+    public void setContentFragment(Fragment fragment, boolean addToBackStack) {
         mCurrentFragment = fragment;
-        mFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.exit_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .addToBackStack(mCurrentFragment.getTag())
-                .replace(R.id.container_frame, mCurrentFragment)
-                .commit();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        FragmentTransaction ft = mFragmentManager.beginTransaction()
+                .replace(R.id.container_frame, mCurrentFragment);
+        //TODO: use customAnimation only when we are going one level deeper in the navigation
+//                .setCustomAnimations(R.anim.exit_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+
+        /* TODO: Check if the tag for this fragment is my cases or the one which is home for us
+                 if yes, then call clearBackStack */
+
+        if (addToBackStack) {
+            ft.addToBackStack(mCurrentFragment.getTag());
+        }
+        ft.commit();
     }
 
+    public void clearBackStack() {
+        FragmentManager fm = getSupportFragmentManager();
+        for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+            fm.popBackStack();
+        }
+    }
+
+
+    @Override
     public void setTitle(String title) {
-        getSupportActionBar().setTitle(title);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
+    @Override
+    public void onContentFragmentsActivityCreated(Fragment fragment, String title) {
+        this.setTitle(title);
+    }
+
+    @Override
     public void showActionIcons() {
-        mEdit.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mAssign.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mClose.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mEdit.setVisibility(View.VISIBLE);
-        mAssign.setVisibility(View.VISIBLE);
-        mClose.setVisibility(View.VISIBLE);
+//        mEdit.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mAssign.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mClose.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mEdit.setVisibility(View.VISIBLE);
+//        mAssign.setVisibility(View.VISIBLE);
+//        mClose.setVisibility(View.VISIBLE);
     }
 
+    @Override
     public void hideActionIcons() {
-        mEdit.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mAssign.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mClose.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        mEdit.setVisibility(View.GONE);
-        mAssign.setVisibility(View.GONE);
-        mClose.setVisibility(View.GONE);
+//        mEdit.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mAssign.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mClose.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
+//        mEdit.setVisibility(View.GONE);
+//        mAssign.setVisibility(View.GONE);
+//        mClose.setVisibility(View.GONE);
     }
 
+    @Override
     public void showFab() {
             fab.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
             fab.setVisibility(View.VISIBLE);

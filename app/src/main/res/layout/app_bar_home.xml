@@ -18,33 +18,33 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right|center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginRight="10dp">
-                <ImageView
-                    android:id="@+id/edit_button"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/edit"
-                    android:background="@android:color/transparent"/>
-                <ImageView
-                    android:id="@+id/assign_button"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:src="@drawable/transfer"
-                    android:background="@android:color/transparent"/>
-                <ImageView
-                    android:id="@+id/close_button"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/close"
-                    android:background="@android:color/transparent"/>
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="right|center_vertical"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_marginRight="10dp">-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/edit_button"-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/edit"-->
+                    <!--android:background="@android:color/transparent"/>-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/assign_button"-->
+                    <!--android:layout_width="26dp"-->
+                    <!--android:layout_height="26dp"-->
+                    <!--android:layout_marginLeft="16dp"-->
+                    <!--android:layout_marginRight="16dp"-->
+                    <!--android:src="@drawable/transfer"-->
+                    <!--android:background="@android:color/transparent"/>-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/close_button"-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/close"-->
+                    <!--android:background="@android:color/transparent"/>-->
+            <!--</LinearLayout>-->
 
             </android.support.v7.widget.Toolbar>
 
