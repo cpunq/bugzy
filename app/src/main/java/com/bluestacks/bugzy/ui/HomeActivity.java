@@ -81,6 +81,8 @@ public class HomeActivity extends BaseActivity
     private Fragment mCurrentFragment;
     private Context context;
     private List<Filter> mFilters;
+    private int mHomeNavItemId = -1;
+    private HashMap<String, Integer> mNavItemTagMap = new HashMap<>();
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -292,23 +294,31 @@ public class HomeActivity extends BaseActivity
 
     HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
 
+    private void removeFiltersFromNavigationView() {
+        for (Filter filter : mFilters) {
+            int id = filter.getFilter().hashCode();
+            if (mFiltersMap.containsKey(id)) {
+                navigationView.getMenu().removeItem(id);
+            }
+        }
+    }
+
     @UiThread
     private void showFilters(List<Filter> filters) {
         showContent();
         if (mFilters != null) {
             // Filters already present, clear the list and add new
-            for (Filter filter : mFilters) {
-                int id = filter.getFilter().hashCode();
-                if (mFiltersMap.containsKey(id)) {
-                    navigationView.getMenu().removeItem(id);
-                }
-            }
+            removeFiltersFromNavigationView();
             // Removed
         }
 
         mFiltersMap.clear();
+        // Clear the navItemTagMap as well, because the navigation items have been changed
+        mNavItemTagMap.clear();
         mFilters = filters;
+        mHomeNavItemId = -1;
 
+        // Add the new filters to navigation view
         int i = 0;
         MenuItem myCasesItem = null;
         for (Filter filter : mFilters) {
@@ -335,7 +345,10 @@ public class HomeActivity extends BaseActivity
         // Unlock the drawer
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         if (myCasesItem != null) {
+            mHomeNavItemId = myCasesItem.getItemId();
             onNavigationItemSelected(myCasesItem.setChecked(true));
+        } else {
+            //think of having some other menuItem as the home
         }
     }
 
@@ -424,19 +437,27 @@ public class HomeActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Fragment fragment = null;
+        String tag = null;
+        boolean addToBackstack = true;
 
         if (id == R.id.nav_people) {
             fragment = PeopleFragment.getInstance();
+            tag = "people";
         } else {
             // Check if its a filter
             if (mFiltersMap.containsKey(item.getItemId())) {
                 //its from a filter
                 Filter f = mFiltersMap.get(item.getItemId());
+                tag = "filter_" + f.getFilter();
                 fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
             }
         }
 
-        setContentFragment(fragment, true);
+        mNavItemTagMap.put(tag, id);
+        if (id == mHomeNavItemId) {
+            addToBackstack = false;
+        }
+        setContentFragment(fragment, addToBackstack, tag);
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -458,18 +479,23 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void setContentFragment(Fragment fragment, boolean addToBackStack) {
+    public void setContentFragment(Fragment fragment, boolean addToBackStack, String tag) {
         mCurrentFragment = fragment;
         FragmentTransaction ft = mFragmentManager.beginTransaction()
-                .replace(R.id.container_frame, mCurrentFragment);
+                .replace(R.id.container_frame, mCurrentFragment, tag);
+
         //TODO: use customAnimation only when we are going one level deeper in the navigation
 //                .setCustomAnimations(R.anim.exit_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+
+        if (mNavItemTagMap.containsKey(tag) && mHomeNavItemId == mNavItemTagMap.get(tag)) {
+            clearBackStack();
+        }
 
         /* TODO: Check if the tag for this fragment is my cases or the one which is home for us
                  if yes, then call clearBackStack */
 
         if (addToBackStack) {
-            ft.addToBackStack(mCurrentFragment.getTag());
+            ft.addToBackStack(null);
         }
         ft.commit();
     }
@@ -490,8 +516,11 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void onContentFragmentsActivityCreated(Fragment fragment, String title) {
+    public void onContentFragmentsActivityCreated(Fragment fragment, String title, String tag) {
         this.setTitle(title);
+        if (mNavItemTagMap.containsKey(tag)) {
+            navigationView.getMenu().findItem(mNavItemTagMap.get(tag)).setChecked(true);
+        }
     }
 
     @Override

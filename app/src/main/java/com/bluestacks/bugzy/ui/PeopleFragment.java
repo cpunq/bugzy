@@ -109,7 +109,7 @@ public class PeopleFragment extends Fragment implements Injectable{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mNavigationBehavior != null) {
-            mNavigationBehavior.onContentFragmentsActivityCreated(this, "People");
+            mNavigationBehavior.onContentFragmentsActivityCreated(this, "People", getTag());
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);

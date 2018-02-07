@@ -342,7 +342,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                             arg.putParcelable("img_src",bitmap);
                             d.setArguments(arg);
 
-                            homeActivity.setContentFragment(d, true);
+                            homeActivity.setContentFragment(d, true, "c");
                         }
                     });
                 }

@@ -124,7 +124,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         mMainThreadExecutor = mAppExecutors.mainThread();
         if (mParentActivity != null) {
-            mParentActivity.onContentFragmentsActivityCreated(this, mFilterText);
+            mParentActivity.onContentFragmentsActivityCreated(this, mFilterText, getTag());
             mParentActivity.hideActionIcons();
             mParentActivity.showFab();
         }
@@ -302,7 +302,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
             arg.putSerializable("bug",mBug);
             d.setArguments(arg);
             if (mNavigationBehavior != null) {
-                mNavigationBehavior.setContentFragment(d, true);
+                mNavigationBehavior.setContentFragment(d, true, "d");
             }
         }
 
