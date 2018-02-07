@@ -17,17 +17,8 @@
             android:theme="@style/AppTheme">
 
         <activity
-                android:name=".ui.home.HomeActivity"
-                android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
                 android:name=".ui.login.LoginActivity"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,13 +26,18 @@
         </activity>
 
         <activity
+                android:name=".ui.home.HomeActivity"
+                android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
                 android:name=".ui.casedetails.CaseDetailsActivity"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme">
         </activity>
 
         <activity
                 android:name=".ui.casedetails.FullScreenImageActivity"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme">
         </activity>
 
     </application>
