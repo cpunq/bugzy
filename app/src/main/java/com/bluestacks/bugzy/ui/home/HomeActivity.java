@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -38,9 +38,11 @@ import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
+import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
-import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;

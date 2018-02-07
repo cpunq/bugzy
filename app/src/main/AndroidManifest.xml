@@ -17,7 +17,7 @@
             android:theme="@style/AppTheme">
 
         <activity
-                android:name=".ui.HomeActivity"
+                android:name=".ui.home.HomeActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-                android:name=".ui.LoginActivity"
+                android:name=".ui.login.LoginActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,12 +35,12 @@
         </activity>
 
         <activity
-                android:name=".ui.CaseDetailsActivity"
+                android:name=".ui.casedetails.CaseDetailsActivity"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-                android:name=".ui.FullScreenImageActivity"
+                android:name=".ui.casedetails.FullScreenImageActivity"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

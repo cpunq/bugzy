@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy;
+package com.bluestacks.bugzy.ui;
 
 
 import com.bluestacks.bugzy.utils.PrefsHelper;

@@ -1,7 +1,7 @@
 package com.bluestacks.bugzy.di;
 
 import com.bluestacks.bugzy.BugzyApp;
-import com.bluestacks.bugzy.ui.Injectable;
+import com.bluestacks.bugzy.ui.common.Injectable;
 
 import android.app.Activity;
 import android.app.Application;

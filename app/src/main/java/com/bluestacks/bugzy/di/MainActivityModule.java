@@ -1,9 +1,9 @@
 package com.bluestacks.bugzy.di;
 
-import com.bluestacks.bugzy.ui.CaseDetailsActivity;
-import com.bluestacks.bugzy.ui.FullScreenImageActivity;
-import com.bluestacks.bugzy.ui.HomeActivity;
-import com.bluestacks.bugzy.ui.LoginActivity;
+import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
+import com.bluestacks.bugzy.ui.home.HomeActivity;
+import com.bluestacks.bugzy.ui.login.LoginActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;

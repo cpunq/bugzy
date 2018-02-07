@@ -1,11 +1,11 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.casedetails;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;

@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.casedetails;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;

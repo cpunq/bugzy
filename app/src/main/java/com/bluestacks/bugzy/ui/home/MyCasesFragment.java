@@ -1,9 +1,8 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.ui.common.ErrorView;
+import com.bluestacks.bugzy.ui.common.Injectable;
+import com.bluestacks.bugzy.ui.common.NavigationActivityBehavior;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.Response;

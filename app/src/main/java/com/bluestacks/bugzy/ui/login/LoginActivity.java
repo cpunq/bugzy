@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.login;
 
 import com.google.gson.Gson;
 
@@ -13,8 +13,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.utils.AppExecutors;
-import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.Response;

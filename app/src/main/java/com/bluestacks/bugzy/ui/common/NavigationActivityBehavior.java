@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.common;
 
 import com.bluestacks.bugzy.models.resp.Case;
 

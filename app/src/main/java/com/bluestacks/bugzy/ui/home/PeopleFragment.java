@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.ui;
+package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
 
@@ -22,7 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
+import com.bluestacks.bugzy.ui.common.Injectable;
+import com.bluestacks.bugzy.ui.common.NavigationActivityBehavior;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
@@ -43,7 +46,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class PeopleFragment extends Fragment implements Injectable{
+public class PeopleFragment extends Fragment implements Injectable {
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 

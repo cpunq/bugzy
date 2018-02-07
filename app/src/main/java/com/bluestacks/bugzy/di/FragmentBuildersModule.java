@@ -1,7 +1,7 @@
 package com.bluestacks.bugzy.di;
 
-import com.bluestacks.bugzy.ui.MyCasesFragment;
-import com.bluestacks.bugzy.ui.PeopleFragment;
+import com.bluestacks.bugzy.ui.home.MyCasesFragment;
+import com.bluestacks.bugzy.ui.home.PeopleFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
