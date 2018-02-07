@@ -1,6 +1,6 @@
 package com.bluestacks.bugzy.ui;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,13 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BaseActivity;
+import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.CaseEvent;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
-import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.bumptech.glide.Glide;
 import java.text.DateFormat;
@@ -237,10 +236,10 @@ public class CaseDetailsActivity extends BaseActivity {
         private TextView mChangesContent;
         private ImageView mImageAttachment;
         private CaseEvent mBug;
-        private Context mContext;
+        private CaseDetailsActivity mContext;
 
         //4
-        public BugHolder (View v,Context context) {
+        public BugHolder (View v, CaseDetailsActivity context) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
@@ -296,16 +295,15 @@ public class CaseDetailsActivity extends BaseActivity {
                     Glide.with(mContext).load(img_path)
                             .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
                             .into(mImageAttachment);
+
                     mImageAttachment.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-//                            Fragment d = FullScreenImageFragment.getInstance();
-//                            Bundle arg = new Bundle();
-//                            Bitmap bitmap = ((BitmapDrawable)mImageAttachment.getDrawable()).getBitmap();
-//                            arg.putParcelable("img_src",bitmap);
-//                            d.setArguments(arg);
-//
-//                            homeActivity.setContentFragment(d, true, "c");
+                            Bundle arg = new Bundle();
+                            arg.putString("img_path", img_path);
+                            Intent i  = new Intent(mContext, FullScreenImageActivity.class);
+                            i.putExtras(arg);
+                            mContext.startActivity(i);
                         }
                     });
                 }

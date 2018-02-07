@@ -1,6 +1,7 @@
 package com.bluestacks.bugzy.di;
 
 import com.bluestacks.bugzy.ui.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.FullScreenImageActivity;
 import com.bluestacks.bugzy.ui.HomeActivity;
 import com.bluestacks.bugzy.ui.LoginActivity;
 
@@ -17,4 +18,7 @@ public abstract class MainActivityModule {
 
     @ContributesAndroidInjector
     abstract CaseDetailsActivity contributeCaseDetailsActivity();
+
+    @ContributesAndroidInjector
+    abstract FullScreenImageActivity contributeFullScreenImageActivity();
 }
