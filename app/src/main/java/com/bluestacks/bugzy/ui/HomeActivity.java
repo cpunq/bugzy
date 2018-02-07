@@ -3,10 +3,8 @@ package com.bluestacks.bugzy.ui;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.UiThread;
@@ -21,9 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,10 +27,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,7 +40,6 @@ import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
-import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
@@ -89,15 +81,6 @@ public class HomeActivity extends BaseActivity
 
     @BindView(R.id.nav_view)
     protected NavigationView navigationView;
-
-//    @BindView(R.id.edit_button)
-//    protected ImageView mEdit;
-//
-//    @BindView(R.id.assign_button)
-//    protected ImageView mAssign;
-//
-//    @BindView(R.id.close_button)
-//    protected ImageView mClose;
 
     @BindView(R.id.fab)
     protected FloatingActionButton fab;
@@ -427,7 +410,6 @@ public class HomeActivity extends BaseActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -455,6 +437,7 @@ public class HomeActivity extends BaseActivity
 
         mNavItemTagMap.put(tag, id);
         if (id == mHomeNavItemId) {
+            // If HOME item then skip backstack
             addToBackstack = false;
         }
         setContentFragment(fragment, addToBackstack, tag);
@@ -491,9 +474,6 @@ public class HomeActivity extends BaseActivity
             clearBackStack();
         }
 
-        /* TODO: Check if the tag for this fragment is my cases or the one which is home for us
-                 if yes, then call clearBackStack */
-
         if (addToBackStack) {
             ft.addToBackStack(null);
         }
@@ -506,7 +486,6 @@ public class HomeActivity extends BaseActivity
             fm.popBackStack();
         }
     }
-
 
     @Override
     public void setTitle(String title) {
@@ -525,22 +504,10 @@ public class HomeActivity extends BaseActivity
 
     @Override
     public void showActionIcons() {
-//        mEdit.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mAssign.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mClose.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mEdit.setVisibility(View.VISIBLE);
-//        mAssign.setVisibility(View.VISIBLE);
-//        mClose.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideActionIcons() {
-//        mEdit.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mAssign.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mClose.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-//        mEdit.setVisibility(View.GONE);
-//        mAssign.setVisibility(View.GONE);
-//        mClose.setVisibility(View.GONE);
     }
 
     @Override
