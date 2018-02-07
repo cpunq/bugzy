@@ -33,14 +33,17 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
+import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.BugzyApp;
@@ -94,6 +97,15 @@ public class HomeActivity extends BaseActivity
 
     @BindView(R.id.fab)
     protected FloatingActionButton fab;
+
+    @BindView(R.id.error_view)
+    protected ErrorView mErrorView;
+
+    @BindView(R.id.container_frame)
+    protected FrameLayout mContentContainer;
+
+    @BindView(R.id.progress_bar)
+    protected ProgressBar mProgressBar;
 
     @Inject
     FogbugzApiService mApiClient;
@@ -167,6 +179,9 @@ public class HomeActivity extends BaseActivity
             // Available, show these filters
             showFilters(filters);
             // And continue fetching from net
+        } else {
+            //show working
+            showWorking();
         }
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
@@ -174,6 +189,34 @@ public class HomeActivity extends BaseActivity
                 fetchFilters();
             }
         });
+    }
+
+    @UiThread
+    private void showWorking() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mContentContainer.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    private void showError(String message) {
+        if (mFilters == null) {
+            mContentContainer.setVisibility(View.GONE);
+            mErrorView.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+            mErrorView.setErrorText(message);
+            return;
+        }
+
+        // If filters are already present, just show a toast, or snackbar
+        Snackbar.make(mContentContainer, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @UiThread
+    private void showContent() {
+        mContentContainer.setVisibility(View.VISIBLE);
+        mErrorView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private List<Filter> getFilters() {
@@ -204,6 +247,8 @@ public class HomeActivity extends BaseActivity
         Call<com.bluestacks.bugzy.models.Response<JsonElement>> req = mApiClient.getFilters(new FiltersRequest());
         try {
             retrofit2.Response<Response<JsonElement>> resp = req.execute();
+
+            //TODO: handle all of this gracefully
             if(resp.isSuccessful()) {
                 JsonElement body = resp.body().getData();
                 Log.d("HomeActivity", body.toString());
@@ -229,12 +274,24 @@ public class HomeActivity extends BaseActivity
                         showFilters(filters);
                     }
                 });
+            } else {
+                showErrorMainThread("Some error, please try again");
             }
         } catch(ConnectivityInterceptor.NoConnectivityException e) {
-            Log.d("Connectivitity Error ", "Error");
+            showErrorMainThread("Connectivity error, please try again");
         } catch (IOException e) {
-            Log.d("Cases","Call Failed");
+            showErrorMainThread("Some error, please try again");
         }
+    }
+
+    @WorkerThread
+    private void showErrorMainThread(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showError(message);
+            }
+        });
     }
 
     @UiThread
@@ -250,7 +307,7 @@ public class HomeActivity extends BaseActivity
 
     @UiThread
     private void showFilters(List<Filter> filters) {
-
+        showContent();
         if (mFilters != null) {
             // Filters already present, clear the list and add new
             for (Filter filter : mFilters) {
