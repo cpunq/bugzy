@@ -1,28 +1,26 @@
 package com.bluestacks.bugzy.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bluestacks.bugzy.BaseActivity;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
@@ -45,8 +43,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CaseDetailsFragment extends Fragment implements Injectable{
-
+public class CaseDetailsActivity extends BaseActivity {
     @BindView(R.id.main_container)
     protected LinearLayout mContainer;
 
@@ -77,14 +74,13 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     @BindView(R.id.textview_required_merge)
     protected TextView mRequiredMerge;
 
+    @BindView(R.id.toolbar)
+    protected Toolbar mToolbar;
+
     private LinearLayoutManager mLinearLayoutManager;
-    private ListCasesData myCases;
-    private String mAccessToken;
     private Case mCase;
-    private static CaseDetailsFragment mFragment;
-    private MyCasesFragment.CasesFragmentActivityContract mParentActivity;
     private String mFogBugzId;
-    public static String token;
+    public static String mToken;
     private RecyclerAdapter mAdapter;
 
     @Inject
@@ -96,76 +92,41 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
     @Inject
     AppExecutors mAppExecutors;
 
-    public static CaseDetailsFragment getInstance() {
-        if(mFragment == null) {
-            mFragment = new CaseDetailsFragment();
-            return mFragment;
-        }
-        else {
-            return mFragment;
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MyCasesFragment.CasesFragmentActivityContract) {
-            mParentActivity = (MyCasesFragment.CasesFragmentActivityContract)context;
-        }
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getArguments();
+        setContentView(R.layout.activity_case_details);
+        ButterKnife.bind(this);
+
+        Bundle extras = getIntent().getExtras();
         mFogBugzId = extras.getString("bug_id");
         mCase = (Case) extras.getSerializable("bug");
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.case_details, null);
-        ButterKnife.bind(this, v);
-        return v;
-    }
+        setupToolbar();
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
+        mToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
         showLoading();
-        mParentActivity.hideFab();
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                getToken();
-            }
-        });
+
+        showCaseInfo(mCase);
     }
 
-    @WorkerThread
-    protected void getToken() {
-        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            return;
-        }
-        mAccessToken = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-        mAppExecutors.mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateToken(mCase);
-            }
-        });
+    private void setupToolbar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("Case: " + mFogBugzId);
     }
 
     @UiThread
-    protected void updateToken(Case caseEvents) {
+    protected void showCaseInfo(Case caseEvents) {
         showContent();
 
-        mParentActivity.showActionIcons();
-        mParentActivity.setTitle(String.valueOf(mCase.getIxBug()));
+        // TODO: Show actionIcons
+        // TODO show title    mcase.getIxBugId
 
         List<CaseEvent> evs = mCase.getCaseevents();
         Collections.reverse(evs);
@@ -194,11 +155,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         else {
             mPriorityIndicator.setBackgroundColor(Color.parseColor("#ecf0f1"));
         }
-    }
-
-    @UiThread
-    protected void showConnectivityError() {
-        Toast.makeText(getActivity(),"No internet",Toast.LENGTH_LONG).show();
     }
 
     @UiThread
@@ -238,8 +194,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                             .inflate(R.layout.bug_event_row, parent, false);
                     break;
             }
-
-            return new BugHolder(inflatedView, getContext(), mParentActivity);
+            return new BugHolder(inflatedView, CaseDetailsActivity.this);
         }
 
         @Override
@@ -265,6 +220,16 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     public static class BugHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mItemDate;
         private TextView mItemDescription;
@@ -273,10 +238,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
         private ImageView mImageAttachment;
         private CaseEvent mBug;
         private Context mContext;
-        private MyCasesFragment.CasesFragmentActivityContract homeActivity;
 
         //4
-        public BugHolder (View v,Context context,MyCasesFragment.CasesFragmentActivityContract activity) {
+        public BugHolder (View v,Context context) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
@@ -284,7 +248,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
             mChangesContent = (TextView) v.findViewById(R.id.change_content);
             mImageAttachment = (ImageView) v.findViewById(R.id.attachment);
             mContext = context;
-            homeActivity = activity;
             v.setOnClickListener(this);
         }
 
@@ -328,7 +291,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                 Log.d(Const.TAG,bug.getsAttachments().get(0).getUrl());
                 if(bug.getsAttachments().get(0).getFilename().endsWith(".png") || bug.getsAttachments().get(0).getFilename().endsWith(".jpg") ) {
                     mImageAttachment.setVisibility(View.VISIBLE);
-                    final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + token).replaceAll("&amp;","&");
+                    final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
                     Log.d(Const.TAG,img_path);
                     Glide.with(mContext).load(img_path)
                             .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
@@ -336,13 +299,13 @@ public class CaseDetailsFragment extends Fragment implements Injectable{
                     mImageAttachment.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Fragment d = FullScreenImageFragment.getInstance();
-                            Bundle arg = new Bundle();
-                            Bitmap bitmap = ((BitmapDrawable)mImageAttachment.getDrawable()).getBitmap();
-                            arg.putParcelable("img_src",bitmap);
-                            d.setArguments(arg);
-
-                            homeActivity.setContentFragment(d, true, "c");
+//                            Fragment d = FullScreenImageFragment.getInstance();
+//                            Bundle arg = new Bundle();
+//                            Bitmap bitmap = ((BitmapDrawable)mImageAttachment.getDrawable()).getBitmap();
+//                            arg.putParcelable("img_src",bitmap);
+//                            d.setArguments(arg);
+//
+//                            homeActivity.setContentFragment(d, true, "c");
                         }
                     });
                 }

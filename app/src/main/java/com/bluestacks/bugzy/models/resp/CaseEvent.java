@@ -2,9 +2,10 @@ package com.bluestacks.bugzy.models.resp;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CaseEvent {
+public class CaseEvent implements Serializable {
     @SerializedName( "ixBug")
     String bug_id;
 

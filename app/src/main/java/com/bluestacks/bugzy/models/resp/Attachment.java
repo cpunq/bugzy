@@ -2,7 +2,9 @@ package com.bluestacks.bugzy.models.resp;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Attachment {
+import java.io.Serializable;
+
+public class Attachment implements Serializable {
     @SerializedName("sFileName")
     String filename;
 

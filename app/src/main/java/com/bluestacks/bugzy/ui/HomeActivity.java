@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
@@ -49,13 +50,10 @@ import com.bluestacks.bugzy.net.FogbugzApiService;
 import com.bluestacks.bugzy.utils.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
-import org.json.JSONArray;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -133,6 +131,7 @@ public class HomeActivity extends BaseActivity
         showFiltersIfAvailable();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -200,6 +199,17 @@ public class HomeActivity extends BaseActivity
         List<Filter> filters = mGson.fromJson(filterString, typeOfObjectsList);
         return filters;
     }
+
+    @Override
+    public void openCaseDetailsActivity(Case cas) {
+        Intent i = new Intent(this, CaseDetailsActivity.class);
+        Bundle arg = new Bundle();
+        arg.putString("bug_id", String.valueOf(cas.getIxBug()));
+        arg.putSerializable("bug", cas);
+        i.putExtras(arg);
+        this.startActivity(i);
+    }
+
 
     @WorkerThread
     private void fetchFilters() {
@@ -425,14 +435,15 @@ public class HomeActivity extends BaseActivity
         if (id == R.id.nav_people) {
             fragment = PeopleFragment.getInstance();
             tag = "people";
-        } else {
+        } else if (mFiltersMap.containsKey(item.getItemId())) {
             // Check if its a filter
-            if (mFiltersMap.containsKey(item.getItemId())) {
-                //its from a filter
-                Filter f = mFiltersMap.get(item.getItemId());
-                tag = "filter_" + f.getFilter();
-                fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
-            }
+            //its from a filter
+            Filter f = mFiltersMap.get(item.getItemId());
+            tag = "filter_" + f.getFilter();
+            fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
+        } else {
+            // Else do nothing as of now
+            return true;
         }
 
         mNavItemTagMap.put(tag, id);

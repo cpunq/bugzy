@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.ui;
 import com.google.gson.Gson;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -258,7 +259,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
         public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bug_item_row, parent, false);
-            return new BugHolder(inflatedView, mParentActivity);
+            return new BugHolder(inflatedView, mParentActivity, getContext());
         }
 
         @Override
@@ -282,13 +283,15 @@ public class MyCasesFragment extends Fragment implements Injectable {
         private Case mBug;
         @Nullable
         private NavigationActivityBehavior mNavigationBehavior;
+        private Context mContext;
 
         //4
-        public BugHolder (View v, NavigationActivityBehavior a) {
+        public BugHolder (View v, NavigationActivityBehavior a, Context context) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
             mPriority = (LinearLayout) v.findViewById(R.id.priority);
+            mContext = context;
             mNavigationBehavior = a;
             v.setOnClickListener(this);
         }
@@ -296,13 +299,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
         //5
         @Override
         public void onClick(View v) {
-            Fragment d = CaseDetailsFragment.getInstance();
-            Bundle arg = new Bundle();
-            arg.putString("bug_id",String.valueOf(mBug.getIxBug()));
-            arg.putSerializable("bug",mBug);
-            d.setArguments(arg);
             if (mNavigationBehavior != null) {
-                mNavigationBehavior.setContentFragment(d, true, "d");
+                mNavigationBehavior.openCaseDetailsActivity(mBug);
+//                mNavigationBehavior.setContentFragment(d, true, "d");
             }
         }
 
