@@ -39,6 +39,7 @@ import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.utils.AppExecutors;
@@ -65,7 +66,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 
 public class HomeActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MyCasesFragment.CasesFragmentActivityContract {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeActivityCallbacks {
     public static final String TAG = HomeActivity.class.getName();
     private TextView mUserName;
     private TextView mUserEmail;
@@ -112,7 +113,6 @@ public class HomeActivity extends BaseActivity
     protected void onViewsReady() {
         mFragmentManager = getSupportFragmentManager();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        hideActionIcons();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
@@ -196,7 +196,7 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void openCaseDetailsActivity(Case cas) {
+    public void onCaseSelected(Case cas) {
         Intent i = new Intent(this, CaseDetailsActivity.class);
         Bundle arg = new Bundle();
         arg.putString("bug_id", String.valueOf(cas.getIxBug()));
@@ -501,30 +501,11 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void onContentFragmentsActivityCreated(Fragment fragment, String title, String tag) {
+    public void onFragmentsActivityCreated(Fragment fragment, String title, String tag) {
         this.setTitle(title);
         if (mNavItemTagMap.containsKey(tag)) {
             navigationView.getMenu().findItem(mNavItemTagMap.get(tag)).setChecked(true);
         }
-    }
-
-    @Override
-    public void showActionIcons() {
-    }
-
-    @Override
-    public void hideActionIcons() {
-    }
-
-    @Override
-    public void showFab() {
-            fab.animate().scaleX(1).scaleY(1).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-            fab.setVisibility(View.VISIBLE);
-    }
-
-    public void hideFab() {
-            fab.setVisibility(View.GONE);
-            fab.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<PeopleFragment.BugHolder> {

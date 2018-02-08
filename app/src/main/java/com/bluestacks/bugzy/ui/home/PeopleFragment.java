@@ -18,14 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
-import com.bluestacks.bugzy.ui.common.NavigationActivityBehavior;
+import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
@@ -55,11 +54,10 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     private LinearLayoutManager mLinearLayoutManager;
     private List<Person> people;
-    private String mAccessToken;
     private static PeopleFragment mFragment;
     private RecyclerAdapter mAdapter;
     protected Executor mMainExecutor;
-    private NavigationActivityBehavior mNavigationBehavior;
+    private HomeActivityCallbacks mHomeActivityCallbacks;
 
     @Inject
     PrefsHelper mPrefs;
@@ -86,8 +84,8 @@ public class PeopleFragment extends Fragment implements Injectable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof NavigationActivityBehavior) {
-            mNavigationBehavior = (NavigationActivityBehavior)context;
+        if (context instanceof HomeActivityCallbacks) {
+            mHomeActivityCallbacks = (HomeActivityCallbacks)context;
         }
     }
 
@@ -108,8 +106,8 @@ public class PeopleFragment extends Fragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (mNavigationBehavior != null) {
-            mNavigationBehavior.onContentFragmentsActivityCreated(this, "People", getTag());
+        if (mHomeActivityCallbacks != null) {
+            mHomeActivityCallbacks.onFragmentsActivityCreated(this, "People", getTag());
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);

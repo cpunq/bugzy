@@ -17,12 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
-import com.bluestacks.bugzy.ui.common.NavigationActivityBehavior;
+import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.Response;
@@ -44,14 +43,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 
 public class MyCasesFragment extends Fragment implements Injectable {
-    public static interface CasesFragmentActivityContract extends NavigationActivityBehavior {
-        public void hideActionIcons();
-
-        public void showActionIcons();
-
-        public void showFab();
-        public void hideFab();
-    }
     private static final String PARAM_FILTER = "filter";
     private static final String PARAM_FILTER_TEXT = "filter_text";
     @Inject
@@ -81,7 +72,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
     private String mFilter;
     private String mFilterText;
     private static MyCasesFragment mFragment;
-    private CasesFragmentActivityContract mParentActivity;
+    private HomeActivityCallbacks mHomeActivityCallbacks;
     private RecyclerAdapter mAdapter;
 
     public static MyCasesFragment getInstance(String filter, String filterText) {
@@ -103,8 +94,8 @@ public class MyCasesFragment extends Fragment implements Injectable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof CasesFragmentActivityContract) {
-            mParentActivity = (CasesFragmentActivityContract) context;
+        if (context instanceof HomeActivityCallbacks) {
+            mHomeActivityCallbacks = (HomeActivityCallbacks) context;
         }
     }
 
@@ -122,10 +113,8 @@ public class MyCasesFragment extends Fragment implements Injectable {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMainThreadExecutor = mAppExecutors.mainThread();
-        if (mParentActivity != null) {
-            mParentActivity.onContentFragmentsActivityCreated(this, mFilterText, getTag());
-            mParentActivity.hideActionIcons();
-            mParentActivity.showFab();
+        if (mHomeActivityCallbacks != null) {
+            mHomeActivityCallbacks.onFragmentsActivityCreated(this, mFilterText, getTag());
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -253,7 +242,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
         public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bug_item_row, parent, false);
-            return new BugHolder(inflatedView, mParentActivity, getContext());
+            return new BugHolder(inflatedView, mHomeActivityCallbacks);
         }
 
         @Override
@@ -276,26 +265,23 @@ public class MyCasesFragment extends Fragment implements Injectable {
         private LinearLayout mPriority;
         private Case mBug;
         @Nullable
-        private NavigationActivityBehavior mNavigationBehavior;
-        private Context mContext;
+        private HomeActivityCallbacks mHomeActivityCallbacks;
 
         //4
-        public BugHolder (View v, NavigationActivityBehavior a, Context context) {
+        public BugHolder (View v, HomeActivityCallbacks a) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
             mPriority = (LinearLayout) v.findViewById(R.id.priority);
-            mContext = context;
-            mNavigationBehavior = a;
+            mHomeActivityCallbacks = a;
             v.setOnClickListener(this);
         }
 
         //5
         @Override
         public void onClick(View v) {
-            if (mNavigationBehavior != null) {
-                mNavigationBehavior.openCaseDetailsActivity(mBug);
-//                mNavigationBehavior.setContentFragment(d, true, "d");
+            if (mHomeActivityCallbacks != null) {
+                mHomeActivityCallbacks.onCaseSelected(mBug);
             }
         }
 
