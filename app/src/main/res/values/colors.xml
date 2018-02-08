@@ -2,11 +2,12 @@
 <resources>
     <color name="colorPrimary">#3A4750</color>
     <color name="colorPrimaryDark">#303841</color>
-    <color name="colorAccent">#BC3346</color>
+    <color name="colorAccent">#BE3144</color>
 
     <color name="diagonalColor">#F5F5F5</color>
 
-    <color name="login_button_bg">#4A90E2</color>
     <color name="main_color">#FF2E4C7D</color>
     <color name="stroke_color">#7f8c8d</color>
+    <color name="buttonSecondary">#B6BABF</color>
+    <color name="windowBackground">#F4F4F4</color>
 </resources>

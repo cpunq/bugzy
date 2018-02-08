@@ -4,6 +4,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/AppTheme.toolbarStyle</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>
+        <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
     </style>
 
     <style name="AppTheme.toolbarStyle" parent="Widget.AppCompat.Toolbar">
@@ -11,4 +14,40 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Global button styles -->
+    <style name="AppTheme.PrimaryButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:padding">20dp</item>
+        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+    <style name="AppTheme.SecondaryButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:padding">20dp</item>
+        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:theme">@style/SecondaryButtonTheme</item>
+    </style>
+    <style name="SecondaryButtonTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorButtonNormal">@color/buttonSecondary</item>
+        <item name="colorAccent">@color/buttonSecondary</item>
+    </style>
+
+    <!-- Global TextView styles-->
+    <style name="AppTheme.TextView.Primary" parent="android:Widget.TextView">
+    </style>
+    <style name="AppTheme.TextView.Secondary" parent="android:Widget.TextView">
+    </style>
+
+    <!-- Global EditText styles -->
+    <style name="AppTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textColor">#8B999F</item>
+    </style>
+
 </resources>

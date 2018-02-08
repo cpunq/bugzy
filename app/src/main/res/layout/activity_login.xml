@@ -6,10 +6,22 @@
 <ImageView
     android:layout_width="180dp"
     android:layout_height="180dp"
-    android:src="@drawable/logo"
+    android:src="@drawable/bug"
     android:layout_centerHorizontal="true"
     android:layout_marginTop="50dp"
     android:id="@+id/imageView" />
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/app_name"
+              android:textAllCaps="true"
+              android:layout_centerHorizontal="true"
+              android:layout_marginTop="24dp"
+              android:textSize="@dimen/text_headline"
+              android:fontFamily="@font/open_sans_bold"
+              android:textColor="@android:color/white"
+              android:layout_below="@id/imageView"
+    />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,16 +34,13 @@
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true" />
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/login_button"
-        android:gravity="center"
-        android:text="@string/log_in"
-        android:layout_margin="20dp"
-        android:textColor="@android:color/white"
-        android:background="@color/login_button_bg"
-        android:layout_alignParentBottom="true"
-        android:padding="8dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/login_button"
+            android:gravity="center"
+            android:text="@string/log_in"
+            android:layout_margin="20dp"
+            android:layout_alignParentBottom="true" android:fontFamily="@font/open_sans_semibold"/>
 
     <EditText
         android:layout_width="match_parent"
