@@ -307,18 +307,19 @@ public class HomeActivity extends BaseActivity
         mHomeNavItemId = -1;
 
         // Add the new filters to navigation view
-        int i = 0;
+        int firstMenuItemId = -1;
         MenuItem myCasesItem = null;
         for (Filter filter : mFilters) {
             // Only showing shared/saved filters
             if (!filter.getType().equals("shared") && !filter.getType().equals("saved")) {
-                // Skip this, as a filter with same name already exists
-                // TODO: think about this skipping, as there can be filters with different
-                // TODO: types but same names
+                // Skip any other type of filter
                 continue;
             }
             MenuItem mi;
             int id = filter.getFilter().hashCode();
+            if (firstMenuItemId == -1) {
+                firstMenuItemId = id;
+            }
 
             if (filter.getText().toLowerCase().contains("my cases")) {
                 // Ensuring that my cases item appears on the top
@@ -332,11 +333,23 @@ public class HomeActivity extends BaseActivity
         }
         // Unlock the drawer
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+        // Set default fragment
         if (myCasesItem != null) {
             mHomeNavItemId = myCasesItem.getItemId();
             onNavigationItemSelected(myCasesItem.setChecked(true));
+        }
+        //think of having some other menuItem as the home
+        else if (firstMenuItemId != -1) {
+            // See if firstMenuItem is available
+            MenuItem mi = navigationView.getMenu().findItem(firstMenuItemId);
+            mHomeNavItemId = mi.getItemId();
+            onNavigationItemSelected(mi.setChecked(true));
         } else {
-            //think of having some other menuItem as the home
+            // Use people tab as default tab
+            MenuItem mi = navigationView.getMenu().findItem(R.id.nav_people);
+            mHomeNavItemId = mi.getItemId();
+            onNavigationItemSelected(mi.setChecked(true));
         }
     }
 
