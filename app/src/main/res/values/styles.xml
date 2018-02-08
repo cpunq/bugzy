@@ -50,4 +50,18 @@
         <item name="android:textColor">#8B999F</item>
     </style>
 
+    <!-- Others -->
+    <style name="AppTheme.NavigationView">
+        <item name="android:theme">@style/NavigationDrawerStyle</item>
+        <item name="itemTextColor">@color/item_textcolor</item>
+        <item name="itemBackground">@drawable/item_background_navview</item>
+    </style>
+    <style name="NavigationDrawerStyle" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="listPreferredItemPaddingLeft">36dp</item>
+
+    </style>
+
 </resources>

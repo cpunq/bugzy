@@ -10,4 +10,5 @@
     <color name="stroke_color">#7f8c8d</color>
     <color name="buttonSecondary">#B6BABF</color>
     <color name="windowBackground">#F4F4F4</color>
+    <color name="navItemText">#80979BA0</color>
 </resources>
