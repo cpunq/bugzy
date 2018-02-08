@@ -50,9 +50,6 @@ public class PeopleFragment extends Fragment implements Injectable {
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
-    @BindView(R.id.progressBar)
-    protected ProgressBar mProgressBar;
-
     @BindView(R.id.viewError)
     protected ErrorView mErrorView;
 
@@ -197,28 +194,24 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     @UiThread
     private void hideLoading() {
-        mProgressBar.setVisibility(View.GONE);
+        mErrorView.hide();
     }
 
     @UiThread
     protected void showLoading() {
-        mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.GONE);
+        mErrorView.showProgress("Fetching people..." );
     }
 
     @UiThread
     protected void showContent() {
-        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
-        mErrorView.setVisibility(View.GONE);
+        mErrorView.hide();
     }
 
     protected void showError(String message) {
-        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.VISIBLE);
-        mErrorView.setErrorText(message);
+        mErrorView.showError(message);
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {

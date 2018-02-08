@@ -20,12 +20,5 @@
             android:id="@+id/error_view">
     </com.bluestacks.bugzy.ui.common.ErrorView>
 
-    <ProgressBar
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:id="@+id/progress_bar"
-    />
-
 
 </FrameLayout>

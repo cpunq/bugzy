@@ -69,9 +69,6 @@ public class MyCasesFragment extends Fragment implements Injectable {
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
-    @BindView(R.id.progressBar)
-    protected ProgressBar mProgress;
-
     @BindView(R.id.viewError)
     protected ErrorView mErrorView;
 
@@ -225,29 +222,25 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @UiThread
     private void hideLoading() {
-        mProgress.setVisibility(View.GONE);
+        mErrorView.hide();
     }
 
     @UiThread
     protected void showLoading() {
-        mProgress.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.GONE);
+        mErrorView.showProgress("Fetching " + mFilterText + "..." );
     }
 
     @UiThread
     protected void showContent() {
-        mProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
-        mErrorView.setVisibility(View.GONE);
+        mErrorView.hide();
     }
 
     @UiThread
     private void showError(String message) {
-        mProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.VISIBLE);
-        mErrorView.setErrorText(message);
+        mErrorView.showError(message);
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {

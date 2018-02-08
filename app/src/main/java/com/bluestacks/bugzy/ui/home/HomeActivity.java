@@ -91,9 +91,6 @@ public class HomeActivity extends BaseActivity
     @BindView(R.id.container_frame)
     protected FrameLayout mContentContainer;
 
-    @BindView(R.id.progress_bar)
-    protected ProgressBar mProgressBar;
-
     @Inject
     FogbugzApiService mApiClient;
 
@@ -160,18 +157,15 @@ public class HomeActivity extends BaseActivity
 
     @UiThread
     private void showWorking() {
-        mProgressBar.setVisibility(View.VISIBLE);
         mContentContainer.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.GONE);
+        mErrorView.showProgress("Fetching filters..");
     }
 
     @UiThread
     private void showError(String message) {
         if (mFilters == null) {
             mContentContainer.setVisibility(View.GONE);
-            mErrorView.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
-            mErrorView.setErrorText(message);
+            mErrorView.showError(message);
             return;
         }
 
@@ -188,8 +182,7 @@ public class HomeActivity extends BaseActivity
     @UiThread
     private void showContent() {
         mContentContainer.setVisibility(View.VISIBLE);
-        mErrorView.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.GONE);
+        mErrorView.hide();
     }
 
     private List<Filter> getFilters() {

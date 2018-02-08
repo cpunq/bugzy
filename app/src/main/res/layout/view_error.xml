@@ -5,24 +5,39 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent">
 
+    <View
+            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/anchor">
+    </View>
+
     <ImageView
             android:layout_width="82dp"
             android:layout_height="82dp"
-            android:layout_centerInParent="true"
-            android:id="@+id/error_img"
+            android:layout_above="@+id/anchor"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/img_error"
             android:src="@drawable/img_network_err"
+    />
+
+    <ProgressBar
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:layout_above="@+id/anchor"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/progress_bar"
     />
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:layout_below="@id/error_img"
+            android:layout_below="@+id/anchor"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:layout_marginTop="16dp"
-            android:id="@+id/error_text"
+            android:id="@+id/text_message"
             style="@style/AppTheme.PrimaryBigTextView"
     />
-
 </merge>
