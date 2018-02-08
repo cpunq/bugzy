@@ -61,6 +61,9 @@
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:letterSpacing">0.1</item>
         <item name="listPreferredItemPaddingLeft">36dp</item>
+        <item name="android:listPreferredItemHeight">56dp</item>
+        <item name="android:listPreferredItemHeightLarge">56dp</item>
+        <item name="android:listPreferredItemHeightSmall">56dp</item>
 
     </style>
 
