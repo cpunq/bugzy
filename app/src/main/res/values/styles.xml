@@ -39,6 +39,11 @@
     </style>
     <style name="AppTheme.TextView.Secondary" parent="android:Widget.TextView">
     </style>
+    <style name="AppTheme.PrimaryBigTextView" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+    </style>
 
     <!-- Global EditText styles -->
     <style name="AppTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
