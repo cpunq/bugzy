@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.di;
 
+import com.bluestacks.bugzy.ui.casedetails.CaseDetailsFragment;
 import com.bluestacks.bugzy.ui.home.MyCasesFragment;
 import com.bluestacks.bugzy.ui.home.PeopleFragment;
 
@@ -13,4 +14,7 @@ public abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract PeopleFragment contributePeopleFragment();
+
+    @ContributesAndroidInjector
+    abstract CaseDetailsFragment contributeCaseDetailsFragment();
 }

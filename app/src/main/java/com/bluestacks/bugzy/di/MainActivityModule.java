@@ -16,7 +16,7 @@ public abstract class MainActivityModule {
     @ContributesAndroidInjector(modules = FragmentBuildersModule.class)
     abstract HomeActivity contributeHomeActivity();
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = FragmentBuildersModule.class)
     abstract CaseDetailsActivity contributeCaseDetailsActivity();
 
     @ContributesAndroidInjector

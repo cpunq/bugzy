@@ -49,8 +49,12 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/case_details"
-    />
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                 android:id="@+id/container_frame">
+    </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
