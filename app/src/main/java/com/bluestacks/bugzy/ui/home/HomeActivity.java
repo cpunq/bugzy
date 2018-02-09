@@ -27,10 +27,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Response;
@@ -48,9 +46,9 @@ import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
+import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
 import java.io.IOException;

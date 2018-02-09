@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.utils;
+package com.bluestacks.bugzy.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;

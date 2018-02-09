@@ -4,10 +4,10 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.net.RequestInterceptor;
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
+import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.remote.RequestInterceptor;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 
 import android.app.Application;
 

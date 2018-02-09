@@ -1,6 +1,6 @@
-package com.bluestacks.bugzy.net;
+package com.bluestacks.bugzy.data.remote;
 
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 

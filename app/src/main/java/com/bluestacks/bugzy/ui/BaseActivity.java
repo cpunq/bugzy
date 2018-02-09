@@ -1,7 +1,7 @@
 package com.bluestacks.bugzy.ui;
 
 
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

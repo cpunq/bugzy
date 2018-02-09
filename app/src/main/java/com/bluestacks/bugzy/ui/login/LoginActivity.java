@@ -21,8 +21,8 @@ import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.utils.Utils;
 
 import java.io.IOException;

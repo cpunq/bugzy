@@ -30,9 +30,9 @@ import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
 import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
+import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 
 import java.io.IOException;
 import java.util.List;

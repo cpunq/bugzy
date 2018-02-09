@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.net;
+package com.bluestacks.bugzy.data.remote;
 
 import android.content.Context;
 

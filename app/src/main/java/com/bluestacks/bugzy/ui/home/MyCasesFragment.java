@@ -28,9 +28,9 @@ import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
-import com.bluestacks.bugzy.net.ConnectivityInterceptor;
-import com.bluestacks.bugzy.net.FogbugzApiService;
-import com.bluestacks.bugzy.utils.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
+import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
 
 import java.io.IOException;
 import java.util.List;
