@@ -28,4 +28,8 @@ public class Error {
    public void setCode(String code) {
       this.code = code;
    }
+
+   public void setCode(int code) {
+      this.code = code + "";
+   }
 }

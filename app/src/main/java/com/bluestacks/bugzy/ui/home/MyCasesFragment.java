@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
@@ -53,6 +54,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @Inject
     Gson mGson;
+
+    @Inject
+    DataManager mDataManager;
 
     @Inject
     AppExecutors mAppExecutors;
@@ -119,14 +123,14 @@ public class MyCasesFragment extends Fragment implements Injectable {
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         if(myCases == null) {
+            showLoading();
             mAppExecutors.networkIO().execute(new Runnable() {
                 @Override
                 public void run() {
                     fetchCases();
                 }
             });
-        }
-        else {
+        } else {
             showCases(myCases);
         }
     }
@@ -136,53 +140,13 @@ public class MyCasesFragment extends Fragment implements Injectable {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             return;
         }
-        String[] cols =new String[]{
-                "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
-        };
-
-        ListCasesRequest request = new ListCasesRequest(cols, mFilter);
-        Call<Response<ListCasesData>> cases = mApiClient.listCases(request);
-
-        try {
-            mMainThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    showLoading();
-                }
-            });
-            retrofit2.Response<Response<ListCasesData>> req = cases.execute();
-            final Response<ListCasesData> response;
-
-            if(req.isSuccessful()) {
-                response = req.body();
-            } else {
-                String stringbody = req.errorBody().string();
-                response = mGson.fromJson(stringbody, Response.class);
-                Log.d("Call Failed " , req.errorBody().toString());
+        final Response<ListCasesData> response = mDataManager.fetchCases(mFilter);
+        mMainThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                onCasesResponse(response);
             }
-            mMainThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onCasesResponse(response);
-                }
-            });
-        } catch(ConnectivityInterceptor.NoConnectivityException e){
-            Log.d("Cases","NoConnectivity");
-            mMainThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onCasesResponse(null);
-                }
-            });
-        } catch (IOException e) {
-            Log.d("Cases","Call Failed");
-            mMainThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onCasesResponse(null);
-                }
-            });
-        }
+        });
     }
 
     @UiThread
@@ -198,7 +162,6 @@ public class MyCasesFragment extends Fragment implements Injectable {
         }
         // All good
         myCases = response.getData().getCases();
-        Log.d("Cases List " , myCases.toString());
         showCases(myCases);
     }
 

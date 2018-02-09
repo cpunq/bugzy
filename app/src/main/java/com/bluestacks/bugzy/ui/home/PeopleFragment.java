@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.data.DataManager;
+import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
@@ -28,13 +30,10 @@ import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
-import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -42,8 +41,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class PeopleFragment extends Fragment implements Injectable {
     @BindView(R.id.recyclerView)
@@ -67,6 +64,9 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     @Inject
     Gson mGson;
+
+    @Inject
+    DataManager mDataManager;
 
     @Inject
     AppExecutors mAppExecutors;
@@ -111,6 +111,7 @@ public class PeopleFragment extends Fragment implements Injectable {
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        showLoading();
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -125,49 +126,17 @@ public class PeopleFragment extends Fragment implements Injectable {
            redirectLogin();
            return;
         }
-        Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mApiClient.listPeople(new ListPeopleRequest());
-
-        try {
-            mMainExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    showLoading();
-                }
-            });
-            Response<com.bluestacks.bugzy.models.Response<ListPeopleData>> resp = call.execute();
-            final com.bluestacks.bugzy.models.Response<ListPeopleData> body;
-            if(resp.isSuccessful()) {
-                body = resp.body();
-            } else {
-                Log.d("Call Failed ", resp.errorBody().toString());
-                String stringbody = resp.errorBody().string();
-                body = mGson.fromJson(stringbody, com.bluestacks.bugzy.models.Response.class);
+        final Response<ListPeopleData> response = mDataManager.fetchPeople();
+        mMainExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                // Can be fatal, must look out for fragment already destroyed
+                onPeopleResponse(response);
             }
-            mMainExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onPeopleResponse(body);
-                }
-            });
-        } catch(ConnectivityInterceptor.NoConnectivityException e){
-            mMainExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onPeopleResponse(null);
-                }
-            });
-        } catch (IOException e) {
-            Log.d("Cases","Call Failed");
-            mMainExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onPeopleResponse(null);
-                }
-            });
-        }
+        });
     }
 
-    protected void onPeopleResponse(com.bluestacks.bugzy.models.Response<ListPeopleData> response) {
+    protected void onPeopleResponse(Response<ListPeopleData> response) {
         hideLoading();
         if (response == null) {
             showError("Could not fetch people");

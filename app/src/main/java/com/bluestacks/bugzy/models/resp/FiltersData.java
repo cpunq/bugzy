@@ -6,7 +6,7 @@ import java.util.List;
 public class FiltersData {
     private String type;
 
-    private List<String> filters;
+    private List<Filter> filters;
 
     public String getType() {
         return type;
@@ -16,11 +16,11 @@ public class FiltersData {
         this.type = type;
     }
 
-    public List<String> getFilters() {
+    public List<Filter> getFilters() {
         return filters;
     }
 
-    public void setFilters(List<String> filters) {
+    public void setFilters(List<Filter> filters) {
         this.filters = filters;
     }
 }

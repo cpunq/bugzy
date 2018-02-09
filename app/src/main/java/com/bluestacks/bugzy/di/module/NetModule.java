@@ -4,6 +4,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.bluestacks.bugzy.data.local.DatabaseHelper;
+import com.bluestacks.bugzy.data.local.InMemoryDb;
 import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.RequestInterceptor;
@@ -43,6 +45,12 @@ public class NetModule {
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
         return gson;
+    }
+
+    @Provides
+    @Singleton
+    DatabaseHelper provideDatabaseHelper() {
+        return new InMemoryDb();
     }
 
     @Provides @Singleton

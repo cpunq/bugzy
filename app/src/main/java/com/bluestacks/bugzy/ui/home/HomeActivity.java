@@ -31,11 +31,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
+import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
@@ -74,6 +76,8 @@ public class HomeActivity extends BaseActivity
     private List<Filter> mFilters;
     private int mHomeNavItemId = -1;
     private HashMap<String, Integer> mNavItemTagMap = new HashMap<>();
+    private HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
+
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -95,6 +99,9 @@ public class HomeActivity extends BaseActivity
 
     @Inject
     AppExecutors mAppExecutors;
+
+    @Inject
+    DataManager mDataManager;
 
     @Inject
     Gson mGson;
@@ -136,13 +143,12 @@ public class HomeActivity extends BaseActivity
     }
 
     private void showFiltersIfAvailable() {
-        List<Filter> filters = getFilters();
-        if (getFilters() != null) {
+        List<Filter> filters = mDataManager.getFilters();
+        if (filters != null) {
             // Available, show these filters
             showFilters(filters);
             // And continue fetching from net
         } else {
-            //show working
             showWorking();
         }
         mAppExecutors.networkIO().execute(new Runnable() {
@@ -166,7 +172,6 @@ public class HomeActivity extends BaseActivity
             mErrorView.showError(message);
             return;
         }
-
         // If filters are already present, just show a toast, or snackbar
         Snackbar.make(mContentContainer, message, Snackbar.LENGTH_LONG).show();
     }
@@ -183,16 +188,6 @@ public class HomeActivity extends BaseActivity
         mErrorView.hide();
     }
 
-    private List<Filter> getFilters() {
-        String filterString = mPrefs.getString(PrefsHelper.Key.FILTERS_LIST);
-        if (TextUtils.isEmpty(filterString)) {
-            return null;
-        }
-        Type typeOfObjectsList = new TypeToken<ArrayList<Filter>>() {}.getType();
-        List<Filter> filters = mGson.fromJson(filterString, typeOfObjectsList);
-        return filters;
-    }
-
     @Override
     public void onCaseSelected(Case cas) {
         Intent i = new Intent(this, CaseDetailsActivity.class);
@@ -203,68 +198,14 @@ public class HomeActivity extends BaseActivity
         this.startActivity(i);
     }
 
-
     @WorkerThread
     private void fetchFilters() {
-//        FiltersData data = new FiltersData();
-//        List<Filter> filters = new ArrayList<>();
-//        for (int i = 0 ; i < 5 ; i++) {
-//            Filter f = new Filter();
-//            f.setFilter((100 + i) + "");
-//            f.setText("My Cases + " + i);
-//            f.setType("Shared");
-//            filters.add(f);
-//        }
-//        data.setFilters(filters);
-//        Response<FiltersData> response = new Response<>(data);
-//        onFiltersResponse(response);
-
-        Call<com.bluestacks.bugzy.models.Response<JsonElement>> req = mApiClient.getFilters(new FiltersRequest());
-        try {
-            retrofit2.Response<Response<JsonElement>> resp = req.execute();
-
-            //TODO: handle all of this gracefully
-            if(resp.isSuccessful()) {
-                JsonElement body = resp.body().getData();
-                Log.d("HomeActivity", body.toString());
-                JsonArray filtersjson = body.getAsJsonObject().getAsJsonArray("filters");
-                final List<Filter> filters = new ArrayList<>();
-                for (int i = 0 ; i < filtersjson.size() ; i++) {
-                    JsonElement d = filtersjson.get(i);
-                    try {
-                        Filter f = mGson.fromJson(d, Filter.class);
-                        // Set it on disk
-                        filters.add(f);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("HomeActivity", d.toString());
-                }
-
-                mPrefs.setString(PrefsHelper.Key.FILTERS_LIST, mGson.toJson(filters));
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showFilters(filters);
-                    }
-                });
-            } else {
-                showErrorMainThread("Some error, please try again");
-            }
-        } catch(ConnectivityInterceptor.NoConnectivityException e) {
-            showErrorMainThread("Connectivity error, please try again");
-        } catch (IOException e) {
-            showErrorMainThread("Some error, please try again");
-        }
-    }
-
-    @WorkerThread
-    private void showErrorMainThread(final String message) {
-        runOnUiThread(new Runnable() {
+        final Response<FiltersData> response = mDataManager.fetchFilters();
+        mAppExecutors.mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                showError(message);
+                // Can be fatal, must look out for activity already destroyed
+                onFiltersResponse(response);
             }
         });
     }
@@ -275,10 +216,13 @@ public class HomeActivity extends BaseActivity
             // Show Error
             return;
         }
-//        showFilters(response.getData().getFilters());
+        if (response.getErrors().size() > 0) {
+            showError(response.getErrors().get(0).getMessage());
+            return;
+        }
+        // All good
+        showFilters(response.getData().getFilters());
     }
-
-    HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
 
     private void removeFiltersFromNavigationView() {
         for (Filter filter : mFilters) {

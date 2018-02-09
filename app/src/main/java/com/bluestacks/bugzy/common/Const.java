@@ -3,6 +3,8 @@ package com.bluestacks.bugzy.common;
 public class Const {
 
     public static final String API_BASE_URL                         = "https://bluestacks.fogbugz.com";
+    public static final int NETWORK_ERROR                           = 111;
+    public static final int NO_NETWORK                              = 112;
     public static final int FB_NOT_INITIALIZED                      = 0;
     public static final int FB_NOT_PROPER_PASSWORD                  = 1;
     public static final int FB_MULTIPLE_MATCHES                     = 2;
