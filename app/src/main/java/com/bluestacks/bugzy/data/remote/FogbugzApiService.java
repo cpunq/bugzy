@@ -19,18 +19,18 @@ import retrofit2.http.POST;
 
 public interface FogbugzApiService {
 
-    @POST("/f/api/0/jsonapi")
+    @POST("/api/logon")
     Call<Response<LoginData>> loginWithEmail(@Body LoginRequest loginRequest);
 
-    @POST("/f/api/0/jsonapi")
+    @POST("/api/listCases")
     Call<Response<ListCasesData>> listCases(@Body ListCasesRequest request);
 
-    @POST("/f/api/0/jsonapi")
+    @POST("/api/listPeople")
     Call<Response<ListPeopleData>> listPeople(@Body ListPeopleRequest request);
 
-    @POST("/f/api/0/jsonapi")
+    @POST("/api/viewPerson")
     Call<Response<MyDetailsData>> getMyDetails(@Body MyDetailsRequest request);
 
-    @POST("/f/api/0/jsonapi")
+    @POST("/api/listFilters")
     Call<Response<JsonElement>> getFilters(@Body FiltersRequest request);
 }
