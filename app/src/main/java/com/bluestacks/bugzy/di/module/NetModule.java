@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.di;
+package com.bluestacks.bugzy.di.module;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -20,6 +20,9 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Provide network related modules.
+ */
 @Module
 public class NetModule {
     private final String mBaseUrl;

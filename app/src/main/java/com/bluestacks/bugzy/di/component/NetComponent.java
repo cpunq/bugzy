@@ -1,7 +1,10 @@
-package com.bluestacks.bugzy.di;
+package com.bluestacks.bugzy.di.component;
 
 
 import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.di.module.MainActivityModule;
+import com.bluestacks.bugzy.di.module.NetModule;
+import com.bluestacks.bugzy.di.module.AppModule;
 
 import javax.inject.Singleton;
 

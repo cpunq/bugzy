@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.di;
+package com.bluestacks.bugzy.di.module;
 
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;

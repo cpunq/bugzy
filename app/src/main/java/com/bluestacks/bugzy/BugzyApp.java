@@ -5,10 +5,10 @@ import android.app.Application;
 
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.di.AppInjector;
-import com.bluestacks.bugzy.di.AppModule;
-import com.bluestacks.bugzy.di.DaggerNetComponent;
-import com.bluestacks.bugzy.di.NetComponent;
-import com.bluestacks.bugzy.di.NetModule;
+import com.bluestacks.bugzy.di.component.DaggerNetComponent;
+import com.bluestacks.bugzy.di.module.AppModule;
+import com.bluestacks.bugzy.di.component.NetComponent;
+import com.bluestacks.bugzy.di.module.NetModule;
 import com.bluestacks.bugzy.models.resp.Person;
 
 import java.util.List;
@@ -20,7 +20,6 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
 public class BugzyApp extends Application implements HasActivityInjector {
-    private NetComponent mNetComponent;
     public List<Person> persons;
 
     @Inject DispatchingAndroidInjector<Activity> mActivityInjector;
