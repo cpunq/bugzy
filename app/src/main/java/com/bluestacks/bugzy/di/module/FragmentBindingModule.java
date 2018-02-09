@@ -8,7 +8,7 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
-public abstract class FragmentBuildersModule {
+public abstract class FragmentBindingModule {
     @ContributesAndroidInjector
     abstract MyCasesFragment contributeSearchFragment();
 

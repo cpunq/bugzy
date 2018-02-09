@@ -9,14 +9,14 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
-public abstract class MainActivityModule {
+public abstract class ActivityBindingModule {
     @ContributesAndroidInjector
     abstract LoginActivity contributeLoginActivity();
 
-    @ContributesAndroidInjector(modules = FragmentBuildersModule.class)
+    @ContributesAndroidInjector(modules = FragmentBindingModule.class)
     abstract HomeActivity contributeHomeActivity();
 
-    @ContributesAndroidInjector(modules = FragmentBuildersModule.class)
+    @ContributesAndroidInjector(modules = FragmentBindingModule.class)
     abstract CaseDetailsActivity contributeCaseDetailsActivity();
 
     @ContributesAndroidInjector
