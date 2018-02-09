@@ -38,6 +38,9 @@ public class Case implements Serializable {
     @SerializedName( "events")
     List<CaseEvent> caseevents;
 
+    @SerializedName("sFavorite")
+    boolean favorite;
+
     public int getIxBug() {
         return ixBug;
     }
@@ -124,5 +127,13 @@ public class Case implements Serializable {
 
     public void setCaseevents(List<CaseEvent> caseevents) {
         this.caseevents = caseevents;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 }
