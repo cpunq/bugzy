@@ -72,7 +72,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
      */
     private Executor mMainThreadExecutor;
     private LinearLayoutManager mLinearLayoutManager;
-    private List<Case> myCases;
+    private List<Case> mCases;
     private String mFilter;
     private String mFilterText;
     private static MyCasesFragment mFragment;
@@ -122,17 +122,13 @@ public class MyCasesFragment extends Fragment implements Injectable {
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        if(myCases == null) {
-            showLoading();
-            mAppExecutors.networkIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    fetchCases();
-                }
-            });
-        } else {
-            showCases(myCases);
-        }
+        showLoading();
+        mAppExecutors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                fetchCases();
+            }
+        });
     }
 
     @WorkerThread
@@ -161,14 +157,14 @@ public class MyCasesFragment extends Fragment implements Injectable {
             return;
         }
         // All good
-        myCases = response.getData().getCases();
-        showCases(myCases);
+        showCases(response.getData().getCases());
     }
 
     @UiThread
     protected void showCases(List<Case> cases) {
+        mCases = cases;
         showContent();
-        mAdapter = new RecyclerAdapter(cases);
+        mAdapter = new RecyclerAdapter(mCases);
         mRecyclerView.setAdapter(mAdapter);
     }
 
