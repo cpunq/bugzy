@@ -12,6 +12,7 @@ import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
+import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -33,4 +34,7 @@ public interface FogbugzApiService {
 
     @POST("/api/listFilters")
     Call<Response<JsonElement>> getFilters(@Body FiltersRequest request);
+
+    @POST("/api/searchCases")
+    Call<Response<ListCasesData>> searchCases(@Body SearchCasesRequest request);
 }

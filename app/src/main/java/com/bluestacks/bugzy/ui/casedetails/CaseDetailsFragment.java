@@ -1,5 +1,8 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
+import com.bluestacks.bugzy.data.DataManager;
+import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
 import android.content.Context;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -92,6 +96,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     FogbugzApiService mApiClient;
 
     @Inject
+    DataManager mDataManager;
+
+    @Inject
     AppExecutors mAppExecutors;
 
     public static CaseDetailsFragment getInstance(String bugId, Case aCase) {
@@ -133,39 +140,64 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         showLoading();
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        showCaseDetails(mCase);
+        // Fetch more case details
         mAppExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                getToken();
+                fetchCaseDetails();
             }
         });
     }
 
     @WorkerThread
-    protected void getToken() {
+    protected void fetchCaseDetails() {
         if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
             return;
         }
+
+        final Response<ListCasesData> response = mDataManager.fetchCaseDetails(mCase.getIxBug());
+
         mAppExecutors.mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                updateToken(mCase);
+                onCaseDetailsReponse(response);
             }
         });
     }
 
     @UiThread
-    protected void updateToken(Case caseEvents) {
+    private void onCaseDetailsReponse(Response<ListCasesData> response) {
+        if (response == null) {
+            Snackbar.make(getView(), "Failed to get case details", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        if (response.getErrors().size() > 0) {
+            Snackbar.make(getView(), "Failed to get case details", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        showCaseDetails(response.getData().getCases().get(0));
+    }
+
+    @UiThread
+    protected void showCaseDetails(Case aCase) {
+        mCase = aCase;
         showContent();
 
         List<CaseEvent> evs = mCase.getCaseevents();
-        Collections.reverse(evs);
-        mAdapter = new RecyclerAdapter(evs);
-        mRecyclerView.setAdapter(mAdapter);
+        if (evs != null) {
+            Collections.reverse(evs);
+            mAdapter = new RecyclerAdapter(evs);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
         mBugId.setText(String.valueOf(mCase.getIxBug()));
         mBugTitle.setText(String.valueOf(mCase.getTitle()));
         mAssignedTo.setText(String.valueOf(mCase.getPersonAssignedTo()));
-        mMileStone.setText(String.valueOf(mCase.getFixFor()));
+
+        if (!TextUtils.isEmpty(mCase.getFixFor())) {
+            mMileStone.setText(String.valueOf(mCase.getFixFor()));
+        }
         mActiveStatus.setText(String.valueOf(mCase.getStatus()));
         Case bug = mCase;
         Log.d(Const.TAG," " + mCase.getFixFor());
