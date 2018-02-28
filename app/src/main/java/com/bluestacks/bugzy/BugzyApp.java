@@ -7,7 +7,6 @@ import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.di.AppInjector;
 import com.bluestacks.bugzy.di.component.DaggerNetComponent;
 import com.bluestacks.bugzy.di.module.AppModule;
-import com.bluestacks.bugzy.di.component.NetComponent;
 import com.bluestacks.bugzy.di.module.NetModule;
 import com.bluestacks.bugzy.models.resp.Person;
 

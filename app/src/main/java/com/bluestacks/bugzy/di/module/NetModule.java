@@ -10,6 +10,7 @@ import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.RequestInterceptor;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.utils.LiveDataCallAdapterFactory;
 
 import android.app.Application;
 
@@ -61,7 +62,7 @@ public class NetModule {
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(mBaseUrl)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(new LiveDataCallAdapterFactory(gson))
                 .addConverterFactory(GsonConverterFactory.create(gson));
 
         Retrofit retrofit = builder

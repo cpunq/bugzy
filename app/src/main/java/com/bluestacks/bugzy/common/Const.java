@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.common;
 public class Const {
 
     public static final String API_BASE_URL                         = "https://bluestacks.manuscript.com";
+    public static final int UNKNOWN_ERROR                              = 100;
     public static final int NETWORK_ERROR                           = 111;
     public static final int NO_NETWORK                              = 112;
     public static final int FB_NOT_INITIALIZED                      = 0;

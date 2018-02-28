@@ -14,6 +14,8 @@ import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
 
+import android.arch.lifecycle.LiveData;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -21,7 +23,10 @@ import retrofit2.http.POST;
 public interface FogbugzApiService {
 
     @POST("/api/logon")
-    Call<Response<LoginData>> loginWithEmail(@Body LoginRequest loginRequest);
+    LiveData<ApiResponse<Response<LoginData>>> loginWithEmail(@Body LoginRequest loginRequest);
+
+    @POST("/api/logon")
+    Call<Response<LoginData>> login(@Body LoginRequest loginRequest);
 
     @POST("/api/listCases")
     Call<Response<ListCasesData>> listCases(@Body ListCasesRequest request);
