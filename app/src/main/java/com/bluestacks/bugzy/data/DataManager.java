@@ -78,69 +78,6 @@ public class DataManager {
     }
 
     @WorkerThread
-    public Response<FiltersData> fetchFilters() {
-        FiltersData da = new FiltersData();
-        Response<FiltersData> response = new Response<>(da);
-        List<Error> errors = new ArrayList<>();
-        // Empty error list
-        response.setErrors(errors);
-
-
-//        FiltersData data = new FiltersData();
-//        List<Filter> filters = new ArrayList<>();
-//        for (int i = 0 ; i < 5 ; i++) {
-//            Filter f = new Filter();
-//            f.setFilter((100 + i) + "");
-//            f.setText("My Cases + " + i);
-//            f.setType("Shared");
-//            filters.add(f);
-//        }
-//        data.setFilters(filters);
-//        Response<FiltersData> response = new Response<>(data);
-//        onFiltersResponse(response);
-
-        Call<Response<JsonElement>> req = mFogbugzApi.getFilters(new FiltersRequest());
-        try {
-            retrofit2.Response<Response<JsonElement>> resp = req.execute();
-
-            if(resp.isSuccessful()) {
-                JsonElement body = resp.body().getData();
-                Log.d("HomeActivity", body.toString());
-                JsonArray filtersjson = body.getAsJsonObject().getAsJsonArray("filters");
-                final List<Filter> filters = new ArrayList<>();
-                for (int i = 0 ; i < filtersjson.size() ; i++) {
-                    JsonElement d = filtersjson.get(i);
-                    try {
-                        Filter f = mGson.fromJson(d, Filter.class);
-                        // Set it on disk
-                        filters.add(f);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("HomeActivity", d.toString());
-                }
-                mPrefs.setString(PrefsHelper.Key.FILTERS_LIST, mGson.toJson(filters));
-
-                da.setFilters(filters);
-            } else {
-                // Error from server
-                String stringbody = resp.errorBody().string();
-                Response<JsonElement> jsonDataResponse;
-                jsonDataResponse = mGson.fromJson(stringbody, Response.class);
-
-                // Transfer the errors to our response object
-                response.getErrors().addAll(jsonDataResponse.getErrors());
-            }
-            return response;
-        } catch(ConnectivityInterceptor.NoConnectivityException e) {
-            response.setErrors(getErrorListForNoNetwork());
-        } catch (IOException e) {
-            response.setErrors(getErrorListForNetworkError());
-        }
-        return response;
-    }
-
-    @WorkerThread
     public Response<ListCasesData> fetchCases(String filter) {
         ListCasesData d = new ListCasesData();
         Response<ListCasesData> response = new Response<>(d);

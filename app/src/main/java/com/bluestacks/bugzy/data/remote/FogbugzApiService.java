@@ -38,7 +38,7 @@ public interface FogbugzApiService {
     Call<Response<MyDetailsData>> getMyDetails(@Body MyDetailsRequest request);
 
     @POST("/api/listFilters")
-    Call<Response<JsonElement>> getFilters(@Body FiltersRequest request);
+    LiveData<ApiResponse<Response<JsonElement>>> getFilters(@Body FiltersRequest request);
 
     @POST("/api/searchCases")
     Call<Response<ListCasesData>> searchCases(@Body SearchCasesRequest request);

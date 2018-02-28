@@ -1,6 +1,7 @@
 package com.bluestacks.bugzy.di.module;
 
 
+import com.bluestacks.bugzy.ui.home.HomeViewModel;
 import com.bluestacks.bugzy.ui.login.LoginViewModel;
 import com.bluestacks.bugzy.utils.BugzyViewModelFactory;
 import com.bluestacks.bugzy.utils.ViewModelKey;
@@ -18,6 +19,12 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel.class)
     abstract ViewModel bindLoginViewModel(LoginViewModel loginViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel.class)
+    abstract ViewModel bindHomeViewModel(HomeViewModel homeViewModel);
+
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(BugzyViewModelFactory factory);

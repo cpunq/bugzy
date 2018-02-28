@@ -5,7 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import android.content.Context;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
@@ -33,15 +34,15 @@ import android.widget.TextView;
 
 import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
-import com.bluestacks.bugzy.models.resp.FiltersRequest;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
+import com.bluestacks.bugzy.ui.login.LoginViewModel;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
@@ -54,8 +55,6 @@ import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -72,12 +71,14 @@ public class HomeActivity extends BaseActivity
     private TextView mUserEmail;
     private FragmentManager mFragmentManager;
     private Fragment mCurrentFragment;
-    private Context context;
     private List<Filter> mFilters;
     private int mHomeNavItemId = -1;
     private HashMap<String, Integer> mNavItemTagMap = new HashMap<>();
     private HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
+    private HomeViewModel mHomeViewModel;
 
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -111,8 +112,10 @@ public class HomeActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-        context = this;
+        mHomeViewModel = ViewModelProviders.of(this, mViewModelFactory).get(HomeViewModel.class);
+
         onViewsReady();
+        subscribeToViewModel();
     }
 
     protected void onViewsReady() {
@@ -131,10 +134,31 @@ public class HomeActivity extends BaseActivity
         mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
 
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        //Lock the drawer
-        showFiltersIfAvailable();
     }
 
+    private void subscribeToViewModel() {
+        mHomeViewModel.getIsLoggedIn().observe(this, loggedIn -> {
+            if (!loggedIn) {
+                redirectLogin();
+            }
+        });
+        mHomeViewModel.getFiltersState().observe(this, filtersDataResource -> {
+            if (filtersDataResource.data != null) {
+                showFilters(filtersDataResource.data.getFilters());
+            }
+            if (filtersDataResource.status == Status.LOADING) {
+                showWorking();
+                return;
+            }
+            if (filtersDataResource.status == Status.ERROR) {
+                showError(filtersDataResource.message);
+                return;
+            }
+            if (filtersDataResource.status == Status.SUCCESS) {
+                // TODO: hide working
+            }
+        });
+    }
 
     @Override
     protected void onResume() {
@@ -142,27 +166,14 @@ public class HomeActivity extends BaseActivity
         showUserInfoIfAvailable();
     }
 
-    private void showFiltersIfAvailable() {
-        List<Filter> filters = mDataManager.getFilters();
-        if (filters != null) {
-            // Available, show these filters
-            showFilters(filters);
-            // And continue fetching from net
-        } else {
-            showWorking();
-        }
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                fetchFilters();
-            }
-        });
-    }
-
     @UiThread
     private void showWorking() {
-        mContentContainer.setVisibility(View.GONE);
-        mErrorView.showProgress("Fetching filters..");
+        if (mFilters == null) {
+            mContentContainer.setVisibility(View.GONE);
+            mErrorView.showProgress("Fetching filters..");
+        } else {
+            // TODO: show some small working, or refreshing
+        }
     }
 
     @UiThread
@@ -179,7 +190,6 @@ public class HomeActivity extends BaseActivity
     @Override
     public void onAttachFragment(android.app.Fragment fragment) {
         super.onAttachFragment(fragment);
-        Log.d(TAG, "onAttachFragment" + fragment.getClass().getName());
     }
 
     @UiThread
@@ -196,32 +206,6 @@ public class HomeActivity extends BaseActivity
         arg.putSerializable("bug", cas);
         i.putExtras(arg);
         this.startActivity(i);
-    }
-
-    @WorkerThread
-    private void fetchFilters() {
-        final Response<FiltersData> response = mDataManager.fetchFilters();
-        mAppExecutors.mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                // Can be fatal, must look out for activity already destroyed
-                onFiltersResponse(response);
-            }
-        });
-    }
-
-    @UiThread
-    private void onFiltersResponse(Response<FiltersData> response) {
-        if (response == null) {
-            // Show Error
-            return;
-        }
-        if (response.getErrors().size() > 0) {
-            showError(response.getErrors().get(0).getMessage());
-            return;
-        }
-        // All good
-        showFilters(response.getData().getFilters());
     }
 
     private void removeFiltersFromNavigationView() {
@@ -312,10 +296,6 @@ public class HomeActivity extends BaseActivity
 
     @WorkerThread
     protected void fetchUserInfo() {
-        if(!isLoggedIn()) {
-          redirectLogin();
-          return;
-        }
         Call<Response<MyDetailsData>> req = mApiClient.getMyDetails(new MyDetailsRequest());
 
         try {
