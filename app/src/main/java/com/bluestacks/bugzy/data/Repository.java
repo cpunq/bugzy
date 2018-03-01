@@ -19,6 +19,9 @@ import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
+import com.bluestacks.bugzy.models.resp.MyDetailsData;
+import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
+import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
@@ -164,6 +167,50 @@ public class Repository {
             @Override
             protected LiveData<ApiResponse<Response<JsonElement>>> createCall() {
                 return mApiService.getFilters(new FiltersRequest());
+            }
+        }.asLiveData();
+    }
+
+    public LiveData<Resource<Person>> getMyDetails() {
+        return new NetworkBoundResource<Person, Response<MyDetailsData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<MyDetailsData> item) {
+                Person me = item.getData().getPerson();
+                mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
+                mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
+                mPrefs.setInt(PrefsHelper.Key.PERSON_ID, me.getPersonid());
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable Person data) {
+                // Only fetch once
+                return data == null;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Person> loadFromDb() {
+                return new LiveData<Person>() {
+                    @Override
+                    protected void onActive() {
+                        super.onActive();
+                        if (TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.USER_EMAIL))) {
+                            setValue(null);
+                            return;
+                        }
+                        Person me = new Person();
+                        me.setFullname(mPrefs.getString(PrefsHelper.Key.USER_NAME));
+                        me.setPersonid(mPrefs.getInt(PrefsHelper.Key.PERSON_ID));
+                        me.setEmail(mPrefs.getString(PrefsHelper.Key.USER_EMAIL));
+                        setValue(me);
+                    }
+                };
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<MyDetailsData>>> createCall() {
+                return mApiService.getMyDetails(new MyDetailsRequest());
             }
         }.asLiveData();
     }

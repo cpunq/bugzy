@@ -41,5 +41,17 @@ public class PrefsHelper {
         mPrivatePrefs.edit().putString(key.name(), value).commit();
     }
 
+     public int getInt(Key key, int defaultVal) {
+        return mPrivatePrefs.getInt(key.name(), defaultVal);
+    }
+
+    public int getInt(Key key) {
+        return this.getInt(key, -1);
+    }
+
+    public void setInt(Key key, int value) {
+        mPrivatePrefs.edit().putInt(key.name(), value).commit();
+    }
+
 }
 

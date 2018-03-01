@@ -158,12 +158,11 @@ public class HomeActivity extends BaseActivity
                 // TODO: hide working
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showUserInfoIfAvailable();
+        mHomeViewModel.getMyDetailsState().observe(this, personResource -> {
+            if (personResource.data != null) {
+                showUserInfo(personResource.data);
+            }
+        });
     }
 
     @UiThread
@@ -185,11 +184,6 @@ public class HomeActivity extends BaseActivity
         }
         // If filters are already present, just show a toast, or snackbar
         Snackbar.make(mContentContainer, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onAttachFragment(android.app.Fragment fragment) {
-        super.onAttachFragment(fragment);
     }
 
     @UiThread
@@ -279,50 +273,6 @@ public class HomeActivity extends BaseActivity
         }
     }
 
-    @UiThread
-    private void showUserInfoIfAvailable() {
-        if (TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.PERSON_ID))) {
-            // No userinfo, fetch from network
-            mAppExecutors.networkIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    fetchUserInfo();
-                }
-            });
-            return;
-        }
-        showUserInfo();
-    }
-
-    @WorkerThread
-    protected void fetchUserInfo() {
-        Call<Response<MyDetailsData>> req = mApiClient.getMyDetails(new MyDetailsRequest());
-
-        try {
-            retrofit2.Response<Response<MyDetailsData>> resp = req.execute();
-            if(resp.isSuccessful()) {
-                Person me = resp.body().getData().getPerson();
-                mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
-                mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
-                mPrefs.setString(PrefsHelper.Key.PERSON_ID, me.getPersonid()+"");
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showUserInfo();
-                    }
-                });
-            } else {
-                Log.d("Call Failed ", resp.errorBody().toString());
-            }
-        }
-        catch(ConnectivityInterceptor.NoConnectivityException e){
-            Log.d("Connectivitity Error ", "Error");
-        }
-        catch (IOException e) {
-            Log.d("Cases","Call Failed");
-        }
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -387,15 +337,16 @@ public class HomeActivity extends BaseActivity
     }
 
     @UiThread
-    protected void showUserInfo() {
-        String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+mPrefs.getString(PrefsHelper.Key.PERSON_ID)+"&pg=pgAvatar&pxSize=140";
+    protected void showUserInfo(Person p) {
+        String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+p.getPersonid()+"&pg=pgAvatar&pxSize=140";
         ImageRequest.create(navigationView.getHeaderView(0).findViewById(R.id.pro))
                 .setTargetUrl(img_path)
                 .setFadeTransition(150)
                 .execute();
-        mUserName.setText(mPrefs.getString(PrefsHelper.Key.USER_NAME));
-        mUserEmail.setText(mPrefs.getString(PrefsHelper.Key.USER_EMAIL));
+        mUserName.setText(p.getFullname());
+        mUserEmail.setText(p.getEmail());
     }
+
     public void redirectLogin() {
         Intent mLogin = new Intent(this,LoginActivity.class);
         startActivity(mLogin);

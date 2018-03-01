@@ -35,7 +35,7 @@ public interface FogbugzApiService {
     Call<Response<ListPeopleData>> listPeople(@Body ListPeopleRequest request);
 
     @POST("/api/viewPerson")
-    Call<Response<MyDetailsData>> getMyDetails(@Body MyDetailsRequest request);
+    LiveData<ApiResponse<Response<MyDetailsData>>> getMyDetails(@Body MyDetailsRequest request);
 
     @POST("/api/listFilters")
     LiveData<ApiResponse<Response<JsonElement>>> getFilters(@Body FiltersRequest request);
