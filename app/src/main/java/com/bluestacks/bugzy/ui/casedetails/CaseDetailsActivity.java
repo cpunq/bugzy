@@ -33,10 +33,13 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
 
         setupToolbar();
 
-        CaseDetailsFragment fragment = CaseDetailsFragment.getInstance(mFogBugzId, aCase);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container_frame, fragment);
-        ft.commit();
+        if (savedInstanceState == null) {
+            CaseDetailsFragment fragment = CaseDetailsFragment.getInstance(mFogBugzId, aCase);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_frame, fragment);
+
+            ft.commit();
+        }
     }
 
     private void setupToolbar() {
