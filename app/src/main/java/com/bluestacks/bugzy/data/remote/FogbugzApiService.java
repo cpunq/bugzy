@@ -13,6 +13,7 @@ import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
+import com.bluestacks.bugzy.utils.LiveDataCallAdapter;
 
 import android.arch.lifecycle.LiveData;
 
@@ -29,7 +30,7 @@ public interface FogbugzApiService {
     Call<Response<LoginData>> login(@Body LoginRequest loginRequest);
 
     @POST("/api/listCases")
-    Call<Response<ListCasesData>> listCases(@Body ListCasesRequest request);
+    LiveData<ApiResponse<Response<ListCasesData>>> listCases(@Body ListCasesRequest request);
 
     @POST("/api/listPeople")
     Call<Response<ListPeopleData>> listPeople(@Body ListPeopleRequest request);
@@ -41,5 +42,5 @@ public interface FogbugzApiService {
     LiveData<ApiResponse<Response<JsonElement>>> getFilters(@Body FiltersRequest request);
 
     @POST("/api/searchCases")
-    Call<Response<ListCasesData>> searchCases(@Body SearchCasesRequest request);
+    LiveData<ApiResponse<Response<ListCasesData>>> searchCases(@Body SearchCasesRequest request);
 }

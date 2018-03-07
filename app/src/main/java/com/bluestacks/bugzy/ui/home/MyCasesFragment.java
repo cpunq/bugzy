@@ -2,17 +2,16 @@ package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +19,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.data.DataManager;
+import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
-import com.bluestacks.bugzy.models.resp.ListCasesRequest;
-import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -41,11 +36,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
 
 public class MyCasesFragment extends Fragment implements Injectable {
     private static final String PARAM_FILTER = "filter";
     private static final String PARAM_FILTER_TEXT = "filter_text";
+    private MyCasesViewModel mViewModel;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
+
     @Inject
     PrefsHelper mPrefs;
 
@@ -116,48 +115,37 @@ public class MyCasesFragment extends Fragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyCasesViewModel.class);
+
         mMainThreadExecutor = mAppExecutors.mainThread();
         if (mHomeActivityCallbacks != null) {
             mHomeActivityCallbacks.onFragmentsActivityCreated(this, mFilterText, getTag());
         }
+        this.subscribeToViewModel();
+
+
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        showLoading();
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                fetchCases();
-            }
-        });
+        mViewModel.loadCases(mFilter);  // Load cases
     }
 
-    @WorkerThread
-    protected void fetchCases() {
-        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            return;
-        }
-        final Response<ListCasesData> response = mDataManager.fetchCases(mFilter);
-        mMainThreadExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                onCasesResponse(response);
+    private void subscribeToViewModel() {
+        mViewModel.getCasesState().observe(this, resourceState -> {
+            if (resourceState.data != null) {
+                showCases(resourceState.data);
+            }
+            if (resourceState.status == Status.LOADING) {
+                showLoading();
+                return;
+            }
+            if (resourceState.status == Status.ERROR) {
+                showError(resourceState.message);
+                return;
+            }
+            if (resourceState.status == Status.SUCCESS) {
+                this.hideLoading();
             }
         });
-    }
-
-    @UiThread
-    private void onCasesResponse(Response<ListCasesData> response) {
-        hideLoading();
-        if (response == null) {
-            showError("Could not fetch cases");
-            return;
-        }
-        if (response.getErrors().size() > 0) {
-            showError(response.getErrors().get(0).getMessage());
-            return;
-        }
-        // All good
-        showCases(response.getData().getCases());
     }
 
     @UiThread
@@ -175,7 +163,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @UiThread
     protected void showLoading() {
-        mRecyclerView.setVisibility(View.GONE);
+        if (mCases == null) {
+            mRecyclerView.setVisibility(View.GONE);
+        }
         mErrorView.showProgress("Fetching " + mFilterText + "..." );
     }
 
@@ -187,7 +177,9 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @UiThread
     private void showError(String message) {
-        mRecyclerView.setVisibility(View.GONE);
+        if (mCases == null) {
+            mRecyclerView.setVisibility(View.GONE);
+        }
         mErrorView.showError(message);
     }
 

@@ -1,15 +1,11 @@
 package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,28 +28,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.data.DataManager;
-import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
-import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
-import com.bluestacks.bugzy.ui.login.LoginViewModel;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.MyDetailsData;
-import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
-import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.guardanis.imageloader.ImageRequest;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,7 +49,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
 
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeActivityCallbacks {

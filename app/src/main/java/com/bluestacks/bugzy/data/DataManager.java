@@ -2,8 +2,6 @@ package com.bluestacks.bugzy.data;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import com.bluestacks.bugzy.common.Const;
@@ -15,14 +13,11 @@ import com.bluestacks.bugzy.models.Error;
 import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
-import com.bluestacks.bugzy.models.resp.FiltersData;
-import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
 import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -86,23 +81,23 @@ public class DataManager {
                 "sTitle","ixPriority","sStatus","sProject","sPersonAssignedTo","sPersonOpenedBy"
         };
         ListCasesRequest request = new ListCasesRequest(cols, filter);
-        Call<Response<ListCasesData>> cases = mFogbugzApi.listCases(request);
-        try {
-            retrofit2.Response<Response<ListCasesData>> req = cases.execute();
-            if(req.isSuccessful()) {
-                response = req.body();
-                // Update cases in db
-                mDbHelper.setCases(response.getData().getCases(), filter);
-            } else {
-                String stringbody = req.errorBody().string();
-                response = mGson.fromJson(stringbody, Response.class);
-            }
-            return response;
-        } catch(ConnectivityInterceptor.NoConnectivityException e){
-            response.setErrors(getErrorListForNoNetwork());
-        } catch (IOException e) {
-            response.setErrors(getErrorListForNetworkError());
-        }
+//        Call<Response<ListCasesData>> cases = mFogbugzApi.listCases(request);
+//        try {
+//            retrofit2.Response<Response<ListCasesData>> req = cases.execute();
+//            if(req.isSuccessful()) {
+//                response = req.body();
+//                // Update cases in db
+//                mDbHelper.setCases(response.getData().getCases(), filter);
+//            } else {
+//                String stringbody = req.errorBody().string();
+//                response = mGson.fromJson(stringbody, Response.class);
+//            }
+//            return response;
+//        } catch(ConnectivityInterceptor.NoConnectivityException e){
+//            response.setErrors(getErrorListForNoNetwork());
+//        } catch (IOException e) {
+//            response.setErrors(getErrorListForNetworkError());
+//        }
         return response;
     }
 
@@ -141,21 +136,21 @@ public class DataManager {
         String[] cols =new String[]{
                 "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
         };
-        Call<Response<ListCasesData>> cases = mFogbugzApi.searchCases(new SearchCasesRequest(cols, bugId+""));
-        try {
-            retrofit2.Response<Response<ListCasesData>> req = cases.execute();
-            if(req.isSuccessful()) {
-                response = req.body();
-            } else {
-                String stringbody = req.errorBody().string();
-                response = mGson.fromJson(stringbody, Response.class);
-            }
-            return response;
-        } catch(ConnectivityInterceptor.NoConnectivityException e){
-            response.setErrors(getErrorListForNoNetwork());
-        } catch (IOException e) {
-            response.setErrors(getErrorListForNetworkError());
-        }
+//        LiveData<ApiResponse<Response<ListCasesData>>> cases = mFogbugzApi.searchCases(new SearchCasesRequest(cols, bugId+""));
+//        try {
+//            retrofit2.Response<Response<ListCasesData>> req =
+//            if(req.isSuccessful()) {
+//                response = req.body();
+//            } else {
+//                String stringbody = req.errorBody().string();
+//                response = mGson.fromJson(stringbody, Response.class);
+//            }
+//            return response;
+//        } catch(ConnectivityInterceptor.NoConnectivityException e){
+//            response.setErrors(getErrorListForNoNetwork());
+//        } catch (IOException e) {
+//            response.setErrors(getErrorListForNetworkError());
+//        }
         return response;
     }
 
