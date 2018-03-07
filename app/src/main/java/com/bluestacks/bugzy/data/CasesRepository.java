@@ -83,11 +83,12 @@ public class CasesRepository {
         }.asLiveData();
     }
 
-    public LiveData<Resource<Case>> caseDetails(final int caseId) {
+    public LiveData<Resource<Case>> caseDetails(final Case kase) {
         return new NetworkBoundResource<Case, Response<ListCasesData>>(mAppExecutors) {
+            Case mCase = kase;
             @Override
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
-
+                mCase = item.getData().getCases().get(0);
             }
 
             @Override
@@ -103,7 +104,7 @@ public class CasesRepository {
                     @Override
                     protected void onActive() {
                         super.onActive();
-                        setValue(null);
+                        setValue(mCase);
                     }
                 };
             }
@@ -114,7 +115,7 @@ public class CasesRepository {
                 String[] cols =new String[]{
                         "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
                 };
-                return mApiService.searchCases(new SearchCasesRequest(cols, caseId+""));
+                return mApiService.searchCases(new SearchCasesRequest(cols, kase.getIxBug()+""));
             }
         }.asLiveData();
     }

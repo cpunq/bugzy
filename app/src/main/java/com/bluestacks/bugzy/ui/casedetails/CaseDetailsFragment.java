@@ -1,16 +1,15 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
 import com.bluestacks.bugzy.data.DataManager;
-import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +50,11 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     public interface CaseDetailsFragmentContract {
         void openImageActivity(String imagePath);
     }
+    private CaseDetailsFragmentViewModel mViewModel;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
+
 
     @BindView(R.id.main_container)
     protected LinearLayout mContainer;
@@ -82,12 +86,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     @BindView(R.id.textview_required_merge)
     protected TextView mRequiredMerge;
 
-    private LinearLayoutManager mLinearLayoutManager;
     private Case mCase;
-    private static CaseDetailsFragment mFragment;
     private CaseDetailsFragmentContract mParentActivity;
-    public static String token;
-    private RecyclerAdapter mAdapter;
+    private String mToken;
 
     @Inject
     PrefsHelper mPrefs;
@@ -102,12 +103,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     AppExecutors mAppExecutors;
 
     public static CaseDetailsFragment getInstance(String bugId, Case aCase) {
-        mFragment = new CaseDetailsFragment();
+        CaseDetailsFragment fragment = new CaseDetailsFragment();
         Bundle args = new Bundle();
         args.putSerializable("bug", aCase);
         args.putString("bug_id",bugId);
-        mFragment.setArguments(args);
-        return mFragment;
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -136,47 +137,28 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
-        showLoading();
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        showCaseDetails(mCase);
-        // Fetch more case details
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                fetchCaseDetails();
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(CaseDetailsFragmentViewModel.class);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mViewModel.getToken().observe(this, token -> {
+            if (token == null) {
+                // Not logged in
+                return;
             }
+            mToken = token;
+            // If token is there, only then start observing cases
+            mViewModel.getCaseState().observe(this, caseState -> {
+                if (caseState.data != null) {
+                    showCaseDetails(caseState.data);
+                }
+            });
+            // Load cases only when token is gotten
+            mViewModel.loadCaseDetails(mCase);
         });
-    }
 
-    @WorkerThread
-    protected void fetchCaseDetails() {
-        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-            return;
-        }
-
-        final Response<ListCasesData> response = mDataManager.fetchCaseDetails(mCase.getIxBug());
-
-        mAppExecutors.mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                onCaseDetailsReponse(response);
-            }
-        });
-    }
-
-    @UiThread
-    private void onCaseDetailsReponse(Response<ListCasesData> response) {
-        if (response == null) {
-            Snackbar.make(getView(), "Failed to get case details", Snackbar.LENGTH_LONG).show();
-            return;
-        }
-        if (response.getErrors().size() > 0) {
-            Snackbar.make(getView(), "Failed to get case details", Snackbar.LENGTH_LONG).show();
-            return;
-        }
-        showCaseDetails(response.getData().getCases().get(0));
+        mViewModel.getSnackBarText().observe(this, text -> Snackbar.make(getView(), text, Snackbar.LENGTH_LONG).show());
     }
 
     @UiThread
@@ -187,8 +169,8 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         List<CaseEvent> evs = mCase.getCaseevents();
         if (evs != null) {
             Collections.reverse(evs);
-            mAdapter = new RecyclerAdapter(evs);
-            mRecyclerView.setAdapter(mAdapter);
+            RecyclerAdapter adapter = new RecyclerAdapter(evs);
+            mRecyclerView.setAdapter(adapter);
         }
 
         mBugId.setText(String.valueOf(mCase.getIxBug()));
@@ -220,25 +202,19 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     }
 
     @UiThread
-    protected void showLoading() {
-        mProgress.setVisibility(View.VISIBLE);
-        mContainer.setVisibility(View.GONE);
-    }
-
-    @UiThread
     protected void showContent() {
         mProgress.setVisibility(View.GONE);
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
+    public class RecyclerAdapter extends RecyclerView.Adapter<EventHolder> {
 
         private List<CaseEvent> mBugs;
-        public RecyclerAdapter(List<CaseEvent> bugs) {
+        private RecyclerAdapter(List<CaseEvent> bugs) {
             mBugs = bugs ;
         }
         @Override
-        public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView;
             switch(viewType) {
                 case 0:
@@ -257,11 +233,11 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                     break;
             }
 
-            return new BugHolder(inflatedView, getContext(), mParentActivity);
+            return new EventHolder(inflatedView, getContext(), mParentActivity, mToken);
         }
 
         @Override
-        public void onBindViewHolder(BugHolder holder, int position) {
+        public void onBindViewHolder(EventHolder holder, int position) {
             CaseEvent bug = mBugs.get(position);
             holder.bindData(bug);
         }
@@ -283,26 +259,27 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         }
     }
 
-    public static class BugHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mItemDate;
         private TextView mItemDescription;
         private TextView mChanges;
         private TextView mChangesContent;
         private ImageView mImageAttachment;
-        private CaseEvent mBug;
         private Context mContext;
         private CaseDetailsFragmentContract homeActivity;
+        private String mToken;
 
         //4
-        public BugHolder (View v,Context context, CaseDetailsFragmentContract activity) {
+        private EventHolder (View v,Context context, CaseDetailsFragmentContract activity, String token) {
             super(v);
-            mItemDate = (TextView) v.findViewById(R.id.item_id);
-            mItemDescription = (TextView) v.findViewById(R.id.item_description);
-            mChanges = (TextView) v.findViewById(R.id.changes);
-            mChangesContent = (TextView) v.findViewById(R.id.change_content);
-            mImageAttachment = (ImageView) v.findViewById(R.id.attachment);
+            mItemDate =  v.findViewById(R.id.item_id);
+            mItemDescription = v.findViewById(R.id.item_description);
+            mChanges = v.findViewById(R.id.changes);
+            mChangesContent = v.findViewById(R.id.change_content);
+            mImageAttachment = v.findViewById(R.id.attachment);
             mContext = context;
             homeActivity = activity;
+            mToken = token;
             v.setOnClickListener(this);
         }
 
@@ -313,7 +290,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         }
 
         public void bindData(CaseEvent bug) {
-            mBug = bug;
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             DateFormat format2 = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.US);
             try {
@@ -327,18 +303,15 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
             if(!TextUtils.isEmpty(bug.getContentHtml())) {
                 mChangesContent.setText(Html.fromHtml(bug.getContentHtml()));
-            }
-            else if(!TextUtils.isEmpty(bug.getContent())) {
+            } else if(!TextUtils.isEmpty(bug.getContent())) {
                 mChangesContent.setText(Html.fromHtml(bug.getContent()));
-            }
-            else {
+            } else {
                 mChangesContent.setVisibility(View.GONE);
             }
 
             if(!TextUtils.isEmpty(bug.getsChanges())) {
                 mChanges.setText(Html.fromHtml(bug.getsChanges()));
-            }
-            else {
+            } else {
                 mChanges.setVisibility(View.GONE);
             }
 
@@ -346,20 +319,14 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 Log.d(Const.TAG,bug.getsAttachments().get(0).getUrl());
                 if(bug.getsAttachments().get(0).getFilename().endsWith(".png") || bug.getsAttachments().get(0).getFilename().endsWith(".jpg") ) {
                     mImageAttachment.setVisibility(View.VISIBLE);
-                    final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + token).replaceAll("&amp;","&");
+                    final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
                     Log.d(Const.TAG,img_path);
                     Glide.with(mContext).load(img_path)
                             .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
                             .into(mImageAttachment);
-                    mImageAttachment.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            homeActivity.openImageActivity(img_path);
-                        }
-                    });
+                    mImageAttachment.setOnClickListener(view -> homeActivity.openImageActivity(img_path));
                 }
-            }
-            else {
+            } else {
                 mImageAttachment.setVisibility(View.GONE);
             }
         }
