@@ -23,7 +23,6 @@ public class MyCasesViewModel extends ViewModel {
     @Inject
     MyCasesViewModel(CasesRepository casesRepository) {
         mCasesRepository = casesRepository;
-        mCasesState = new MediatorLiveData<>();
         mFilter = new MutableLiveData<>();
 
         mCasesState = Transformations.switchMap(mFilter, filter -> {
