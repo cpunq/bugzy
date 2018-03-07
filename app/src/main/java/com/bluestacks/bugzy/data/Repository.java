@@ -44,7 +44,7 @@ public class Repository {
     private final AppExecutors mAppExecutors;
     private FogbugzApiService mApiService;
     private Gson mGson;
-    private MutableLiveData<Boolean> mIsLoggedIn;
+    private MutableLiveData<String> mToken;
     private PrefsHelper mPrefs;
     private DatabaseHelper mDbHelper;
 
@@ -55,6 +55,22 @@ public class Repository {
         mGson = gson;
         mPrefs = prefs;
         mDbHelper = dbHelper;
+
+        mToken = new MutableLiveData<String>() {
+            @Override
+            protected void onActive() {
+                super.onActive();
+                // Read from preferences
+                String token = mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN);
+
+                if ("".equals(token)) {
+                    setValue(null);
+                } else {
+                    setValue(token);
+                }
+
+            }
+        };
     }
 
     public LiveData<Resource<Response<LoginData>>> temp(String email, String password) {
@@ -99,7 +115,7 @@ public class Repository {
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mIsLoggedIn.setValue(true);
+                        mToken.setValue(token);
                     }
                 });
             }
@@ -215,18 +231,7 @@ public class Repository {
         }.asLiveData();
     }
 
-    public MutableLiveData<Boolean> isLoggedIn() {
-        if (mIsLoggedIn != null) {
-            return mIsLoggedIn;
-        }
-        mIsLoggedIn = new MutableLiveData<Boolean>() {
-            @Override
-            protected void onActive() {
-                super.onActive();
-                // Read from preferences
-                setValue(!TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN)));
-            }
-        };
-        return mIsLoggedIn;
+    public MutableLiveData<String> getToken() {
+        return mToken;
     }
 }

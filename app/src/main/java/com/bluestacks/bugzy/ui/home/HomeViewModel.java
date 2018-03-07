@@ -22,7 +22,13 @@ public class HomeViewModel extends ViewModel {
         mRepository = repository;
         mIsLoggedIn = new MediatorLiveData<>();
         mFiltersState = new MediatorLiveData<>();
-        mIsLoggedIn.addSource(mRepository.isLoggedIn(), loggedIn -> mIsLoggedIn.setValue(loggedIn));
+        mIsLoggedIn.addSource(mRepository.getToken(), token -> {
+            if (token == null) {
+                mIsLoggedIn.setValue(false);
+            } else {
+                mIsLoggedIn.setValue(true);
+            }
+        });
         mFiltersState.addSource(mRepository.filters(), filtersDataResource -> mFiltersState.setValue(filtersDataResource));
         mMyDetailsState.addSource(mRepository.getMyDetails(), personResource -> mMyDetailsState.setValue(personResource));
     }

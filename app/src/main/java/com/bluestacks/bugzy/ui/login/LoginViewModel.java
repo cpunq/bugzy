@@ -45,8 +45,12 @@ public class LoginViewModel extends ViewModel {
         mCredentialsLiveData = new MutableLiveData<>();
         mIsLoggedIn = new MediatorLiveData<>();
 
-        mIsLoggedIn.addSource(mRepository.isLoggedIn(), loggedIn -> {
-            mIsLoggedIn.setValue(loggedIn);
+        mIsLoggedIn.addSource(mRepository.getToken(), token -> {
+            if (token == null) {
+                mIsLoggedIn.setValue(false);
+            } else {
+                mIsLoggedIn.setValue(true);
+            }
         });
         mLoginState = Transformations.switchMap(mCredentialsLiveData, pair -> {
             return mRepository.login(pair.first, pair.second);
