@@ -19,8 +19,6 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
 public class BugzyApp extends Application implements HasActivityInjector {
-    public List<Person> persons;
-
     @Inject DispatchingAndroidInjector<Activity> mActivityInjector;
 
     @Override

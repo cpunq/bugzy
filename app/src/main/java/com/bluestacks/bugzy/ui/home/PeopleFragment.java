@@ -120,7 +120,6 @@ public class PeopleFragment extends Fragment implements Injectable {
     protected void subscribeToViewModel() {
         mViewModel.getPeopleState().observe(this, peopleResource -> {
             if (peopleResource.data != null) {
-                ((BugzyApp)getActivity().getApplication()).persons = people;
                 updatePeople(peopleResource.data);
             }
 
