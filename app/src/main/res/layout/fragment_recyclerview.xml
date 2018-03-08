@@ -3,8 +3,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:background="#eeeeee">
 
     <android.support.v7.widget.RecyclerView
@@ -13,8 +11,6 @@
             android:layout_height="match_parent"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
             android:scrollbars="vertical"/>
 
     <com.bluestacks.bugzy.ui.common.ErrorView

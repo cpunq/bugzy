@@ -7,6 +7,8 @@
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#7D7D7D</item>
     </style>
 
     <style name="AppTheme.toolbarStyle" parent="Widget.AppCompat.Toolbar">
@@ -18,13 +20,13 @@
     <!-- Global button styles -->
     <style name="AppTheme.PrimaryButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:padding">20dp</item>
-        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:textSize">@dimen/subheading</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:letterSpacing">0.1</item>
     </style>
     <style name="AppTheme.SecondaryButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:padding">20dp</item>
-        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:textSize">@dimen/subheading</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:letterSpacing">0.1</item>
         <item name="android:theme">@style/SecondaryButtonTheme</item>
@@ -36,11 +38,16 @@
 
     <!-- Global TextView styles-->
     <style name="AppTheme.TextView.Primary" parent="android:Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/body_1</item>
     </style>
     <style name="AppTheme.TextView.Secondary" parent="android:Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textSize">@dimen/body_1</item>
     </style>
+
     <style name="AppTheme.PrimaryBigTextView" parent="android:Widget.TextView">
-        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textSize">@dimen/headline</item>
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
     </style>
@@ -48,7 +55,7 @@
     <!-- Global EditText styles -->
     <style name="AppTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
         <item name="android:padding">16dp</item>
-        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textSize">@dimen/body_1</item>
         <item name="android:background">@android:color/white</item>
         <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:letterSpacing">0.1</item>
@@ -62,7 +69,7 @@
         <item name="itemBackground">@drawable/item_background_navview</item>
     </style>
     <style name="NavigationDrawerStyle" parent="@style/ThemeOverlay.AppCompat.Dark">
-        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:textSize">@dimen/subheading</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:letterSpacing">0.1</item>
         <item name="listPreferredItemPaddingLeft">36dp</item>

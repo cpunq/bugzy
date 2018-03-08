@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -97,6 +99,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         mViewModel.loadCases(mFilter);  // Load cases
     }
 
@@ -206,18 +209,21 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     public static class BugHolder extends RecyclerView.ViewHolder{
         private TextView mItemDate;
         private TextView mItemDescription;
-        private LinearLayout mPriority;
+        private TextView mFooter;
+        private ImageView mPriority;
 
         public BugHolder (View v, HomeActivityCallbacks a) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
-            mItemDescription = (TextView) v.findViewById(R.id.item_description);
-            mPriority = (LinearLayout) v.findViewById(R.id.priority);
+            mItemDescription = (TextView) v.findViewById(R.id.item_subtitle);
+            mPriority = v.findViewById(R.id.priority);
+            mFooter = v.findViewById(R.id.item_footer);
         }
 
         public void bindData(Case bug) {
             mItemDate.setText(String.valueOf(bug.getIxBug()));
             mItemDescription.setText(bug.getTitle());
+            mFooter.setText("Assigned to: " + bug.getPersonAssignedTo());
 
             if(bug.getPriority() == 3){
                 mPriority.setBackgroundColor(Color.parseColor("#e74c3c"));

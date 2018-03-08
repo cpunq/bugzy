@@ -17,7 +17,7 @@
               android:textAllCaps="true"
               android:layout_centerHorizontal="true"
               android:layout_marginTop="24dp"
-              android:textSize="@dimen/text_headline"
+              android:textSize="@dimen/headline"
               android:fontFamily="@font/open_sans_bold"
               android:textColor="@android:color/white"
               android:layout_below="@id/imageView"
