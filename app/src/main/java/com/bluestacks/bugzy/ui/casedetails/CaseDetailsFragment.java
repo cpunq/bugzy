@@ -24,13 +24,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.CaseEvent;
-import com.bluestacks.bugzy.data.remote.FogbugzApiService;
-import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bumptech.glide.Glide;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -50,10 +47,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         void openImageActivity(String imagePath);
     }
     private CaseDetailsFragmentViewModel mViewModel;
+    private Case mCase;
+    private CaseDetailsFragmentContract mParentActivity;
+    private String mToken;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
-
 
     @BindView(R.id.main_container)
     protected LinearLayout mContainer;
@@ -84,19 +83,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     @BindView(R.id.textview_required_merge)
     protected TextView mRequiredMerge;
-
-    private Case mCase;
-    private CaseDetailsFragmentContract mParentActivity;
-    private String mToken;
-
-    @Inject
-    PrefsHelper mPrefs;
-
-    @Inject
-    FogbugzApiService mApiClient;
-
-    @Inject
-    AppExecutors mAppExecutors;
 
     public static CaseDetailsFragment getInstance(String bugId, Case aCase) {
         CaseDetailsFragment fragment = new CaseDetailsFragment();
