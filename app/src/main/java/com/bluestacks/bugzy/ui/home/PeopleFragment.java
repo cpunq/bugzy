@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
-import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
@@ -68,9 +67,6 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     @Inject
     Gson mGson;
-
-    @Inject
-    DataManager mDataManager;
 
     @Inject
     AppExecutors mAppExecutors;

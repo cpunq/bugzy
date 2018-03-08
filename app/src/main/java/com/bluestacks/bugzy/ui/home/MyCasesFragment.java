@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
@@ -53,9 +52,6 @@ public class MyCasesFragment extends Fragment implements Injectable {
 
     @Inject
     Gson mGson;
-
-    @Inject
-    DataManager mDataManager;
 
     @Inject
     AppExecutors mAppExecutors;

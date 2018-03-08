@@ -27,7 +27,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.models.resp.Case;
 import com.bluestacks.bugzy.models.resp.Filter;
@@ -86,9 +85,6 @@ public class HomeActivity extends BaseActivity
 
     @Inject
     AppExecutors mAppExecutors;
-
-    @Inject
-    DataManager mDataManager;
 
     @Inject
     Gson mGson;

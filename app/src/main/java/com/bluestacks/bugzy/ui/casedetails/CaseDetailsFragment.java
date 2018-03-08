@@ -1,6 +1,5 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
-import com.bluestacks.bugzy.data.DataManager;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
 import android.arch.lifecycle.ViewModelProvider;
@@ -95,9 +94,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     @Inject
     FogbugzApiService mApiClient;
-
-    @Inject
-    DataManager mDataManager;
 
     @Inject
     AppExecutors mAppExecutors;
