@@ -1,7 +1,5 @@
 package com.bluestacks.bugzy.ui.home;
 
-import com.google.gson.Gson;
-
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -12,9 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,9 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Status;
@@ -34,11 +27,9 @@ import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
-import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Person;
-import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.guardanis.imageloader.ImageRequest;
 
 import java.util.HashMap;
@@ -79,15 +70,6 @@ public class HomeActivity extends BaseActivity
 
     @BindView(R.id.container_frame)
     protected FrameLayout mContentContainer;
-
-    @Inject
-    FogbugzApiService mApiClient;
-
-    @Inject
-    AppExecutors mAppExecutors;
-
-    @Inject
-    Gson mGson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -373,57 +355,6 @@ public class HomeActivity extends BaseActivity
         this.setTitle(title);
         if (mNavItemTagMap.containsKey(tag)) {
             navigationView.getMenu().findItem(mNavItemTagMap.get(tag)).setChecked(true);
-        }
-    }
-
-    public class RecyclerAdapter extends RecyclerView.Adapter<PeopleFragment.BugHolder> {
-
-        private List<Person> mPersons;
-        public RecyclerAdapter(List<Person> persons) {
-            mPersons = persons ;
-        }
-        @Override
-        public PeopleFragment.BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View inflatedView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.person_item, parent, false);
-            return new PeopleFragment.BugHolder(inflatedView);
-        }
-
-        @Override
-        public void onBindViewHolder(PeopleFragment.BugHolder holder, int position) {
-            Person person = mPersons.get(position);
-            holder.bindData(person);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPersons.size();
-        }
-
-    }
-
-    public static class BugHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mItemDate;
-        private TextView mItemDescription;
-        private LinearLayout mPriority;
-        private Person mPerson;
-
-        //4
-        public BugHolder (View v) {
-            super(v);
-            mItemDate = (TextView) v.findViewById(R.id.person);
-            v.setOnClickListener(this);
-        }
-
-        //5
-        @Override
-        public void onClick(View v) {
-            Log.d("RecyclerView", "CLICK!");
-        }
-
-        public void bindData(Person person) {
-            mPerson = person;
-            mItemDate.setText(String.valueOf(person.getFullname()));
         }
     }
 }
