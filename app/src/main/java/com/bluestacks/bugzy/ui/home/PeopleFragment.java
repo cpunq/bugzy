@@ -5,18 +5,18 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Status;
@@ -27,6 +27,7 @@ import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
+import com.guardanis.imageloader.ImageRequest;
 
 import java.util.List;
 
@@ -85,6 +86,7 @@ public class PeopleFragment extends Fragment implements Injectable {
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         subscribeToViewModel();
 
     }
@@ -155,7 +157,7 @@ public class PeopleFragment extends Fragment implements Injectable {
         @Override
         public PersonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.bug_item_row, parent, false);
+                    .inflate(R.layout.item_people_row, parent, false);
             return new PersonHolder(inflatedView, null);
         }
 
@@ -172,18 +174,18 @@ public class PeopleFragment extends Fragment implements Injectable {
     }
 
     public static class PersonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mItemDate;
-        private TextView mItemDescription;
-        private LinearLayout mPriority;
+        private TextView mNameView;
+        private TextView mEmailView;
+        private ImageView mImageView;
         private OnItemClickListener mItemClickListener;
         public static final String TAG = PersonHolder.class.getName();
 
         public PersonHolder (View v, OnItemClickListener itemClickListener) {
             super(v);
             mItemClickListener = itemClickListener;
-            mItemDate = (TextView) v.findViewById(R.id.item_id);
-            mItemDescription = (TextView) v.findViewById(R.id.item_description);
-            mPriority = (LinearLayout) v.findViewById(R.id.priority);
+            mNameView = v.findViewById(R.id.tv_name);
+            mEmailView = v.findViewById(R.id.tv_email);
+            mImageView = v.findViewById(R.id.iv_person);
             v.setOnClickListener(this);
         }
 
@@ -199,13 +201,17 @@ public class PeopleFragment extends Fragment implements Injectable {
             } else {
                 Log.e(TAG, "No position to click");
             }
-
         }
 
         public void bindData(Person person) {
-            mItemDate.setText(String.valueOf(person.getFullname()));
-            mItemDescription.setText(person.getEmail());
-            mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
+            mNameView.setText(String.valueOf(person.getFullname()));
+            mEmailView.setText(person.getEmail());
+
+            String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+person.getPersonid()+"&pg=pgAvatar&pxSize=140";
+            ImageRequest.create(mImageView)
+                    .setTargetUrl(img_path)
+                    .setFadeTransition(150)
+                    .execute();
         }
     }
 
