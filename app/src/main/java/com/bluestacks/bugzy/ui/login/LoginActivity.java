@@ -1,29 +1,20 @@
 package com.bluestacks.bugzy.ui.login;
 
-import com.google.gson.Gson;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.bluestacks.bugzy.models.Resource;
 import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
-import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.LoginData;
-import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 
 import javax.inject.Inject;
 
@@ -31,10 +22,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends BaseActivity {
+    private LoginViewModel mLoginViewModel;
 
-    @Inject FogbugzApiService mApiClient;
-    @Inject AppExecutors mAppExecutors;
-    @Inject Gson gson;
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
@@ -46,7 +35,6 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.login_button)
     protected Button mLoginButton;
-    private LoginViewModel mLoginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +45,6 @@ public class LoginActivity extends BaseActivity {
         mLoginViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
 
         onViewsReady();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     protected void onViewsReady() {
