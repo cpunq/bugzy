@@ -10,7 +10,7 @@
               android:paddingRight="16dp"
               android:background="?attr/selectableItemBackground">
 
-    <com.pkmmte.view.CircularImageView
+    <ImageView
         android:id="@+id/iv_person"
         android:layout_width="40dp"
         android:layout_height="40dp"

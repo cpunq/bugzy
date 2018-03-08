@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +27,8 @@ import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
-import com.guardanis.imageloader.ImageRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -173,12 +174,13 @@ public class PeopleFragment extends Fragment implements Injectable {
         }
     }
 
-    public static class PersonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class PersonHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mNameView;
         private TextView mEmailView;
         private ImageView mImageView;
         private OnItemClickListener mItemClickListener;
-        public static final String TAG = PersonHolder.class.getName();
+        public final String TAG = PersonHolder.class.getName();
+        private Fragment mFragment;
 
         public PersonHolder (View v, OnItemClickListener itemClickListener) {
             super(v);
@@ -186,6 +188,7 @@ public class PeopleFragment extends Fragment implements Injectable {
             mNameView = v.findViewById(R.id.tv_name);
             mEmailView = v.findViewById(R.id.tv_email);
             mImageView = v.findViewById(R.id.iv_person);
+            mFragment = PeopleFragment.this;
             v.setOnClickListener(this);
         }
 
@@ -206,12 +209,13 @@ public class PeopleFragment extends Fragment implements Injectable {
         public void bindData(Person person) {
             mNameView.setText(String.valueOf(person.getFullname()));
             mEmailView.setText(person.getEmail());
-
-            String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+person.getPersonid()+"&pg=pgAvatar&pxSize=140";
-            ImageRequest.create(mImageView)
-                    .setTargetUrl(img_path)
-                    .setFadeTransition(150)
-                    .execute();
+            String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+person.getPersonid()+"&pg=pgAvatar&pxSize=60";
+            if (!TextUtils.isEmpty(img_path)) {
+                Glide.with(mFragment).load(img_path)
+                        .apply(RequestOptions.circleCropTransform())
+                        .thumbnail(Glide.with(mFragment).load(R.drawable.loading_ring))
+                        .into(mImageView);
+            }
         }
     }
 
