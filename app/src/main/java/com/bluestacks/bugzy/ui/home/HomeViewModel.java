@@ -12,16 +12,14 @@ import android.arch.lifecycle.ViewModel;
 import javax.inject.Inject;
 
 public class HomeViewModel extends ViewModel {
-    private MediatorLiveData<Boolean> mIsLoggedIn = new MediatorLiveData<>();
     private Repository mRepository;
+    private MediatorLiveData<Boolean> mIsLoggedIn = new MediatorLiveData<>();
     private MediatorLiveData<Resource<FiltersData>> mFiltersState = new MediatorLiveData<>();
     private MediatorLiveData<Resource<Person>> mMyDetailsState = new MediatorLiveData<>();
 
     @Inject
     HomeViewModel(Repository repository) {
         mRepository = repository;
-        mIsLoggedIn = new MediatorLiveData<>();
-        mFiltersState = new MediatorLiveData<>();
         mIsLoggedIn.addSource(mRepository.getToken(), token -> {
             if (token == null) {
                 mIsLoggedIn.setValue(false);
