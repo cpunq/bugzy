@@ -1,7 +1,5 @@
 package com.bluestacks.bugzy.ui.home;
 
-import com.google.gson.Gson;
-
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -22,39 +20,29 @@ import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
-import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.data.remote.FogbugzApiService;
-import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.utils.OnItemClickListener;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyCasesFragment extends Fragment implements Injectable {
+public class MyCasesFragment extends Fragment implements Injectable, OnItemClickListener {
     private static final String PARAM_FILTER = "filter";
     private static final String PARAM_FILTER_TEXT = "filter_text";
     private MyCasesViewModel mViewModel;
+    private List<Case> mCases;
+    private String mFilter;
+    private String mFilterText;
+    private HomeActivityCallbacks mHomeActivityCallbacks;
+    private RecyclerAdapter mAdapter;
 
     @Inject
-    ViewModelProvider.Factory mViewModelFactory;
-
-    @Inject
-    PrefsHelper mPrefs;
-
-    @Inject
-    FogbugzApiService mApiClient;
-
-    @Inject
-    Gson mGson;
-
-    @Inject
-    AppExecutors mAppExecutors;
+    protected ViewModelProvider.Factory mViewModelFactory;
 
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
@@ -62,25 +50,13 @@ public class MyCasesFragment extends Fragment implements Injectable {
     @BindView(R.id.viewError)
     protected ErrorView mErrorView;
 
-    /**
-     * - will refer to mAppExecutor.mainThread()
-     */
-    private Executor mMainThreadExecutor;
-    private LinearLayoutManager mLinearLayoutManager;
-    private List<Case> mCases;
-    private String mFilter;
-    private String mFilterText;
-    private static MyCasesFragment mFragment;
-    private HomeActivityCallbacks mHomeActivityCallbacks;
-    private RecyclerAdapter mAdapter;
-
     public static MyCasesFragment getInstance(String filter, String filterText) {
-        mFragment = new MyCasesFragment();
+        MyCasesFragment fragment = new MyCasesFragment();
         Bundle args = new Bundle();
         args.putString(PARAM_FILTER, filter);
         args.putString(PARAM_FILTER_TEXT, filterText);
-        mFragment.setArguments(args);
-        return mFragment;
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -113,16 +89,26 @@ public class MyCasesFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyCasesViewModel.class);
 
-        mMainThreadExecutor = mAppExecutors.mainThread();
         if (mHomeActivityCallbacks != null) {
             mHomeActivityCallbacks.onFragmentsActivityCreated(this, mFilterText, getTag());
         }
         this.subscribeToViewModel();
 
 
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mViewModel.loadCases(mFilter);  // Load cases
+    }
+
+    //5
+    @Override
+    public void onItemClick(int position) {
+        if (mCases == null) {
+            return;
+        }
+        if (mHomeActivityCallbacks != null) {
+            mHomeActivityCallbacks.onCaseSelected(mCases.get(position));
+        }
     }
 
     private void subscribeToViewModel() {
@@ -148,7 +134,7 @@ public class MyCasesFragment extends Fragment implements Injectable {
     protected void showCases(List<Case> cases) {
         mCases = cases;
         showContent();
-        mAdapter = new RecyclerAdapter(mCases);
+        mAdapter = new RecyclerAdapter(mCases, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -180,16 +166,29 @@ public class MyCasesFragment extends Fragment implements Injectable {
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
-
+        private OnItemClickListener mItemClickListener;
         private List<Case> mBugs;
-        public RecyclerAdapter(List<Case> bugs) {
+        public RecyclerAdapter(List<Case> bugs, OnItemClickListener listener) {
             mBugs = bugs ;
+            mItemClickListener = listener;
         }
         @Override
         public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bug_item_row, parent, false);
-            return new BugHolder(inflatedView, mHomeActivityCallbacks);
+            final BugHolder holder = new BugHolder(inflatedView, mHomeActivityCallbacks);
+            inflatedView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = holder.getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        if (mItemClickListener != null) {
+                            mItemClickListener.onItemClick(pos);
+                        }
+                    }
+                }
+            });
+            return holder;
         }
 
         @Override
@@ -202,38 +201,21 @@ public class MyCasesFragment extends Fragment implements Injectable {
         public int getItemCount() {
             return mBugs.size();
         }
-
-
     }
 
-    public static class BugHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class BugHolder extends RecyclerView.ViewHolder{
         private TextView mItemDate;
         private TextView mItemDescription;
         private LinearLayout mPriority;
-        private Case mBug;
-        @Nullable
-        private HomeActivityCallbacks mHomeActivityCallbacks;
 
-        //4
         public BugHolder (View v, HomeActivityCallbacks a) {
             super(v);
             mItemDate = (TextView) v.findViewById(R.id.item_id);
             mItemDescription = (TextView) v.findViewById(R.id.item_description);
             mPriority = (LinearLayout) v.findViewById(R.id.priority);
-            mHomeActivityCallbacks = a;
-            v.setOnClickListener(this);
-        }
-
-        //5
-        @Override
-        public void onClick(View v) {
-            if (mHomeActivityCallbacks != null) {
-                mHomeActivityCallbacks.onCaseSelected(mBug);
-            }
         }
 
         public void bindData(Case bug) {
-            mBug = bug;
             mItemDate.setText(String.valueOf(bug.getIxBug()));
             mItemDescription.setText(bug.getTitle());
 
