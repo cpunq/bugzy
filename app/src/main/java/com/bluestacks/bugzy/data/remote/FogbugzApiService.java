@@ -33,7 +33,7 @@ public interface FogbugzApiService {
     LiveData<ApiResponse<Response<ListCasesData>>> listCases(@Body ListCasesRequest request);
 
     @POST("/api/listPeople")
-    Call<Response<ListPeopleData>> listPeople(@Body ListPeopleRequest request);
+    LiveData<ApiResponse<Response<ListPeopleData>>> listPeople(@Body ListPeopleRequest request);
 
     @POST("/api/viewPerson")
     LiveData<ApiResponse<Response<MyDetailsData>>> getMyDetails(@Body MyDetailsRequest request);

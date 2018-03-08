@@ -4,6 +4,7 @@ package com.bluestacks.bugzy.di.module;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsFragmentViewModel;
 import com.bluestacks.bugzy.ui.home.HomeViewModel;
 import com.bluestacks.bugzy.ui.home.MyCasesViewModel;
+import com.bluestacks.bugzy.ui.home.PeopleViewModel;
 import com.bluestacks.bugzy.ui.login.LoginViewModel;
 import com.bluestacks.bugzy.utils.BugzyViewModelFactory;
 import com.bluestacks.bugzy.utils.ViewModelKey;
@@ -32,11 +33,15 @@ public abstract class ViewModelModule {
     @ViewModelKey(MyCasesViewModel.class)
     abstract ViewModel bindMyCasesViewModel(MyCasesViewModel myCasesViewModel);
 
-
     @Binds
     @IntoMap
     @ViewModelKey(CaseDetailsFragmentViewModel.class)
     abstract ViewModel bindCaseDetailsFragmentViewModel(CaseDetailsFragmentViewModel caseDetailsFragmentViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PeopleViewModel.class)
+    abstract ViewModel bindPeopleViewModel(PeopleViewModel peopleViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(BugzyViewModelFactory factory);

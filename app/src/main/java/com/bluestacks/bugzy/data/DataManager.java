@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.local.DatabaseHelper;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
-import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.models.Error;
 import com.bluestacks.bugzy.models.Response;
@@ -16,15 +15,12 @@ import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
-import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.Person;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +28,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import retrofit2.Call;
 
 @Singleton
 public class DataManager {
@@ -106,26 +101,26 @@ public class DataManager {
         ListPeopleData da = new ListPeopleData();
         Response<ListPeopleData> response = new Response<>(da);
 
-        Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mFogbugzApi.listPeople(new ListPeopleRequest());
-
-        try {
-            retrofit2.Response<Response<ListPeopleData>> resp = call.execute();
-            final com.bluestacks.bugzy.models.Response<ListPeopleData> body;
-            if(resp.isSuccessful()) {
-                response = resp.body();
-                // Update people in db
-                mDbHelper.setPeople(response.getData().getPersons());
-            } else {
-                Log.d("Call Failed ", resp.errorBody().toString());
-                String stringbody = resp.errorBody().string();
-                response = mGson.fromJson(stringbody, com.bluestacks.bugzy.models.Response.class);
-            }
-            return response;
-        } catch(ConnectivityInterceptor.NoConnectivityException e){
-            response.setErrors(getErrorListForNoNetwork());
-        } catch (IOException e) {
-            response.setErrors(getErrorListForNetworkError());
-        }
+//        Call<com.bluestacks.bugzy.models.Response<ListPeopleData>> call = mFogbugzApi.listPeople(new ListPeopleRequest());
+//
+//        try {
+//            retrofit2.Response<Response<ListPeopleData>> resp = call.execute();
+//            final com.bluestacks.bugzy.models.Response<ListPeopleData> body;
+//            if(resp.isSuccessful()) {
+//                response = resp.body();
+//                // Update people in db
+//                mDbHelper.setPeople(response.getData().getPersons());
+//            } else {
+//                Log.d("Call Failed ", resp.errorBody().toString());
+//                String stringbody = resp.errorBody().string();
+//                response = mGson.fromJson(stringbody, com.bluestacks.bugzy.models.Response.class);
+//            }
+//            return response;
+//        } catch(ConnectivityInterceptor.NoConnectivityException e){
+//            response.setErrors(getErrorListForNoNetwork());
+//        } catch (IOException e) {
+//            response.setErrors(getErrorListForNetworkError());
+//        }
         return response;
     }
 

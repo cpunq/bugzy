@@ -2,17 +2,17 @@ package com.bluestacks.bugzy.ui.home;
 
 import com.google.gson.Gson;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +22,13 @@ import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.data.DataManager;
-import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.models.Status;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.ListPeopleData;
 import com.bluestacks.bugzy.models.resp.Person;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
@@ -43,6 +42,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PeopleFragment extends Fragment implements Injectable {
+    private PeopleViewModel mViewModel;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
+
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
 
@@ -106,54 +110,42 @@ public class PeopleFragment extends Fragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PeopleViewModel.class);
+
         if (mHomeActivityCallbacks != null) {
             mHomeActivityCallbacks.onFragmentsActivityCreated(this, "People", getTag());
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        showLoading();
-        mAppExecutors.networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                fetchPeople();
-            }
-        });
+        subscribeToViewModel();
+
     }
 
-    @WorkerThread
-    protected void fetchPeople() {
-        if(TextUtils.isEmpty(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN))) {
-           redirectLogin();
-           return;
-        }
-        final Response<ListPeopleData> response = mDataManager.fetchPeople();
-        mMainExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                // Can be fatal, must look out for fragment already destroyed
-                onPeopleResponse(response);
+    protected void subscribeToViewModel() {
+        mViewModel.getPeopleState().observe(this, peopleResource -> {
+            if (peopleResource.data != null) {
+                ((BugzyApp)getActivity().getApplication()).persons = people;
+                updatePeople(peopleResource.data);
+            }
+
+            if (peopleResource.status == Status.LOADING) {
+                showLoading();
+                return;
+            }
+            if (peopleResource.status == Status.ERROR) {
+                showError(peopleResource.message);
+                return;
+            }
+            if (peopleResource.status == Status.SUCCESS) {
+                hideLoading();
+                return;
             }
         });
-    }
-
-    protected void onPeopleResponse(Response<ListPeopleData> response) {
-        hideLoading();
-        if (response == null) {
-            showError("Could not fetch people");
-            return;
-        }
-        if (response.getErrors().size() > 0) {
-            showError(response.getErrors().get(0).getMessage());
-            return;
-        }
-        people = response.getData().getPersons();
-        ((BugzyApp)getActivity().getApplication()).persons = people;
-        updatePeople(people);
-        Log.d("Cases List " , people.toString());
     }
 
     @UiThread
     protected void updatePeople(List<Person> persons) {
+        people = persons;
         mAdapter = new RecyclerAdapter(persons);
         mRecyclerView.setAdapter(mAdapter);
         showContent();
@@ -166,7 +158,10 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     @UiThread
     protected void showLoading() {
-        mRecyclerView.setVisibility(View.GONE);
+        if (people == null) {
+            // Hiding content only when the people are null
+            mRecyclerView.setVisibility(View.GONE);
+        }
         mErrorView.showProgress("Fetching people..." );
     }
 
@@ -177,7 +172,10 @@ public class PeopleFragment extends Fragment implements Injectable {
     }
 
     protected void showError(String message) {
-        mRecyclerView.setVisibility(View.GONE);
+        if (people == null) {
+            // Hiding content only when the people are null
+            mRecyclerView.setVisibility(View.GONE);
+        }
         mErrorView.showError(message);
     }
 

@@ -17,6 +17,8 @@ import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
+import com.bluestacks.bugzy.models.resp.ListPeopleData;
+import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
 import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
@@ -227,6 +229,39 @@ public class Repository {
             @Override
             protected LiveData<ApiResponse<Response<MyDetailsData>>> createCall() {
                 return mApiService.getMyDetails(new MyDetailsRequest());
+            }
+        }.asLiveData();
+    }
+
+    public LiveData<Resource<List<Person>>> getPeople() {
+        return new NetworkBoundResource<List<Person>, Response<ListPeopleData>>(mAppExecutors) {
+            List<Person> mPersons;
+            @Override
+            protected void saveCallResult(@NonNull Response<ListPeopleData> item) {
+                mPersons = item.getData().getPersons();
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Person> data) {
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Person>> loadFromDb() {
+                return new LiveData<List<Person>>() {
+                    @Override
+                    protected void onActive() {
+                        super.onActive();
+                        setValue(mPersons);
+                    }
+                };
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListPeopleData>>> createCall() {
+                return mApiService.listPeople(new ListPeopleRequest());
             }
         }.asLiveData();
     }
