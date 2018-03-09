@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Status;
@@ -101,6 +100,9 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
+        mAdapter = new RecyclerAdapter(mCases, this);
+        mRecyclerView.setAdapter(mAdapter);
+
         mViewModel.loadCases(mFilter);  // Load cases
     }
 
@@ -138,8 +140,8 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     protected void showCases(List<Case> cases) {
         mCases = cases;
         showContent();
-        mAdapter = new RecyclerAdapter(mCases, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setData(mCases);
+        mAdapter.notifyDataSetChanged();
     }
 
     @UiThread
@@ -180,6 +182,11 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
             mBugs = bugs ;
             mItemClickListener = listener;
         }
+
+        public void setData(List<Case> bugs) {
+            mBugs = bugs;
+        }
+
         @Override
         public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView = LayoutInflater.from(parent.getContext())
@@ -207,7 +214,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
 
         @Override
         public int getItemCount() {
-            return mBugs.size();
+            return mBugs == null ? 0 : mBugs.size();
         }
     }
 
