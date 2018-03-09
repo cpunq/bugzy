@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Pair;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -84,7 +85,7 @@ public class HomeActivity extends BaseActivity
 
     protected void onViewsReady() {
         mFragmentManager = getSupportFragmentManager();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
@@ -94,8 +95,8 @@ public class HomeActivity extends BaseActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        mUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        mUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
+        mUserName = navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        mUserEmail = navigationView.getHeaderView(0).findViewById(R.id.user_email);
 
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
@@ -175,19 +176,20 @@ public class HomeActivity extends BaseActivity
         }
     }
 
-    @UiThread
-    private void showFilters(List<Filter> filters) {
-        showContent();
-        if (mFilters != null) {
-            // Filters already present, clear the list and add new
-            removeFiltersFromNavigationView();
-            // Removed
+    /**
+     * - Clears the existing navigation data and prepares new
+     *   as per the given filters
+     * @param filterList
+     * @return a default menuItemId
+     */
+    private int prepareNavHelperData(List<Filter> filterList) {
+        if (filterList == null)  {
+            return -1;
         }
-
+        // Clear previous data if any
         mFiltersMap.clear();
         // Clear the navItemTagMap as well, because the navigation items have been changed
         mNavItemTagMap.clear();
-        mFilters = filters;
         mHomeNavItemId = -1;
 
         // Add the new filters to navigation view
@@ -204,6 +206,8 @@ public class HomeActivity extends BaseActivity
             if (firstMenuItemId == -1) {
                 firstMenuItemId = id;
             }
+            String tag = "filter_" + filter.getFilter();
+            mNavItemTagMap.put(tag, id);
 
             if (filter.getText().toLowerCase().contains("my cases")) {
                 // Ensuring that my cases item appears on the top
@@ -215,26 +219,52 @@ public class HomeActivity extends BaseActivity
             mi.setCheckable(true);
             mFiltersMap.put(id, filter);
         }
+        // Add the people tag
+        mNavItemTagMap.put("people", R.id.nav_people);
+
+        if (myCasesItem != null){
+            return myCasesItem.getItemId();
+        } else if (firstMenuItemId != -1) {
+            return firstMenuItemId;
+        } else {
+            return R.id.nav_people;
+        }
+    }
+
+    @UiThread
+    private void showFilters(List<Filter> filters) {
+        showContent();
+        if (mFilters != null) {
+            // Filters already present, clear the list and add new
+            removeFiltersFromNavigationView();
+            // Removed
+        }
+        mFilters = filters;
+        int defaultItemId = prepareNavHelperData(filters);
+
         // Unlock the drawer
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
+        if (mCurrentFragment != null) {
+            /**
+             * This can happen in case of an orientation change or when user navigates
+             * back to this activity. The currently active fragment will call
+             * {@link #onFragmentsActivityCreated(Fragment, String, String)} before the
+             * filters get loaded.
+             * And hence, we won't go forward to select the default fragment
+             */
+            String tag = mCurrentFragment.getTag();
+            if (mNavItemTagMap.containsKey(tag)) {
+                navigationView.getMenu().findItem(mNavItemTagMap.get(tag)).setChecked(true);
+            }
+            // If there already is a selected Fragment, don't select a new one
+            return;
+        }
+
         // Set default fragment
-        if (myCasesItem != null) {
-            mHomeNavItemId = myCasesItem.getItemId();
-            onNavigationItemSelected(myCasesItem.setChecked(true));
-        }
-        //think of having some other menuItem as the home
-        else if (firstMenuItemId != -1) {
-            // See if firstMenuItem is available
-            MenuItem mi = navigationView.getMenu().findItem(firstMenuItemId);
-            mHomeNavItemId = mi.getItemId();
-            onNavigationItemSelected(mi.setChecked(true));
-        } else {
-            // Use people tab as default tab
-            MenuItem mi = navigationView.getMenu().findItem(R.id.nav_people);
-            mHomeNavItemId = mi.getItemId();
-            onNavigationItemSelected(mi.setChecked(true));
-        }
+        MenuItem mi = navigationView.getMenu().findItem(defaultItemId);
+        mHomeNavItemId = mi.getItemId();
+        onNavigationItemSelected(mi.setChecked(true));
     }
 
     @Override
@@ -290,7 +320,6 @@ public class HomeActivity extends BaseActivity
             return true;
         }
 
-        mNavItemTagMap.put(tag, id);
         if (id == mHomeNavItemId) {
             // If HOME item then skip backstack
             addToBackstack = false;
@@ -333,7 +362,7 @@ public class HomeActivity extends BaseActivity
         if (addToBackStack) {
             ft.addToBackStack(null);
         }
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     public void clearBackStack() {
@@ -353,6 +382,7 @@ public class HomeActivity extends BaseActivity
     @Override
     public void onFragmentsActivityCreated(Fragment fragment, String title, String tag) {
         this.setTitle(title);
+        mCurrentFragment = fragment;
         if (mNavItemTagMap.containsKey(tag)) {
             navigationView.getMenu().findItem(mNavItemTagMap.get(tag)).setChecked(true);
         }
