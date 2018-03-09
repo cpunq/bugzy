@@ -1,5 +1,8 @@
 package com.bluestacks.bugzy.models.resp;
 
+import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListCasesData {
@@ -39,6 +42,15 @@ public class ListCasesData {
 
     public void setTotalHits(int totalHits) {
         this.totalHits = totalHits;
+    }
+
+    @NonNull
+    public List<Integer> getCaseIds() {
+        List<Integer> caseIds = new ArrayList<>();
+        for (Case c : getCases()) {
+            caseIds.add(c.getIxBug());
+        }
+        return caseIds;
     }
 }
 

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -150,8 +151,10 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     protected void showLoading() {
         if (mCases == null) {
             mRecyclerView.setVisibility(View.GONE);
+            mErrorView.showProgress("Fetching " + mFilterText + "..." );
+            return;
         }
-        mErrorView.showProgress("Fetching " + mFilterText + "..." );
+        // TODO: Show some modern way of fetching
     }
 
     @UiThread
@@ -164,8 +167,10 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     private void showError(String message) {
         if (mCases == null) {
             mRecyclerView.setVisibility(View.GONE);
+            mErrorView.showError(message);
+            return;
         }
-        mErrorView.showError(message);
+        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {

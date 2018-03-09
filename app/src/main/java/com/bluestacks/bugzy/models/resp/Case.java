@@ -2,9 +2,13 @@ package com.bluestacks.bugzy.models.resp;
 
 import com.google.gson.annotations.SerializedName;
 
+import android.arch.persistence.room.Entity;
+
 import java.io.Serializable;
 import java.util.List;
 
+
+@Entity(primaryKeys = "ixBug")
 public class Case implements Serializable {
     int ixBug;
 

@@ -1,22 +1,23 @@
 package com.bluestacks.bugzy.data;
 
 
-import com.google.gson.Gson;
-
-import com.bluestacks.bugzy.data.local.DatabaseHelper;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.data.local.db.BugzyDb;
+import com.bluestacks.bugzy.data.local.db.CaseDao;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.models.Resource;
 import com.bluestacks.bugzy.models.Response;
 import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.models.resp.FilterCasesResult;
 import com.bluestacks.bugzy.models.resp.ListCasesData;
 import com.bluestacks.bugzy.models.resp.ListCasesRequest;
 import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -29,28 +30,32 @@ import javax.inject.Singleton;
 public class CasesRepository {
     private AppExecutors mAppExecutors;
     private FogbugzApiService mApiService;
-    private Gson mGson;
     private PrefsHelper mPrefs;
-    private DatabaseHelper mDbHelper;
+    private BugzyDb db;
+    private CaseDao mCaseDao;
 
 
     @Inject
-    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, DatabaseHelper dbHelper) {
+    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
-        mGson = gson;
         mPrefs = prefs;
-        mDbHelper = dbHelper;
+        mCaseDao = caseDao;
+        db = database;
     }
 
     public LiveData<Resource<List<Case>>> cases(final String filter) {
         return new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
-            // Mocking the local db
-            List<Case> mCases;
             @Override
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
-                // Not saving as of now
-                mCases = item.getData().getCases();
+                db.beginTransaction();
+                try {
+                    mCaseDao.insertCases(item.getData().getCases());
+                    mCaseDao.insert(new FilterCasesResult(filter, item.getData().getCaseIds()));
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
             }
 
             @Override
@@ -62,13 +67,18 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<List<Case>> loadFromDb() {
-                return new LiveData<List<Case>>() {
-                    @Override
-                    protected void onActive() {
-                        super.onActive();
-                        setValue(mCases);
+                return Transformations.switchMap(mCaseDao.loadCasesForFilter(filter), filterCasesData -> {
+                    if (filterCasesData == null) {
+                        return new LiveData<List<Case>>() {
+                            @Override
+                            protected void onActive() {
+                                super.onActive();
+                                setValue(null);
+                            }
+                        };
                     }
-                };
+                    return mCaseDao.loadCasesById(filterCasesData.getCaseIds());
+                });
             }
 
             @NonNull
@@ -85,10 +95,15 @@ public class CasesRepository {
 
     public LiveData<Resource<Case>> caseDetails(final Case kase) {
         return new NetworkBoundResource<Case, Response<ListCasesData>>(mAppExecutors) {
-            Case mCase = kase;
             @Override
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
-                mCase = item.getData().getCases().get(0);
+                db.beginTransaction();
+                try {
+                    mCaseDao.insert(item.getData().getCases().get(0));
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
             }
 
             @Override
@@ -100,13 +115,7 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<Case> loadFromDb() {
-                return new LiveData<Case>() {
-                    @Override
-                    protected void onActive() {
-                        super.onActive();
-                        setValue(mCase);
-                    }
-                };
+                return mCaseDao.loadCaseById(kase.getIxBug());
             }
 
             @NonNull
