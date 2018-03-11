@@ -3,7 +3,6 @@ package com.bluestacks.bugzy.ui.home;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -15,10 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bluestacks.bugzy.models.Status;
+import com.bluestacks.bugzy.ui.common.CaseAdapter;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
@@ -41,7 +39,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     private String mFilter;
     private String mFilterText;
     private HomeActivityCallbacks mHomeActivityCallbacks;
-    private RecyclerAdapter mAdapter;
+    private CaseAdapter mAdapter;
 
     @Inject
     protected ViewModelProvider.Factory mViewModelFactory;
@@ -76,7 +74,6 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         }
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -100,13 +97,12 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
-        mAdapter = new RecyclerAdapter(mCases, this);
+        mAdapter = new CaseAdapter(mCases, this);
         mRecyclerView.setAdapter(mAdapter);
 
         mViewModel.loadCases(mFilter);  // Load cases
     }
 
-    //5
     @Override
     public void onItemClick(int position) {
         if (mCases == null) {
@@ -174,86 +170,4 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         }
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
-
-    public class RecyclerAdapter extends RecyclerView.Adapter<BugHolder> {
-        private OnItemClickListener mItemClickListener;
-        private List<Case> mBugs;
-        public RecyclerAdapter(List<Case> bugs, OnItemClickListener listener) {
-            mBugs = bugs ;
-            mItemClickListener = listener;
-        }
-
-        public void setData(List<Case> bugs) {
-            mBugs = bugs;
-        }
-
-        @Override
-        public BugHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View inflatedView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.bug_item_row, parent, false);
-            final BugHolder holder = new BugHolder(inflatedView, mHomeActivityCallbacks);
-            inflatedView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int pos = holder.getAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        if (mItemClickListener != null) {
-                            mItemClickListener.onItemClick(pos);
-                        }
-                    }
-                }
-            });
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(BugHolder holder, int position) {
-            Case bug = mBugs.get(position);
-            holder.bindData(bug);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mBugs == null ? 0 : mBugs.size();
-        }
-    }
-
-    public static class BugHolder extends RecyclerView.ViewHolder{
-        private TextView mItemDate;
-        private TextView mItemDescription;
-        private TextView mFooter;
-        private ImageView mPriority;
-
-        public BugHolder (View v, HomeActivityCallbacks a) {
-            super(v);
-            mItemDate = (TextView) v.findViewById(R.id.item_id);
-            mItemDescription = (TextView) v.findViewById(R.id.item_subtitle);
-            mPriority = v.findViewById(R.id.priority);
-            mFooter = v.findViewById(R.id.item_footer);
-        }
-
-        public void bindData(Case bug) {
-            mItemDate.setText(String.valueOf(bug.getIxBug()));
-            mItemDescription.setText(bug.getTitle());
-            mFooter.setText("Assigned to: " + bug.getPersonAssignedTo());
-
-            if(bug.getPriority() == 3){
-                mPriority.setBackgroundColor(Color.parseColor("#e74c3c"));
-            }
-            else if(bug.getPriority() == 5) {
-                mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
-            }
-            else if(bug.getPriority() == 4) {
-                mPriority.setBackgroundColor(Color.parseColor("#95a5a6"));
-            }
-            else if(bug.getPriority() == 7) {
-                mPriority.setBackgroundColor(Color.parseColor("#bdc3c7"));
-            }
-            else {
-                mPriority.setBackgroundColor(Color.parseColor("#ecf0f1"));
-            }
-        }
-    }
-
-
 }
