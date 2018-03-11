@@ -6,6 +6,7 @@ import com.bluestacks.bugzy.ui.home.HomeViewModel;
 import com.bluestacks.bugzy.ui.home.MyCasesViewModel;
 import com.bluestacks.bugzy.ui.home.PeopleViewModel;
 import com.bluestacks.bugzy.ui.login.LoginViewModel;
+import com.bluestacks.bugzy.ui.search.SearchActivityViewModel;
 import com.bluestacks.bugzy.utils.BugzyViewModelFactory;
 import com.bluestacks.bugzy.utils.ViewModelKey;
 
@@ -42,6 +43,11 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PeopleViewModel.class)
     abstract ViewModel bindPeopleViewModel(PeopleViewModel peopleViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchActivityViewModel.class)
+    abstract ViewModel bindSearchActivityViewModel(SearchActivityViewModel searchActivityViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(BugzyViewModelFactory factory);

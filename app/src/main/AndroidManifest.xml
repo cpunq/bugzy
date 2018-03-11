@@ -40,6 +40,11 @@
                 android:name=".ui.casedetails.FullScreenImageActivity"
                 android:theme="@style/AppTheme">
         </activity>
+
+        <activity
+                android:name=".ui.search.SearchActivity"
+                android:theme="@style/SearchActivityTheme">
+        </activity>
         <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts"/>
 
     </application>

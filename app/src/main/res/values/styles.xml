@@ -3,7 +3,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="toolbarStyle">@style/AppTheme.toolbarStyle</item>
+        <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
@@ -11,7 +11,15 @@
         <item name="android:textColorSecondary">#7D7D7D</item>
     </style>
 
-    <style name="AppTheme.toolbarStyle" parent="Widget.AppCompat.Toolbar">
+    <style name="SearchActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
+    </style>
+    <style name="SearchActivityTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 

@@ -10,7 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Pair;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +31,7 @@ import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.models.resp.Person;
+import com.bluestacks.bugzy.ui.search.SearchActivity;
 import com.guardanis.imageloader.ImageRequest;
 
 import java.util.HashMap;
@@ -81,6 +82,12 @@ public class HomeActivity extends BaseActivity
 
         onViewsReady();
         subscribeToViewModel();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
     }
 
     protected void onViewsReady() {
@@ -291,7 +298,10 @@ public class HomeActivity extends BaseActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

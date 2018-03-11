@@ -11,4 +11,8 @@
     <color name="buttonSecondary">#B6BABF</color>
     <color name="windowBackground">#F4F4F4</color>
     <color name="navItemText">#80979BA0</color>
+
+
+    <color name="textColorPrimary">#000000</color>
+    <color name="textColorSecondary">#7D7D7D</color>
 </resources>

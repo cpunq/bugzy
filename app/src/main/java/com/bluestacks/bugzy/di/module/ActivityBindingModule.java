@@ -4,6 +4,7 @@ import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
+import com.bluestacks.bugzy.ui.search.SearchActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -21,4 +22,7 @@ public abstract class ActivityBindingModule {
 
     @ContributesAndroidInjector
     abstract FullScreenImageActivity contributeFullScreenImageActivity();
+
+    @ContributesAndroidInjector
+    abstract SearchActivity contributeSearchActivity();
 }
