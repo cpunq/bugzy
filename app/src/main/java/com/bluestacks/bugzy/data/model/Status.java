@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bluestacks.bugzy.models;
+package com.bluestacks.bugzy.data.model;
 
 /**
  * Status of a resource that is provided to the UI.

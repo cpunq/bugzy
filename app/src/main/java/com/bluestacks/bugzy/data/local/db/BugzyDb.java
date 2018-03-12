@@ -1,8 +1,8 @@
 package com.bluestacks.bugzy.data.local.db;
 
 
-import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.FilterCasesResult;
+import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.FilterCasesResult;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;

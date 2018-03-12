@@ -1,5 +1,7 @@
 package com.bluestacks.bugzy.models.resp;
 
+import com.bluestacks.bugzy.data.model.Case;
+
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;

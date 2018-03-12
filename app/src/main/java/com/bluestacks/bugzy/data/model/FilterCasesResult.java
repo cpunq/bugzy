@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.models.resp;
+package com.bluestacks.bugzy.data.model;
 
 
 import android.arch.persistence.room.Entity;

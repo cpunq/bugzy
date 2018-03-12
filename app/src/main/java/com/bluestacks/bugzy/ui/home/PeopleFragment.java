@@ -19,13 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.models.Status;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.Person;
+import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;

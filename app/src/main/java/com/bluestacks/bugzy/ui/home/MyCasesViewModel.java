@@ -3,10 +3,9 @@ package com.bluestacks.bugzy.ui.home;
 
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.models.Resource;
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Case;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;

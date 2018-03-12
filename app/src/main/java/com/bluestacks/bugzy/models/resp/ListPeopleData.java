@@ -2,6 +2,8 @@ package com.bluestacks.bugzy.models.resp;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.bluestacks.bugzy.data.model.Person;
+
 import java.util.List;
 
 public class ListPeopleData {

@@ -1,6 +1,8 @@
 package com.bluestacks.bugzy.models.resp;
 
 
+import com.bluestacks.bugzy.data.model.Person;
+
 public class MyDetailsData {
     private Person person;
 

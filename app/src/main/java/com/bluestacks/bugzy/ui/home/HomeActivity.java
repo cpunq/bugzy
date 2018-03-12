@@ -21,16 +21,16 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.bluestacks.bugzy.models.Status;
-import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.Filter;
+import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.Person;
+import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.ui.search.SearchActivity;
 import com.guardanis.imageloader.ImageRequest;
 

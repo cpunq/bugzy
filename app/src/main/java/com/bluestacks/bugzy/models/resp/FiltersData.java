@@ -1,6 +1,8 @@
 package com.bluestacks.bugzy.models.resp;
 
 
+import com.bluestacks.bugzy.data.model.Filter;
+
 import java.util.List;
 
 public class FiltersData {

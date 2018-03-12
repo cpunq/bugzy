@@ -1,7 +1,7 @@
 package com.bluestacks.bugzy.ui.common;
 
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
 
 import android.graphics.Color;

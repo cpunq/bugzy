@@ -1,8 +1,8 @@
 package com.bluestacks.bugzy.data.local;
 
 
-import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.Person;
+import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.Person;
 
 import android.support.annotation.NonNull;
 

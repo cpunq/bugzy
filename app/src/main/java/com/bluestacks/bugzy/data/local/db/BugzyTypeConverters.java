@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import com.bluestacks.bugzy.models.resp.CaseEvent;
+import com.bluestacks.bugzy.data.model.CaseEvent;
 
 import android.arch.persistence.room.TypeConverter;
 

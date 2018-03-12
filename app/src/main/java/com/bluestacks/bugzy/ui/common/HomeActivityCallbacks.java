@@ -1,6 +1,6 @@
 package com.bluestacks.bugzy.ui.common;
 
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Case;
 
 import android.support.v4.app.Fragment;
 

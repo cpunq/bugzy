@@ -4,8 +4,8 @@ package com.bluestacks.bugzy.ui.casedetails;
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.data.Repository;
 import com.bluestacks.bugzy.models.Resource;
-import com.bluestacks.bugzy.models.Status;
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 
 import android.arch.lifecycle.LiveData;

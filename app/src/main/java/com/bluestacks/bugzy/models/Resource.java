@@ -16,12 +16,14 @@
 
 package com.bluestacks.bugzy.models;
 
+import com.bluestacks.bugzy.data.model.Status;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import static com.bluestacks.bugzy.models.Status.SUCCESS;
-import static com.bluestacks.bugzy.models.Status.ERROR;
-import static com.bluestacks.bugzy.models.Status.LOADING;
+import static com.bluestacks.bugzy.data.model.Status.SUCCESS;
+import static com.bluestacks.bugzy.data.model.Status.ERROR;
+import static com.bluestacks.bugzy.data.model.Status.LOADING;
 
 /**
  * A generic class that holds a value with its loading status.

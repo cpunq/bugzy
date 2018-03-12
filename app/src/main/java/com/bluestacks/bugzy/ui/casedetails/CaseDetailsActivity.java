@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Case;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -14,7 +14,7 @@ import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
 import com.bluestacks.bugzy.models.Resource;
 import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.Filter;
+import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.models.resp.FiltersData;
 import com.bluestacks.bugzy.models.resp.FiltersRequest;
 import com.bluestacks.bugzy.models.resp.ListPeopleData;
@@ -23,7 +23,7 @@ import com.bluestacks.bugzy.models.resp.LoginData;
 import com.bluestacks.bugzy.models.resp.LoginRequest;
 import com.bluestacks.bugzy.models.resp.MyDetailsData;
 import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
-import com.bluestacks.bugzy.models.resp.Person;
+import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;

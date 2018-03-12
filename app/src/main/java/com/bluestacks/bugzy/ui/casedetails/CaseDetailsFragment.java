@@ -26,8 +26,8 @@ import android.widget.TextView;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
-import com.bluestacks.bugzy.models.resp.Case;
-import com.bluestacks.bugzy.models.resp.CaseEvent;
+import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.CaseEvent;
 import com.bumptech.glide.Glide;
 import java.text.DateFormat;
 import java.text.ParseException;

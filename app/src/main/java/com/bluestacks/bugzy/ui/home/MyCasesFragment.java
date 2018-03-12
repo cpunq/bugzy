@@ -15,13 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluestacks.bugzy.models.Status;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.common.CaseAdapter;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.models.resp.Case;
+import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
 
 import java.util.List;
