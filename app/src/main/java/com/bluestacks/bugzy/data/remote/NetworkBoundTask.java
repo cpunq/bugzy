@@ -3,7 +3,7 @@ package com.bluestacks.bugzy.data.remote;
 
 import com.google.gson.Gson;
 
-import com.bluestacks.bugzy.models.Resource;
+import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;

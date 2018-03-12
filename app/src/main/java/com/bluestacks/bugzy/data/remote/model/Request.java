@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.models;
+package com.bluestacks.bugzy.data.remote.model;
 
 
 public abstract class Request {

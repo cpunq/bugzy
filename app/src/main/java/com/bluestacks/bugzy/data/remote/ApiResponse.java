@@ -3,7 +3,7 @@ package com.bluestacks.bugzy.data.remote;
 import com.google.gson.Gson;
 
 import com.bluestacks.bugzy.common.Const;
-import com.bluestacks.bugzy.models.Error;
+import com.bluestacks.bugzy.data.remote.model.Error;
 
 import android.support.annotation.Nullable;
 import java.io.IOException;
@@ -52,8 +52,8 @@ public class ApiResponse<T> {
             if (response.errorBody() != null) {
                 try {
                     String stringbody = response.errorBody().string();
-                    body = mGson.fromJson(stringbody, (Class<T>) com.bluestacks.bugzy.models.Response.class);
-                    Error e = (Error)((com.bluestacks.bugzy.models.Response)body).getErrors().get(0);
+                    body = mGson.fromJson(stringbody, (Class<T>) com.bluestacks.bugzy.data.remote.model.Response.class);
+                    Error e = (Error)((com.bluestacks.bugzy.data.remote.model.Response)body).getErrors().get(0);
                     errorMessage  = e.getMessage();
                 } catch (IOException ignored) {
                     ignored.printStackTrace();

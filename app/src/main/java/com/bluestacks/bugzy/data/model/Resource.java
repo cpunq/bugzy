@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.bluestacks.bugzy.models;
-
-import com.bluestacks.bugzy.data.model.Status;
+package com.bluestacks.bugzy.data.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

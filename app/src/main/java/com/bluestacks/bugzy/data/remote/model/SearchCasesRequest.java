@@ -1,8 +1,6 @@
-package com.bluestacks.bugzy.models.resp;
+package com.bluestacks.bugzy.data.remote.model;
 
 import com.google.gson.annotations.SerializedName;
-
-import com.bluestacks.bugzy.models.Request;
 
 public class SearchCasesRequest  {
     private String[] cols;

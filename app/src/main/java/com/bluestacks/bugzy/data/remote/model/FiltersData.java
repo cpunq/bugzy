@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.models.resp;
+package com.bluestacks.bugzy.data.remote.model;
 
 
 import com.bluestacks.bugzy.data.model.Filter;

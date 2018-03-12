@@ -2,7 +2,7 @@ package com.bluestacks.bugzy.ui.home;
 
 
 import com.bluestacks.bugzy.data.CasesRepository;
-import com.bluestacks.bugzy.models.Resource;
+import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Case;
 
 import android.arch.lifecycle.LiveData;

@@ -1,7 +1,5 @@
-package com.bluestacks.bugzy.models.resp;
+package com.bluestacks.bugzy.data.remote.model;
 
-
-import com.bluestacks.bugzy.models.Request;
 
 public class LoginRequest extends Request {
     protected String email;

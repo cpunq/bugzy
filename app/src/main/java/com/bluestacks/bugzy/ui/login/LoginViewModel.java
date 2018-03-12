@@ -3,9 +3,9 @@ package com.bluestacks.bugzy.ui.login;
 import com.google.gson.Gson;
 
 import com.bluestacks.bugzy.data.Repository;
-import com.bluestacks.bugzy.models.Resource;
-import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.LoginData;
+import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.Response;
+import com.bluestacks.bugzy.data.remote.model.LoginData;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 import com.bluestacks.bugzy.utils.Utils;
 

@@ -2,18 +2,17 @@ package com.bluestacks.bugzy.data.remote;
 
 import com.google.gson.JsonElement;
 
-import com.bluestacks.bugzy.models.Response;
-import com.bluestacks.bugzy.models.resp.FiltersRequest;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
-import com.bluestacks.bugzy.models.resp.ListCasesRequest;
-import com.bluestacks.bugzy.models.resp.ListPeopleData;
-import com.bluestacks.bugzy.models.resp.ListPeopleRequest;
-import com.bluestacks.bugzy.models.resp.LoginData;
-import com.bluestacks.bugzy.models.resp.LoginRequest;
-import com.bluestacks.bugzy.models.resp.MyDetailsData;
-import com.bluestacks.bugzy.models.resp.MyDetailsRequest;
-import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
-import com.bluestacks.bugzy.utils.LiveDataCallAdapter;
+import com.bluestacks.bugzy.data.remote.model.Response;
+import com.bluestacks.bugzy.data.remote.model.FiltersRequest;
+import com.bluestacks.bugzy.data.remote.model.ListCasesData;
+import com.bluestacks.bugzy.data.remote.model.ListCasesRequest;
+import com.bluestacks.bugzy.data.remote.model.ListPeopleData;
+import com.bluestacks.bugzy.data.remote.model.ListPeopleRequest;
+import com.bluestacks.bugzy.data.remote.model.LoginData;
+import com.bluestacks.bugzy.data.remote.model.LoginRequest;
+import com.bluestacks.bugzy.data.remote.model.MyDetailsData;
+import com.bluestacks.bugzy.data.remote.model.MyDetailsRequest;
+import com.bluestacks.bugzy.data.remote.model.SearchCasesRequest;
 
 import android.arch.lifecycle.LiveData;
 

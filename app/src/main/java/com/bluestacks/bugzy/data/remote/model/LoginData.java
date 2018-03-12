@@ -1,4 +1,4 @@
-package com.bluestacks.bugzy.models.resp;
+package com.bluestacks.bugzy.data.remote.model;
 
 public class LoginData {
     protected String token;

@@ -7,13 +7,13 @@ import com.bluestacks.bugzy.data.local.db.CaseDao;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
-import com.bluestacks.bugzy.models.Resource;
-import com.bluestacks.bugzy.models.Response;
+import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.FilterCasesResult;
-import com.bluestacks.bugzy.models.resp.ListCasesData;
-import com.bluestacks.bugzy.models.resp.ListCasesRequest;
-import com.bluestacks.bugzy.models.resp.SearchCasesRequest;
+import com.bluestacks.bugzy.data.remote.model.ListCasesData;
+import com.bluestacks.bugzy.data.remote.model.ListCasesRequest;
+import com.bluestacks.bugzy.data.remote.model.SearchCasesRequest;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;

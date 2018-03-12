@@ -1,6 +1,4 @@
-package com.bluestacks.bugzy.models.resp;
-
-import com.bluestacks.bugzy.models.Request;
+package com.bluestacks.bugzy.data.remote.model;
 
 public class FiltersRequest extends Request {
     public FiltersRequest() {

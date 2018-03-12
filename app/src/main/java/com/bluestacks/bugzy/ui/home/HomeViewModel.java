@@ -2,8 +2,8 @@ package com.bluestacks.bugzy.ui.home;
 
 
 import com.bluestacks.bugzy.data.Repository;
-import com.bluestacks.bugzy.models.Resource;
-import com.bluestacks.bugzy.models.resp.FiltersData;
+import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.FiltersData;
 import com.bluestacks.bugzy.data.model.Person;
 
 import android.arch.lifecycle.MediatorLiveData;

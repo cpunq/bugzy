@@ -15,7 +15,7 @@ package com.bluestacks.bugzy.data.remote;/*
  */
 
 
-import com.bluestacks.bugzy.models.Resource;
+import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.utils.AppExecutors;
 import com.bluestacks.bugzy.utils.Objects;
 
