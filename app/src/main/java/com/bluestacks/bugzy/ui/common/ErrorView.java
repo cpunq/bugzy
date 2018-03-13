@@ -86,6 +86,20 @@ public class ErrorView extends RelativeLayout {
     }
 
     /**
+     * Shows text without showing the error image
+     * @param message
+     */
+    public void showMessage(String message) {
+        this.show();
+
+        this.setMessage(message);
+
+        // Change the visibility
+        mProgressBar.setVisibility(View.GONE);
+        mErrorImageView.setVisibility(GONE);
+    }
+
+    /**
      * Updates the current message
      * This functions assumes that the view is already visible, hence we won't call show()
      * @param message

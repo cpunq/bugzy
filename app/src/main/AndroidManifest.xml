@@ -43,7 +43,8 @@
 
         <activity
                 android:name=".ui.search.SearchActivity"
-                android:theme="@style/SearchActivityTheme">
+                android:theme="@style/SearchActivityTheme"
+                android:windowSoftInputMode="adjustResize">
         </activity>
         <service android:name=".utils.BugzyDataSyncService" />
 

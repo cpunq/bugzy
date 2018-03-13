@@ -16,15 +16,18 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
+                android:background="@android:color/white"
                 android:layout_height="wrap_content">
 
             <LinearLayout android:layout_width="fill_parent"
                           android:layout_height="fill_parent"
-                          android:paddingTop="4dp"
-                          android:paddingBottom="4dp">
+            >
                 <EditText
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="?attr/actionBarSize"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
                         android:textSize="@dimen/subheading"
                         android:background="@android:color/transparent"
                         android:textColorHint="@color/textColorSecondary"
@@ -46,5 +49,27 @@
                  android:layout_height="match_parent"
                  app:layout_behavior="@string/appbar_scrolling_view_behavior"
                  android:id="@+id/container_frame">
+        <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#eeeeee">
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical"/>
+
+            <com.bluestacks.bugzy.ui.common.ErrorView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:id="@+id/viewError">
+            </com.bluestacks.bugzy.ui.common.ErrorView>
+
+        </RelativeLayout>
     </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

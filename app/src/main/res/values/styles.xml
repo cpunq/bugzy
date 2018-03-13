@@ -12,7 +12,12 @@
     </style>
 
     <style name="SearchActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#7D7D7D</item>
     </style>
     <style name="SearchActivityTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>

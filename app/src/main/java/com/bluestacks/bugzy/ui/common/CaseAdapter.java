@@ -18,6 +18,10 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
     private OnItemClickListener mItemClickListener;
     private List<Case> mBugs;
 
+    public CaseAdapter(OnItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
     public CaseAdapter(List<Case> bugs, OnItemClickListener listener) {
         mBugs = bugs ;
         mItemClickListener = listener;

@@ -4,6 +4,7 @@ package com.bluestacks.bugzy.data;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.CaseDao;
+import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
@@ -127,5 +128,45 @@ public class CasesRepository {
                 return mApiService.searchCases(new SearchCasesRequest(cols, kase.getIxBug()+""));
             }
         }.asLiveData();
+    }
+
+    public LiveData<SearchResultsResource<List<Case>>> searchCases(final String query) {
+        return Transformations.map(new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
+            List<Case> mCases = null;
+
+            @Override
+            protected void saveCallResult(@NonNull Response<ListCasesData> item) {
+                mCases = item.getData().getCases();
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Case> data) {
+                // Fetch always
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Case>> loadFromDb() {
+                return new LiveData<List<Case>>() {
+                    @Override
+                    protected void onActive() {
+                        super.onActive();
+                        setValue(mCases);
+                    }
+                };
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
+                String[] cols =new String[]{
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
+                };
+                return mApiService.searchCases(new SearchCasesRequest(cols, query));
+            }
+        }.asLiveData(), v -> {
+            return new SearchResultsResource<>(query, v);
+        });
     }
 }
