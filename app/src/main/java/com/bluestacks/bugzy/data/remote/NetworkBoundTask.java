@@ -17,8 +17,8 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public abstract class NetworkBoundTask<ResultType> implements Runnable {
-    public MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
+public abstract class NetworkBoundTask<ResponseType> implements Runnable {
+    public MediatorLiveData<Resource<ResponseType>> result = new MediatorLiveData<>();
 
     AppExecutors mAppExecutors;
     Gson mGson;
@@ -32,10 +32,10 @@ public abstract class NetworkBoundTask<ResultType> implements Runnable {
 
     @Override
     public void run() {
-        Call<ResultType> call = createCall();
+        Call<ResponseType> call = createCall();
         try {
-            Response<ResultType> response = call.execute();
-            ApiResponse<ResultType> apiResponse = new ApiResponse<ResultType>(response, mGson);
+            Response<ResponseType> response = call.execute();
+            ApiResponse<ResponseType> apiResponse = new ApiResponse<ResponseType>(response, mGson);
             if (apiResponse.isSuccessful()) {
                 result.postValue(Resource.success(apiResponse.body));
                 saveCallResult(apiResponse.body);
@@ -43,24 +43,24 @@ public abstract class NetworkBoundTask<ResultType> implements Runnable {
                 result.postValue(Resource.error(apiResponse.errorMessage, null));
             }
         } catch (IOException e) {
-            ApiResponse<ResultType> apiResponse = new ApiResponse<ResultType>(e, mGson);
+            ApiResponse<ResponseType> apiResponse = new ApiResponse<ResponseType>(e, mGson);
             result.postValue(Resource.error(apiResponse.errorMessage, null));
         }
     }
 
     @WorkerThread
-    protected ResultType processResponse(ApiResponse<ResultType> response) {
+    protected ResponseType processResponse(ApiResponse<ResponseType> response) {
         return response.body;
     }
 
     @WorkerThread
-    public abstract void saveCallResult(@NonNull ResultType result);
+    public abstract void saveCallResult(@NonNull ResponseType result);
 
     @NonNull
     @WorkerThread
-    protected abstract Call<ResultType> createCall();
+    protected abstract Call<ResponseType> createCall();
 
-    public LiveData<Resource<ResultType>> asLiveData() {
+    public LiveData<Resource<ResponseType>> asLiveData() {
         return result;
     }
 }

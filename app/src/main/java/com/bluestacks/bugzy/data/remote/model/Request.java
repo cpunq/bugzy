@@ -1,7 +1,12 @@
 package com.bluestacks.bugzy.data.remote.model;
 
 
-public abstract class Request {
+public class Request {
+   /**
+    * It is not required any more because we are now using
+    * the new api format from manuscript, which has
+    * this cmd in the URL itself
+    */
    private String cmd;
 
    public Request(String cmd) {

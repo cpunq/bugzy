@@ -2,6 +2,10 @@ package com.bluestacks.bugzy.data.remote;
 
 import com.google.gson.JsonElement;
 
+import com.bluestacks.bugzy.data.remote.model.ListAreasData;
+import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
+import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
+import com.bluestacks.bugzy.data.remote.model.Request;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.remote.model.FiltersRequest;
 import com.bluestacks.bugzy.data.remote.model.ListCasesData;
@@ -42,4 +46,13 @@ public interface FogbugzApiService {
 
     @POST("/api/searchCases")
     LiveData<ApiResponse<Response<ListCasesData>>> searchCases(@Body SearchCasesRequest request);
+
+    @POST("/api/listAreas")
+    LiveData<ApiResponse<Response<ListAreasData>>> getAreas(@Body Request request);
+
+    @POST("/api/listProjects")
+    LiveData<ApiResponse<Response<ListProjectsData>>> getProjects(@Body Request request);
+
+    @POST("/api/listFixFors")
+    LiveData<ApiResponse<Response<ListMilestonesData>>> getMilestones(@Body Request request);
 }

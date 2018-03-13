@@ -2,7 +2,7 @@ package com.bluestacks.bugzy.di.module;
 
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.CaseDao;
-import com.bluestacks.bugzy.ui.casedetails.CaseDetailsFragment;
+import com.bluestacks.bugzy.data.local.db.MiscDao;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
@@ -39,5 +39,11 @@ public class AppModule {
     @Singleton
     CaseDao provideCaseDao(BugzyDb db) {
         return db.caseDao();
+    }
+
+    @Provides
+    @Singleton
+    MiscDao provideMiscDao(BugzyDb db) {
+        return db.miscDao();
     }
 }

@@ -45,6 +45,8 @@
                 android:name=".ui.search.SearchActivity"
                 android:theme="@style/SearchActivityTheme">
         </activity>
+        <service android:name=".utils.BugzyDataSyncService" />
+
         <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts"/>
 
     </application>

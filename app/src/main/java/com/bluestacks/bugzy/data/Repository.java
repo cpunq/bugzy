@@ -6,13 +6,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import com.bluestacks.bugzy.data.local.DatabaseHelper;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.data.local.db.BugzyDb;
+import com.bluestacks.bugzy.data.local.db.MiscDao;
+import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.Milestone;
+import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.ListAreasData;
+import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
+import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
+import com.bluestacks.bugzy.data.remote.model.Request;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.data.remote.model.FiltersData;
@@ -27,6 +35,7 @@ import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,15 +57,21 @@ public class Repository {
     private Gson mGson;
     private MutableLiveData<String> mToken;
     private PrefsHelper mPrefs;
-    private DatabaseHelper mDbHelper;
+    private MiscDao mMiscDao;
+    private BugzyDb db;
+
+    private MediatorLiveData<Resource<List<Area>>> mAreasLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Project>>> mProjectsLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Milestone>>> mMilestonesLiveData = new MediatorLiveData<>();
 
     @Inject
-    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, DatabaseHelper dbHelper) {
+    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mGson = gson;
         mPrefs = prefs;
-        mDbHelper = dbHelper;
+        mMiscDao = miscDao;
+        db = databaseObject;
 
         mToken = new MutableLiveData<String>() {
             @Override
@@ -70,9 +85,24 @@ public class Repository {
                 } else {
                     setValue(token);
                 }
-
             }
         };
+
+        mAreasLiveData.addSource(fetchAreas(), value -> mAreasLiveData.setValue(value));
+        mMilestonesLiveData.addSource(fetchMilestones(), value -> mMilestonesLiveData.setValue(value));
+        mProjectsLiveData.addSource(fetchProjects(), value -> mProjectsLiveData.setValue(value));
+    }
+
+    public MediatorLiveData<Resource<List<Area>>> getAreasLiveData() {
+        return mAreasLiveData;
+    }
+
+    public MediatorLiveData<Resource<List<Project>>> getProjectsLiveData() {
+        return mProjectsLiveData;
+    }
+
+    public MediatorLiveData<Resource<List<Milestone>>> getMilestonesLiveData() {
+        return mMilestonesLiveData;
     }
 
     public LiveData<Resource<Response<LoginData>>> temp(String email, String password) {
@@ -262,6 +292,105 @@ public class Repository {
             @Override
             protected LiveData<ApiResponse<Response<ListPeopleData>>> createCall() {
                 return mApiService.listPeople(new ListPeopleRequest());
+            }
+        }.asLiveData();
+    }
+
+    private LiveData<Resource<List<Area>>> fetchAreas() {
+        return new NetworkBoundResource<List<Area>, Response<ListAreasData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListAreasData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insert(item.getData().getAreas());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Area> data) {
+                // Always fetch
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Area>> loadFromDb() {
+                return mMiscDao.loadAreas();
+            };
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListAreasData>>> createCall() {
+                return mApiService.getAreas(new Request("listAreas"));
+            }
+        }.asLiveData();
+    }
+
+    private LiveData<Resource<List<Milestone>>> fetchMilestones() {
+        return new NetworkBoundResource<List<Milestone>, Response<ListMilestonesData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListMilestonesData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertMilestones(item.getData().getMilestones());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Milestone> data) {
+                // Always fetch
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Milestone>> loadFromDb() {
+                return mMiscDao.loadMilestones();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListMilestonesData>>> createCall() {
+                return mApiService.getMilestones(new Request("listFixFors"));
+            }
+        }.asLiveData();
+    }
+
+    public LiveData<Resource<List<Project>>> fetchProjects() {
+        return new NetworkBoundResource<List<Project>, Response<ListProjectsData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListProjectsData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertProjects(item.getData().getProjects());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Project> data) {
+                // Always fetch
+                return true;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Project>> loadFromDb() {
+                return mMiscDao.loadProjects();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListProjectsData>>> createCall() {
+                return mApiService.getProjects(new Request("listProjects"));
             }
         }.asLiveData();
     }
