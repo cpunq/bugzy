@@ -51,7 +51,7 @@ public class CasesRepository {
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
                 db.beginTransaction();
                 try {
-                    mCaseDao.insertCases(item.getData().getCases());
+                    mCaseDao.upsertCases(item.getData().getCases());
                     mCaseDao.insert(new FilterCasesResult(filter, item.getData().getCaseIds()));
                     db.setTransactionSuccessful();
                 } finally {
@@ -86,7 +86,7 @@ public class CasesRepository {
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
                 String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sPersonAssignedTo","sPersonOpenedBy"
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor", "sPersonAssignedTo","sPersonOpenedBy"
                 };
                 ListCasesRequest request = new ListCasesRequest(cols, filter);
                 return mApiService.listCases(request);
@@ -100,7 +100,7 @@ public class CasesRepository {
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
                 db.beginTransaction();
                 try {
-                    mCaseDao.insert(item.getData().getCases().get(0));
+                    mCaseDao.upsert(item.getData().getCases().get(0));
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();

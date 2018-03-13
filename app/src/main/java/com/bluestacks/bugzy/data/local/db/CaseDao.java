@@ -9,16 +9,57 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-
+import android.arch.persistence.room.Transaction;
+import android.arch.persistence.room.Update;
 import java.util.List;
 
 @Dao
 public abstract class CaseDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(Case... cases);
+    public static final String TAG = CaseDao.class.getName();
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertCases(List<Case> cases);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public abstract long insert(Case kase);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    public abstract int update(Case kase);
+
+    @Query("UPDATE `Case` SET title = :title, priority = :priority, fixFor = :fixFor, projectName = :project, projectArea = :area, " +
+            "status = :status, personAssignedTo = :personAssignedTo, personOpenedBy = :personOpenedBy, favorite = :favorite WHERE ixBug = :id")
+    public abstract int updatePartial(String title, int priority, String fixFor, String project, String area,
+                                      String status, String personAssignedTo, String personOpenedBy, boolean favorite, int id);
+
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public abstract long[] insertCases(List<Case> cases);
+
+    @Update(onConflict = OnConflictStrategy.FAIL)
+    public abstract int updateCases(List<Case> cases);
+
+    @Transaction
+    public void upsert(Case kase) {
+        if (insert(kase) == -1) {
+            update(kase);
+        }
+    }
+
+    /**
+     * It does a partial UPDATE in case the case is already present
+     * @param cases
+     */
+    @Transaction
+    public void upsertCases(List<Case> cases) {
+        long[] ids = insertCases(cases);
+        int i = 0;
+        for (long id: ids) {
+            if (id == -1) {
+                // cautiously update
+                Case kase = cases.get(i);
+                updatePartial(kase.getTitle(), kase.getPriority(), kase.getFixFor(), kase.getProjectName(), kase.getProjectArea(),
+                        kase.getStatus(), kase.getPersonAssignedTo(), kase.getPersonOpenedBy(), kase.isFavorite(), kase.getIxBug());
+            }
+            i++;
+        }
+    }
 
     @Query("SELECT * FROM `Case` WHERE ixBug in (:ids)")
     public abstract LiveData<List<Case>> loadCasesById(List<Integer> ids);
