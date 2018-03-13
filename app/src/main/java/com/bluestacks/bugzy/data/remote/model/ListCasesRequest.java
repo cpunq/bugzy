@@ -8,6 +8,8 @@ public class ListCasesRequest extends Request {
     @SerializedName("sFilter")
     String filter;
 
+    private int max = 200;
+
     public ListCasesRequest(String[] cols, String filter) {
         super("listCases");
         this.cols = cols;
@@ -32,5 +34,13 @@ public class ListCasesRequest extends Request {
 
     public void setFilter(String filter) {
         this.filter = filter;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
     }
 }

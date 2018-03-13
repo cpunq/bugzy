@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class SearchCasesRequest  {
     private String[] cols;
-    private int max;
+    private int max = 200;
 
     @SerializedName("q")
     private String query;
