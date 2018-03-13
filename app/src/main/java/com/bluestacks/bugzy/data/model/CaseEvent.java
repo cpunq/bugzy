@@ -16,7 +16,7 @@ public class CaseEvent implements Serializable {
     String bugEvent;
 
     @SerializedName( "evt")
-    String evt;
+    int evt;
 
     @SerializedName( "sVerb")
     String verb;
@@ -110,11 +110,11 @@ public class CaseEvent implements Serializable {
         this.bugEvent = bugEvent;
     }
 
-    public String getEvt() {
+    public int getEvt() {
         return evt;
     }
 
-    public void setEvt(String evt) {
+    public void setEvt(int evt) {
         this.evt = evt;
     }
 
