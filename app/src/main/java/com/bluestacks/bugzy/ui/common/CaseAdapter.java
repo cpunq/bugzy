@@ -80,19 +80,15 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
             mItemDescription.setText(bug.getTitle());
             mFooter.setText("Assigned to: " + bug.getPersonAssignedTo());
 
-            if(bug.getPriority() == 3){
-                mPriority.setBackgroundColor(Color.parseColor("#e74c3c"));
-            }
-            else if(bug.getPriority() == 5) {
-                mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
-            }
-            else if(bug.getPriority() == 4) {
+            if (bug.getPriority() <= 3) {
+                mPriority.setBackgroundColor(Color.parseColor("#E74E54"));
+            }  else if(bug.getPriority() == 4) {
                 mPriority.setBackgroundColor(Color.parseColor("#95a5a6"));
-            }
-            else if(bug.getPriority() == 7) {
+            } else if(bug.getPriority() == 5) {
+                mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
+            } else if(bug.getPriority() <= 7) {
                 mPriority.setBackgroundColor(Color.parseColor("#bdc3c7"));
-            }
-            else {
+            } else {
                 mPriority.setBackgroundColor(Color.parseColor("#ecf0f1"));
             }
         }

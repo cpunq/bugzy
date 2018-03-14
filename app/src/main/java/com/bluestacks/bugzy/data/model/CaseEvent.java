@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.data.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class CaseEvent implements Serializable {
@@ -28,7 +29,7 @@ public class CaseEvent implements Serializable {
     String personAssignedTo;
 
     @SerializedName( "dt" )
-    String date;
+    Date date;
 
     @SerializedName( "sURL")
     String url;
@@ -246,12 +247,12 @@ public class CaseEvent implements Serializable {
         this.bug_id = bug_id;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

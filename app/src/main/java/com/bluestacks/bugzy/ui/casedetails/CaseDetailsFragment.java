@@ -166,16 +166,15 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         Case bug = mCase;
         Log.d(Const.TAG," " + mCase.getFixFor());
         Log.d(Const.TAG," " + mCase.getProjectArea());
-        if(bug.getPriority() == 3){
+        if(bug.getPriority() <= 3){
             mPriorityIndicator.setBackgroundColor(Color.parseColor("#e74c3c"));
+        } else if(bug.getPriority() == 4) {
+            mPriorityIndicator.setBackgroundColor(Color.parseColor("#95a5a6"));
         }
         else if(bug.getPriority() == 5) {
             mPriorityIndicator.setBackgroundColor(Color.parseColor("#ddb65b"));
         }
-        else if(bug.getPriority() == 4) {
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#95a5a6"));
-        }
-        else if(bug.getPriority() == 7) {
+        else if(bug.getPriority() <= 7) {
             mPriorityIndicator.setBackgroundColor(Color.parseColor("#bdc3c7"));
         }
         else {
@@ -272,15 +271,8 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         }
 
         public void bindData(CaseEvent bug) {
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             DateFormat format2 = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.US);
-            try {
-                Date d = formatter.parse(String.valueOf(bug.getDate()));
-                mItemDate.setText(format2.format(d));
-            }catch(ParseException e) {
-                mItemDate.setText(String.valueOf(bug.getDate()));
-                Log.d(Const.TAG,"Failed to parse tags");
-            }
+            mItemDate.setText(format2.format(bug.getDate()));
 
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
             if(!TextUtils.isEmpty(bug.getContentHtml())) {
