@@ -11,7 +11,7 @@ public class Milestone {
     private int id;
 
     @SerializedName("sFixFor")
-    private String area;
+    private String name;
 
     @SerializedName("ixProject")
     private int projectId;
@@ -27,12 +27,12 @@ public class Milestone {
         this.id = id;
     }
 
-    public String getArea() {
-        return area;
+    public String getName() {
+        return name;
     }
 
-    public void setArea(String area) {
-        this.area = area;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getProjectId() {
