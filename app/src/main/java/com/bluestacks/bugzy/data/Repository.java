@@ -59,19 +59,22 @@ public class Repository {
     private PrefsHelper mPrefs;
     private MiscDao mMiscDao;
     private BugzyDb db;
+    private SearchSuggestionRepository mSsRespository;
+
 
     private MediatorLiveData<Resource<List<Area>>> mAreasLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<Project>>> mProjectsLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<Milestone>>> mMilestonesLiveData = new MediatorLiveData<>();
 
     @Inject
-    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject) {
+    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mGson = gson;
         mPrefs = prefs;
         mMiscDao = miscDao;
         db = databaseObject;
+        mSsRespository = ssRepository;
 
         mToken = new MutableLiveData<String>() {
             @Override
@@ -268,6 +271,7 @@ public class Repository {
             List<Person> mPersons;
             @Override
             protected void saveCallResult(@NonNull Response<ListPeopleData> item) {
+                mSsRespository.updatePeopleSearchSuggestion(item.getData().getPersons());
                 mPersons = item.getData().getPersons();
             }
 
@@ -300,6 +304,7 @@ public class Repository {
         return new NetworkBoundResource<List<Area>, Response<ListAreasData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListAreasData> item) {
+                mSsRespository.updateAreaSearchSuggestion(item.getData().getAreas());
                 db.beginTransaction();
                 try {
                     mMiscDao.insert(item.getData().getAreas());
@@ -333,6 +338,7 @@ public class Repository {
         return new NetworkBoundResource<List<Milestone>, Response<ListMilestonesData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListMilestonesData> item) {
+                mSsRespository.updateMilestoneSearchSuggestion(item.getData().getMilestones());
                 db.beginTransaction();
                 try {
                     mMiscDao.insertMilestones(item.getData().getMilestones());
