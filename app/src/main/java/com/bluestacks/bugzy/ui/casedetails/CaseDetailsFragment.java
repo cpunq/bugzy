@@ -30,10 +30,7 @@ import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseEvent;
 import com.bumptech.glide.Glide;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -116,14 +113,21 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         return v;
     }
 
+    private void setupViews() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mAdapter = new RecyclerAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setupViews();
+
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(CaseDetailsFragmentViewModel.class);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-
+        showCaseDetails(mCase);
         mViewModel.getToken().observe(this, token -> {
             if (token == null) {
                 // Not logged in
@@ -142,6 +146,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
         mViewModel.getSnackBarText().observe(this, text -> Snackbar.make(getView(), text, Snackbar.LENGTH_LONG).show());
     }
+    private RecyclerAdapter mAdapter;
 
     @UiThread
     protected void showCaseDetails(Case aCase) {
@@ -150,9 +155,8 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
         List<CaseEvent> evs = mCase.getCaseevents();
         if (evs != null) {
-            Collections.reverse(evs);
-            RecyclerAdapter adapter = new RecyclerAdapter(evs);
-            mRecyclerView.setAdapter(adapter);
+            mAdapter.setData(evs);
+            mAdapter.notifyDataSetChanged();
         }
 
         mBugId.setText(String.valueOf(mCase.getIxBug()));
@@ -189,11 +193,15 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<EventHolder> {
+        private List<CaseEvent> mCaseEvents;
 
-        private List<CaseEvent> mBugs;
-        private RecyclerAdapter(List<CaseEvent> bugs) {
-            mBugs = bugs ;
+        private RecyclerAdapter() {
         }
+
+        public void setData(List<CaseEvent> events) {
+            mCaseEvents = events;
+        }
+
         @Override
         public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View inflatedView;
@@ -219,13 +227,13 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
         @Override
         public void onBindViewHolder(EventHolder holder, int position) {
-            CaseEvent bug = mBugs.get(position);
+            CaseEvent bug = mCaseEvents.get(position);
             holder.bindData(bug);
         }
 
         @Override
         public int getItemCount() {
-            return mBugs.size();
+            return mCaseEvents == null ? 0 : mCaseEvents.size();
         }
 
         @Override
@@ -233,7 +241,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             if(position == 0) {
                 return 0;
             }
-            else if(position == mBugs.size()-1) {
+            else if(position == mCaseEvents.size()-1) {
                 return 2;
             }
             return 1;
@@ -290,11 +298,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             }
 
             if(bug.getsAttachments().size()>0) {
-                Log.d(Const.TAG,bug.getsAttachments().get(0).getUrl());
                 if(bug.getsAttachments().get(0).getFilename().endsWith(".png") || bug.getsAttachments().get(0).getFilename().endsWith(".jpg") ) {
                     mImageAttachment.setVisibility(View.VISIBLE);
                     final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
-                    Log.d(Const.TAG,img_path);
                     Glide.with(mContext).load(img_path)
                             .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
                             .into(mImageAttachment);
