@@ -11,6 +11,7 @@ import android.arch.persistence.room.TypeConverter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BugzyTypeConverters {
@@ -43,7 +44,11 @@ public class BugzyTypeConverters {
     @TypeConverter
     public static List<CaseEvent> caseEventListFromString(String value) {
         Type listType = new TypeToken<List<CaseEvent>>() {}.getType();
-        return sGson.fromJson(value, listType);
+        List<CaseEvent> events =  sGson.fromJson(value, listType);
+        if (events != null) {
+            Collections.sort(events, ((caseEvent, t1) -> Long.compare(t1.getDate().getTime(), caseEvent.getDate().getTime())));
+        }
+        return events;
     }
 
     @TypeConverter
