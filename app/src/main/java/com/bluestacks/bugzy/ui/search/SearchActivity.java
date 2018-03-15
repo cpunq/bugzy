@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.ui.search;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.model.SearchSuggestion;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
@@ -21,7 +22,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,9 +43,12 @@ import butterknife.ButterKnife;
 
 
 public class SearchActivity extends BaseActivity implements OnItemClickListener {
+    public static final String TAG = SearchSuggestion.class.getName();
     private SearchActivityViewModel mViewModel;
     private CaseAdapter mAdapter;
+    private SearchSuggestionAdapter mSearchSuggestionAdapter;
     private List<Case> mCases;
+    private List<SearchSuggestion> mSearchSuggestions;
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
@@ -57,6 +63,9 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
     @BindView(R.id.viewError)
     ErrorView mErrorView;
+
+    @BindView(R.id.searchRecyclerView)
+    RecyclerView mSearchSuggestionView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +82,25 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
     private void setupViews() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        prepareSearchEditText();
+
+        mSearchSuggestionAdapter = new SearchSuggestionAdapter(position -> {
+            if (mSearchSuggestions == null) {
+                return;
+            }
+            mViewModel.searchSuggestionSelected(mSearchSuggestions.get(position));
+        });
+        mSearchSuggestionView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchSuggestionView.setAdapter(mSearchSuggestionAdapter);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+        mAdapter = new CaseAdapter(mCases, this);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void prepareSearchEditText() {
         mSearchEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mSearchEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -93,6 +121,8 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    // Hide suggestions
+                    mSearchSuggestionView.setVisibility(View.GONE);
                     mViewModel.search(v.getText().toString());
                     dismissKeyboard(v.getWindowToken());
                     return true;
@@ -101,11 +131,24 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
             }
         });
 
-        // Initialize adapter and recyclerView
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        mAdapter = new CaseAdapter(mCases, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mSearchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // Show suggestions
+                mSearchSuggestionView.setVisibility(View.VISIBLE);
+                mViewModel.searchTextChanged(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override
@@ -148,6 +191,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
         mViewModel.getClearSearchEvent().observe(this, v -> {
             mSearchEditText.setText("");
+
             mCases = null;
             mAdapter.setData(mCases);
             mAdapter.notifyDataSetChanged();
@@ -155,6 +199,21 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
             mSearchEditText.requestFocus();
             showKeyboard(mSearchEditText);
+        });
+
+        mViewModel.getSearchSuggestions().observe(this, list -> {
+            // Note: list can be null
+            mSearchSuggestions = list;
+            mSearchSuggestionAdapter.setData(mSearchSuggestions);
+            mSearchSuggestionAdapter.notifyDataSetChanged();
+        });
+
+        mViewModel.getSearchChangeEvent().observe(this, updateQuery -> {
+            mSearchEditText.setText(updateQuery);
+            mSearchEditText.setSelection(mSearchEditText.getText().length());
+
+            // Hide suggestions
+            mSearchSuggestionView.setVisibility(View.GONE);
         });
     }
 

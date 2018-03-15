@@ -20,8 +20,7 @@
                 android:layout_height="wrap_content">
 
             <LinearLayout android:layout_width="fill_parent"
-                          android:layout_height="fill_parent"
-            >
+                          android:layout_height="fill_parent">
                 <EditText
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -55,20 +54,29 @@
                 android:layout_height="match_parent"
                 android:background="#eeeeee">
 
-            <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:scrollbars="vertical"/>
-
             <com.bluestacks.bugzy.ui.common.ErrorView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone"
                     android:id="@+id/viewError">
             </com.bluestacks.bugzy.ui.common.ErrorView>
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical"/>
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/searchRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:background="@android:color/white"
+                    android:scrollbars="vertical"/>
 
         </RelativeLayout>
     </FrameLayout>
