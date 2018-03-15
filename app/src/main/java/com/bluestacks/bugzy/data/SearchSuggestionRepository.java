@@ -2,49 +2,20 @@ package com.bluestacks.bugzy.data;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.MiscDao;
 import com.bluestacks.bugzy.data.model.Area;
-import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
-import com.bluestacks.bugzy.data.model.Project;
-import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
-import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
-import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
-import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
-import com.bluestacks.bugzy.data.remote.model.FiltersData;
-import com.bluestacks.bugzy.data.remote.model.FiltersRequest;
-import com.bluestacks.bugzy.data.remote.model.ListAreasData;
-import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
-import com.bluestacks.bugzy.data.remote.model.ListPeopleData;
-import com.bluestacks.bugzy.data.remote.model.ListPeopleRequest;
-import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
-import com.bluestacks.bugzy.data.remote.model.LoginData;
-import com.bluestacks.bugzy.data.remote.model.LoginRequest;
-import com.bluestacks.bugzy.data.remote.model.MyDetailsData;
-import com.bluestacks.bugzy.data.remote.model.MyDetailsRequest;
-import com.bluestacks.bugzy.data.remote.model.Request;
-import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,8 +23,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import retrofit2.Call;
 
 @Singleton
 public class SearchSuggestionRepository {
@@ -70,6 +39,7 @@ public class SearchSuggestionRepository {
         public static final String AREA ="area";
         public static final String STATUS ="status";
         public static final String ASSIGNED_TO ="assigned_to";
+        public static final String OPENED_BY ="opened_by";
         public static final String ORDER_BY ="order_by";
         public static final String PRIORITY ="priority";
     }
@@ -132,6 +102,10 @@ public class SearchSuggestionRepository {
                     String text = "assignedTo:'" + (p.getFullname() +"'");
                     String id = "assignedto:" + (p.getFullname());
                     suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.ASSIGNED_TO));
+
+                    text = "openedBy:'" + (p.getFullname() +"'");
+                    id = "openedby:" + (p.getFullname());
+                    suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.OPENED_BY));
                 }
                 mMiscDao.insertSearchSuggestions(suggestions);
             }
