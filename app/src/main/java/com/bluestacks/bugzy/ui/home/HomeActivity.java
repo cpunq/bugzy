@@ -197,7 +197,6 @@ public class HomeActivity extends BaseActivity
         mFiltersMap.clear();
         // Clear the navItemTagMap as well, because the navigation items have been changed
         mNavItemTagMap.clear();
-        mHomeNavItemId = -1;
 
         // Add the new filters to navigation view
         int firstMenuItemId = -1;
@@ -248,6 +247,7 @@ public class HomeActivity extends BaseActivity
         }
         mFilters = filters;
         int defaultItemId = prepareNavHelperData(filters);
+        mHomeNavItemId = defaultItemId;
 
         // Unlock the drawer
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -317,13 +317,19 @@ public class HomeActivity extends BaseActivity
         boolean addToBackstack = true;
 
         if (id == R.id.nav_people) {
+            if (mCurrentFragment != null && "people".equals(mCurrentFragment.getTag())) {
+                // Do not open the same fragment again
+                return true;
+            }
             fragment = PeopleFragment.getInstance();
             tag = "people";
         } else if (mFiltersMap.containsKey(item.getItemId())) {
-            // Check if its a filter
-            //its from a filter
             Filter f = mFiltersMap.get(item.getItemId());
             tag = "filter_" + f.getFilter();
+            if (mCurrentFragment != null && tag.equals(mCurrentFragment.getTag())) {
+                // Do not open the same fragment again
+                return true;
+            }
             fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
         } else {
             // Else do nothing as of now
