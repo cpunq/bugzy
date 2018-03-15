@@ -202,10 +202,11 @@ public class SearchSuggestionRepository {
                             return Integer.compare(searchSuggestion.getId().indexOf(queryy), t1.getId().indexOf(queryy));
                         }
                     });
+                    List<SearchSuggestion> trimmed = value.subList(0,Math.min(value.size(), 30));
                     mAppExecutors.mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
-                            mMediator.setValue(value);
+                            mMediator.setValue(trimmed);
                         }
                     });
                 }
