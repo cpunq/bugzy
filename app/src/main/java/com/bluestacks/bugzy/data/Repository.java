@@ -147,6 +147,7 @@ public class Repository {
                 String token = result.getData().getToken();
                 mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
+                mSsRespository.insertDefaultSearchSuggestions();
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {

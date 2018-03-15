@@ -16,6 +16,8 @@ import com.bluestacks.bugzy.utils.AppExecutors;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.WorkerThread;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,6 +44,7 @@ public class SearchSuggestionRepository {
         public static final String OPENED_BY ="opened_by";
         public static final String ORDER_BY ="order_by";
         public static final String PRIORITY ="priority";
+        public static final String LAST_EDITED ="last_edited";
     }
 
 
@@ -54,6 +57,63 @@ public class SearchSuggestionRepository {
         mMiscDao = miscDao;
         db = databaseObject;
     }
+
+    @WorkerThread
+    public void insertDefaultSearchSuggestions() {
+        List<SearchSuggestion> suggestions = new ArrayList<>();
+
+        List<String> orderingOptions = getOrderringOptions();
+        for (String option : orderingOptions) {
+            String text = "orderBy:"+option;
+            String id = "orderby:"+option;
+            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.ORDER_BY));
+        }
+
+        for (int i = 1 ; i < 8 ; i++) {
+            String text = "priority:"+i;
+            suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.PRIORITY));
+        }
+
+        for (String option : getLastEditOptions()) {
+            String text = "lastEdited:" + option;
+            String id = "lastedited:" + option.replace("'", "");
+            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.PRIORITY));
+        }
+
+        String text = "status:active";
+        suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.STATUS));
+        text = "status:closed";
+        suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.STATUS));
+        text = "status:open";
+        suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.STATUS));
+        text = "status:resolved";
+        suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.STATUS));
+
+        db.miscDao().insertSearchSuggestions(suggestions);
+    }
+
+    private List<String> getOrderringOptions() {
+        List<String> options = new ArrayList<>();
+        options.add("area");
+        options.add("priority");
+        options.add("milestone");
+        options.add("category");
+        options.add("status");
+        options.add("lastEdited");
+        return options;
+    }
+
+    private List<String> getLastEditOptions() {
+        List<String> options = new ArrayList<>();
+        options.add("today");
+        options.add("yesterday");
+        options.add("'last month'");
+        options.add("'last week'");
+        options.add("'this month'");
+        options.add("'this week'");
+        return options;
+    }
+
 
     public void updateAreaSearchSuggestion(List<Area> areaList) {
         if (areaList == null || areaList.size() == 0) {
