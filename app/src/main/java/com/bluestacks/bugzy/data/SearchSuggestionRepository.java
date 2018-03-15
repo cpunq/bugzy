@@ -45,6 +45,8 @@ public class SearchSuggestionRepository {
         public static final String ORDER_BY ="order_by";
         public static final String PRIORITY ="priority";
         public static final String LAST_EDITED ="last_edited";
+        public static final String OPENED ="opened";
+        public static final String CLOSED ="closed";
     }
 
 
@@ -77,7 +79,17 @@ public class SearchSuggestionRepository {
         for (String option : getLastEditOptions()) {
             String text = "lastEdited:" + option;
             String id = "lastedited:" + option.replace("'", "");
-            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.PRIORITY));
+            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.LAST_EDITED));
+        }
+        for (String option : getLastEditOptions()) {
+            String text = "opened:" + option;
+            String id = "opened:" + option.replace("'", "");
+            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.OPENED));
+        }
+        for (String option : getLastEditOptions()) {
+            String text = "closed:" + option;
+            String id = "closed:" + option.replace("'", "");
+            suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.CLOSED));
         }
 
         String text = "status:active";
