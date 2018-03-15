@@ -68,8 +68,9 @@ public class AppModule {
 
                                 List<String> orderingOptions = getOrderringOptions();
                                 for (String option : orderingOptions) {
-                                    String text = "orderby:"+option;
-                                    suggestions.add(new SearchSuggestion(text, text, SearchSuggestionType.ORDER_BY));
+                                    String text = "orderBy:"+option;
+                                    String id = "orderby:"+option;
+                                    suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.ORDER_BY));
                                 }
 
                                 for (int i = 1 ; i < 8 ; i++) {

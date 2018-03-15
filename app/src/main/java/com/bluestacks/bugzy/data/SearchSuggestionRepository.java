@@ -129,8 +129,9 @@ public class SearchSuggestionRepository {
             public void run() {
                 List<SearchSuggestion> suggestions = new ArrayList<>();
                 for (Person p : personList) {
-                    String text = "assignedto:'" + (p.getFullname() +"'");
-                    suggestions.add(new SearchSuggestion(text.replace("'",""), text, SearchSuggestionType.ASSIGNED_TO));
+                    String text = "assignedTo:'" + (p.getFullname() +"'");
+                    String id = "assignedto:" + (p.getFullname());
+                    suggestions.add(new SearchSuggestion(id, text, SearchSuggestionType.ASSIGNED_TO));
                 }
                 mMiscDao.insertSearchSuggestions(suggestions);
             }
