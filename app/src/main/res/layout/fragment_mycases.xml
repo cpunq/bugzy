@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eeeeee">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/containerSorting"
+                  android:orientation="vertical"
+                  android:elevation="4dp"
+                  android:translationZ="-4dp"
+                  android:clipToPadding="false"
+                  android:layout_alignParentTop="true">
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewSorting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:scrollbars="vertical"/>
+
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="1dp"
+                   android:background="#E0E0E0"
+        />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/containerSorting"
+            android:layout_alignParentBottom="true"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"/>
+
+    <com.bluestacks.bugzy.ui.common.ErrorView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:id="@+id/viewError">
+    </com.bluestacks.bugzy.ui.common.ErrorView>
+</RelativeLayout>

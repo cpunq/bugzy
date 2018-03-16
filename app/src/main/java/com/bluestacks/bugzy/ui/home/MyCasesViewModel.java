@@ -18,15 +18,22 @@ public class MyCasesViewModel extends ViewModel {
     private CasesRepository mCasesRepository;
     private LiveData<Resource<List<Case>>> mCasesState;
     private MutableLiveData<String> mFilter = new MutableLiveData<>();
+    private MutableLiveData<List<String>> mAppliedSorting = new MutableLiveData<>();
+
 
     @Inject
     MyCasesViewModel(CasesRepository casesRepository) {
         mCasesRepository = casesRepository;
         mFilter = new MutableLiveData<>();
 
+        mAppliedSorting.setValue(casesRepository.getSortingOrders());
+
         mCasesState = Transformations.switchMap(mFilter, filter -> {
-            return mCasesRepository.cases(filter);
+            return mCasesRepository.cases(filter, null);
         });
+    }
+
+    public void onSortSelected(String sorting) {
     }
 
     public void loadCases(String filter) {
@@ -35,5 +42,9 @@ public class MyCasesViewModel extends ViewModel {
 
     public LiveData<Resource<List<Case>>> getCasesState() {
         return mCasesState;
+    }
+
+    public MutableLiveData<List<String>> getAppliedSorting() {
+        return mAppliedSorting;
     }
 }

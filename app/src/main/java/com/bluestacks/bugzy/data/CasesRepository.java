@@ -22,6 +22,7 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,6 +36,22 @@ public class CasesRepository {
     private BugzyDb db;
     private CaseDao mCaseDao;
 
+    public static class Sorting {
+        public static final String AREA = "Area";
+        public static final String CATEGORY = "Category";
+        public static final String MILESTONE= "Milestone";
+        public static final String PROJECT  = "Project";
+        public static final String PRIORITY = "Priority";
+        public static final String STATUS   = "Status";
+
+        public static final String AREA_R       = "Area (reversed)";
+        public static final String CATEGORY_R   = "Category (reversed)";
+        public static final String MILESTONE_R  = "Milestone (reversed)";
+        public static final String PROJECT_R    = "Project (reversed)";
+        public static final String PRIORITY_R   = "Priority (reversed)";
+        public static final String STATUS_R     = "Status (reversed)";
+    }
+
 
     @Inject
     CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database) {
@@ -45,7 +62,24 @@ public class CasesRepository {
         db = database;
     }
 
-    public LiveData<Resource<List<Case>>> cases(final String filter) {
+    public List<String> getSortingOrders() {
+        List<String> sortings = new ArrayList<>();
+        sortings.add(Sorting.AREA);
+        sortings.add(Sorting.AREA_R);
+        sortings.add(Sorting.CATEGORY);
+        sortings.add(Sorting.CATEGORY_R);
+        sortings.add(Sorting.MILESTONE);
+        sortings.add(Sorting.MILESTONE_R);
+        sortings.add(Sorting.PROJECT);
+        sortings.add(Sorting.PROJECT_R);
+        sortings.add(Sorting.PRIORITY);
+        sortings.add(Sorting.PRIORITY_R);
+        sortings.add(Sorting.STATUS);
+        sortings.add(Sorting.STATUS_R);
+        return sortings;
+    }
+
+    public LiveData<Resource<List<Case>>> cases(final String filter, List<String> sorting) {
         return new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
