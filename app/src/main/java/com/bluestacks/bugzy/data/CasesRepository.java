@@ -44,12 +44,12 @@ public class CasesRepository {
         public static final String PRIORITY = "Priority";
         public static final String STATUS   = "Status";
 
-        public static final String AREA_R       = "Area (reversed)";
-        public static final String CATEGORY_R   = "Category (reversed)";
-        public static final String MILESTONE_R  = "Milestone (reversed)";
-        public static final String PROJECT_R    = "Project (reversed)";
-        public static final String PRIORITY_R   = "Priority (reversed)";
-        public static final String STATUS_R     = "Status (reversed)";
+        public static final String AREA_R       = "Area (rev)";
+        public static final String CATEGORY_R   = "Category (rev)";
+        public static final String MILESTONE_R  = "Milestone (rev)";
+        public static final String PROJECT_R    = "Project (rev)";
+        public static final String PRIORITY_R   = "Priority (rev)";
+        public static final String STATUS_R     = "Status (rev)";
     }
 
 
