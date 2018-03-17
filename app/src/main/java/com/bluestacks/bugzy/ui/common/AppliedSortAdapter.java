@@ -67,7 +67,7 @@ public class AppliedSortAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 int pos = holder.getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION) {
                     if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(pos, view);
+                        mItemClickListener.onItemClick(pos-1, view);
                     }
                 }
             }

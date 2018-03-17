@@ -45,6 +45,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     private static final String PARAM_FILTER_TEXT = "filter_text";
     private MyCasesViewModel mViewModel;
     private List<Case> mCases;
+    private List<String> mAppliedSortOrders;
     private String mFilter;
     private String mFilterText;
     private HomeActivityCallbacks mHomeActivityCallbacks;
@@ -125,6 +126,10 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mAppliedSortingsAdapter.setItemClickListener((position, view) -> {
             PopupMenu popupMenu = new PopupMenu(getActivity(), view);
             popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getTitle().equals("Remove")) {
+                    mViewModel.removeSortClicked(position);
+                } else {
+                }
                 return true;
             });
             popupMenu.getMenu().add("Replace");
@@ -140,6 +145,17 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
                 )
         ));
         mSortingRecyclerView.setAdapter(mAppliedSortingsAdapter);
+        mAppliedSortingsAdapter.setOnAddClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                mViewModel.onSortSelected(item.getTitle().toString());
+                return true;
+            });
+            for (String sortOrder : mViewModel.getRemainingSortOrders()) {
+                popupMenu.getMenu().add(sortOrder);
+            }
+            popupMenu.show();
+        });
     }
 
     @Override
@@ -171,7 +187,11 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         });
 
         mViewModel.getAppliedSorting().observe(this, value -> {
-            mAppliedSortingsAdapter.setData(value);
+            mAppliedSortOrders = value;
+            if (value != null) {
+                mAppliedSortingsAdapter.setData(value);
+                mAppliedSortingsAdapter.notifyDataSetChanged();
+            }
         });
     }
 

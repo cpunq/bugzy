@@ -10,6 +10,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ public class MyCasesViewModel extends ViewModel {
     private LiveData<Resource<List<Case>>> mCasesState;
     private MutableLiveData<String> mFilter = new MutableLiveData<>();
     private MutableLiveData<List<String>> mAppliedSorting = new MutableLiveData<>();
+    private MutableLiveData<List<String>> mRemainingSortOrders = new MutableLiveData<>();
 
 
     @Inject
@@ -26,7 +28,8 @@ public class MyCasesViewModel extends ViewModel {
         mCasesRepository = casesRepository;
         mFilter = new MutableLiveData<>();
 
-        mAppliedSorting.setValue(casesRepository.getSortingOrders());
+//        mAppliedSorting.setValue(casesRepository.getSortingOrders());
+        mRemainingSortOrders.setValue(casesRepository.getSortingOrders());
 
         mCasesState = Transformations.switchMap(mFilter, filter -> {
             return mCasesRepository.cases(filter, null);
@@ -34,6 +37,23 @@ public class MyCasesViewModel extends ViewModel {
     }
 
     public void onSortSelected(String sorting) {
+        List<String> l ;
+        if (mAppliedSorting.getValue() == null) {
+            l = new ArrayList<>();
+            mAppliedSorting.setValue(l);
+        }
+        l = mAppliedSorting.getValue();
+        l.add(sorting);
+        mAppliedSorting.setValue(l);
+    }
+
+    public void removeSortClicked(int pos) {
+        mAppliedSorting.getValue().remove(pos);
+        mAppliedSorting.setValue(mAppliedSorting.getValue());
+    }
+
+    public List<String> getRemainingSortOrders() {
+        return mRemainingSortOrders.getValue();
     }
 
     public void loadCases(String filter) {
