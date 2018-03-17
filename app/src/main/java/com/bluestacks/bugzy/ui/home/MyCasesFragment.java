@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,7 +121,8 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     }
 
     public void setupSortingView() {
-        mAppliedSortingsAdapter = new AppliedSortAdapter((position, view) -> {
+        mAppliedSortingsAdapter = new AppliedSortAdapter(3);
+        mAppliedSortingsAdapter.setItemClickListener((position, view) -> {
             PopupMenu popupMenu = new PopupMenu(getActivity(), view);
             popupMenu.setOnMenuItemClickListener(item -> {
                 return true;
