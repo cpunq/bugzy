@@ -171,7 +171,8 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     private void subscribeToViewModel() {
         mViewModel.getCasesState().observe(this, resourceState -> {
             if (resourceState.data != null) {
-                showCases(resourceState.data);
+                showCases(resourceState.data.getCases());
+                showSortOrders(resourceState.data.getAppliedSortOrders());
             }
             if (resourceState.status == Status.LOADING) {
                 showLoading();
@@ -186,14 +187,16 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
             }
         });
 
-        mViewModel.getAppliedSorting().observe(this, value -> {
-            mAppliedSortOrders = value;
-            if (value != null) {
-                mAppliedSortingsAdapter.setData(value);
-                mAppliedSortingsAdapter.notifyDataSetChanged();
-            }
-        });
     }
+
+    protected void showSortOrders(List<String> sortOrders) {
+        mAppliedSortOrders = sortOrders;
+        if (mAppliedSortOrders != null) {
+            mAppliedSortingsAdapter.setData(mAppliedSortOrders);
+            mAppliedSortingsAdapter.notifyDataSetChanged();
+        }
+    }
+
 
     @UiThread
     protected void showCases(List<Case> cases) {
@@ -211,6 +214,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     @UiThread
     protected void showLoading() {
         if (mCases == null) {
+            mSortingRecyclerView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
             mErrorView.showProgress("Fetching " + mFilterText + "..." );
             return;
@@ -221,12 +225,14 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     @UiThread
     protected void showContent() {
         mRecyclerView.setVisibility(View.VISIBLE);
+        mSortingRecyclerView.setVisibility(View.VISIBLE);
         mErrorView.hide();
     }
 
     @UiThread
     private void showError(String message) {
         if (mCases == null) {
+            mSortingRecyclerView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
             mErrorView.showError(message);
             return;

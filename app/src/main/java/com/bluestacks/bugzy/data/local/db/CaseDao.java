@@ -70,6 +70,20 @@ public abstract class CaseDao {
     @Query("SELECT * FROM FilterCasesResult WHERE filter = :filter")
     public abstract LiveData<FilterCasesResult> loadCasesForFilter(String filter);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(FilterCasesResult filterCases);
+
+    @Transaction
+    public void upsertFilterCaseIds(FilterCasesResult filterCasesResult) {
+        if (insert(filterCasesResult) == -1) {
+            updateCaseIds(filterCasesResult.getFilter(), BugzyTypeConverters.stringFromIntegerList(filterCasesResult.getCaseIds()));
+        }
+    }
+
+    @Query("UPDATE `FilterCasesResult` SET caseIds = :caseIds WHERE filter = :filterId")
+    public abstract void updateCaseIds(String filterId, String caseIds);
+
+    @Query("UPDATE FilterCasesResult SET appliedSortOrders = :sortOrders WHERE filter = :filterId")
+    public abstract void updateSortOrders(String filterId, String sortOrders);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public abstract long insert(FilterCasesResult filterCases);
 }

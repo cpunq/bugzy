@@ -2,13 +2,15 @@ package com.bluestacks.bugzy.ui.home;
 
 
 import com.bluestacks.bugzy.data.CasesRepository;
+import com.bluestacks.bugzy.data.model.FilterCasesResult;
 import com.bluestacks.bugzy.data.model.Resource;
-import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,39 +19,62 @@ import javax.inject.Inject;
 
 public class MyCasesViewModel extends ViewModel {
     private CasesRepository mCasesRepository;
-    private LiveData<Resource<List<Case>>> mCasesState;
-    private MutableLiveData<String> mFilter = new MutableLiveData<>();
-    private MutableLiveData<List<String>> mAppliedSorting = new MutableLiveData<>();
+    private LiveData<Resource<FilterCasesResult>> mCasesState;
+    private MutableLiveData<Pair<String, List<String>>> mFilter = new MutableLiveData<>();
     private MutableLiveData<List<String>> mRemainingSortOrders = new MutableLiveData<>();
 
+    private AppExecutors mAppExecutors;
 
     @Inject
-    MyCasesViewModel(CasesRepository casesRepository) {
+    MyCasesViewModel(CasesRepository casesRepository, AppExecutors executors) {
         mCasesRepository = casesRepository;
+        mAppExecutors = executors;
         mFilter = new MutableLiveData<>();
 
-//        mAppliedSorting.setValue(casesRepository.getSortingOrders());
         mRemainingSortOrders.setValue(casesRepository.getSortingOrders());
 
         mCasesState = Transformations.switchMap(mFilter, filter -> {
-            return mCasesRepository.cases(filter, null);
+            // If the sort is changed t
+            boolean sortChanged = false;
+            if(filter.second != null) {
+                sortChanged = true;
+            }
+            if (sortChanged) {
+                MutableLiveData<Void> mediator = new MutableLiveData<>();
+                // Save in db
+                mAppExecutors.diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCasesRepository.saveSortOrder(filter.first, filter.second);
+                        mediator.postValue(null);
+                    }
+                });
+
+                // And then fetch cases with sortChanged = true
+                return Transformations.switchMap(mediator, v -> {
+                    return mCasesRepository.cases(filter.first, true);
+                });
+            }
+            return mCasesRepository.cases(filter.first, false);
         });
     }
 
     public void onSortSelected(String sorting) {
-        List<String> l ;
-        if (mAppliedSorting.getValue() == null) {
-            l = new ArrayList<>();
-            mAppliedSorting.setValue(l);
+        List<String> newOrder = new ArrayList<>();
+        if (mCasesState.getValue().data != null && mCasesState.getValue().data.getAppliedSortOrders() != null) {
+            newOrder.addAll(mCasesState.getValue().data.getAppliedSortOrders());
         }
-        l = mAppliedSorting.getValue();
-        l.add(sorting);
-        mAppliedSorting.setValue(l);
+        newOrder.add(sorting);
+        mFilter.setValue(new Pair<String, List<String>>(mFilter.getValue().first, newOrder));
     }
 
     public void removeSortClicked(int pos) {
-        mAppliedSorting.getValue().remove(pos);
-        mAppliedSorting.setValue(mAppliedSorting.getValue());
+        List<String> newOrder = new ArrayList<>();
+        if (mCasesState.getValue().data != null && mCasesState.getValue().data.getAppliedSortOrders() != null) {
+            newOrder.addAll(mCasesState.getValue().data.getAppliedSortOrders());
+        }
+        newOrder.remove(pos);
+        mFilter.setValue(new Pair<String, List<String>>(mFilter.getValue().first, newOrder));
     }
 
     public List<String> getRemainingSortOrders() {
@@ -57,14 +82,11 @@ public class MyCasesViewModel extends ViewModel {
     }
 
     public void loadCases(String filter) {
-        mFilter.setValue(filter);
+        mFilter.setValue(new Pair<>(filter, null));
     }
 
-    public LiveData<Resource<List<Case>>> getCasesState() {
+    public LiveData<Resource<FilterCasesResult>> getCasesState() {
         return mCasesState;
     }
 
-    public MutableLiveData<List<String>> getAppliedSorting() {
-        return mAppliedSorting;
-    }
 }
