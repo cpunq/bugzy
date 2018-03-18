@@ -28,6 +28,7 @@ import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -80,21 +81,33 @@ public class CasesRepository {
         db = database;
     }
 
-    public List<String> getSortingOrders() {
+    @WorkerThread
+    public List<String> getSortingOrders(List<String> except) {
+        HashSet<String> set = new HashSet<>();
+        if (except != null) {
+            set.addAll(except);
+        }
         List<String> sortings = new ArrayList<>();
-        sortings.add(AREA);
-        sortings.add(AREA_R);
-        sortings.add(CATEGORY);
-        sortings.add(CATEGORY_R);
-        sortings.add(MILESTONE);
-        sortings.add(MILESTONE_R);
-        sortings.add(PROJECT);
-        sortings.add(PROJECT_R);
-        sortings.add(PRIORITY);
-        sortings.add(PRIORITY_R);
-        sortings.add(STATUS);
-        sortings.add(STATUS_R);
+        // Only add if not to be excepted
+        addIfNotToBeExcepted(sortings, set, AREA);
+        addIfNotToBeExcepted(sortings, set, AREA_R);
+        addIfNotToBeExcepted(sortings, set, CATEGORY);
+        addIfNotToBeExcepted(sortings, set, CATEGORY_R);
+        addIfNotToBeExcepted(sortings, set, MILESTONE);
+        addIfNotToBeExcepted(sortings, set, MILESTONE_R);
+        addIfNotToBeExcepted(sortings, set, PROJECT);
+        addIfNotToBeExcepted(sortings, set, PROJECT_R);
+        addIfNotToBeExcepted(sortings, set, PRIORITY);
+        addIfNotToBeExcepted(sortings, set, PRIORITY_R);
+        addIfNotToBeExcepted(sortings, set, STATUS);
+        addIfNotToBeExcepted(sortings, set, STATUS_R);
         return sortings;
+    }
+
+    private void addIfNotToBeExcepted(List<String> list, HashSet<String> except, String entry) {
+        if (!except.contains(entry)) {
+            list.add(entry);
+        }
     }
 
 
@@ -117,6 +130,10 @@ public class CasesRepository {
                 return sortedLiveData;
             }
             if (filterData.data == null || filterData.data.getAppliedSortOrders() == null || filterData.data.getCases() == null) {
+                if (filterData.data != null) {
+                    // Set the availableSortOrders
+                    filterData.data.setAvailableSortOrders(getSortingOrders(filterData.data.getAppliedSortOrders()));
+                }
                 sortedLiveData.setValue(filterData);
                 return sortedLiveData;
             }
@@ -126,6 +143,7 @@ public class CasesRepository {
                 @Override
                 public void run() {
                     filterData.data.setCases(sort(filterData.data.getCases(), filterData.data.getAppliedSortOrders()));
+                    filterData.data.setAvailableSortOrders(getSortingOrders(filterData.data.getAppliedSortOrders()));
                     sortedLiveData.postValue(Resource.success(filterData.data));
                 }
             });

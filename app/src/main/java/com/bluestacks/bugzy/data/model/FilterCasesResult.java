@@ -16,6 +16,8 @@ public class FilterCasesResult {
 
     @Ignore
     private List<Case> cases;
+    @Ignore
+    private List<String> availableSortOrders;
 
     public FilterCasesResult(String filter, List<Integer> caseIds, List<String> appliedSortOrders) {
         this.filter = filter;
@@ -53,5 +55,13 @@ public class FilterCasesResult {
 
     public void setCases(List<Case> cases) {
         this.cases = cases;
+    }
+
+    public List<String> getAvailableSortOrders() {
+        return availableSortOrders;
+    }
+
+    public void setAvailableSortOrders(List<String> availableSortOrders) {
+        this.availableSortOrders = availableSortOrders;
     }
 }
