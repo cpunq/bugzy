@@ -150,6 +150,10 @@ public class CasesRepository {
                         return a.getFixFor().compareTo(b.getFixFor());
                     case MILESTONE_R:
                         return b.getFixFor().compareTo(a.getFixFor());
+                    case CATEGORY:
+                        return a.getCategoryName() != null ? a.getCategoryName().compareTo(b.getCategoryName()) : 0;
+                    case CATEGORY_R:
+                        return b.getCategoryName() != null ? b.getCategoryName().compareTo(a.getCategoryName()) : 0;
                     case PRIORITY:
                         return Integer.compare(a.getPriority(), b.getPriority());
                     case PRIORITY_R:
@@ -213,7 +217,7 @@ public class CasesRepository {
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
                 String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor", "sPersonAssignedTo","sPersonOpenedBy", "sArea"
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor", "sPersonAssignedTo","sPersonOpenedBy", "sArea", "sCategory"
                 };
                 ListCasesRequest request = new ListCasesRequest(cols, filter);
                 return mApiService.listCases(request);
@@ -250,7 +254,7 @@ public class CasesRepository {
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
                 String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sPersonAssignedTo", "sPersonOpenedBy", "sArea", "sCategory", "events"
                 };
                 return mApiService.searchCases(new SearchCasesRequest(cols, kase.getIxBug()+""));
             }

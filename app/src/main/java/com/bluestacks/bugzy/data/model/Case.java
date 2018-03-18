@@ -45,6 +45,9 @@ public class Case implements Serializable {
     @SerializedName("sFavorite")
     boolean favorite;
 
+    @SerializedName( "sCategory")
+    String categoryName;
+
     public int getIxBug() {
         return ixBug;
     }
@@ -139,5 +142,13 @@ public class Case implements Serializable {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
