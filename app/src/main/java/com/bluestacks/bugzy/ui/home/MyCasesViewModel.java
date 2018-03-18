@@ -31,8 +31,6 @@ public class MyCasesViewModel extends ViewModel {
         mAppExecutors = executors;
         mFilter = new MutableLiveData<>();
 
-        mRemainingSortOrders.setValue(casesRepository.getSortingOrders());
-
         mCasesState = Transformations.switchMap(mFilter, filter -> {
             // If the sort is changed t
             boolean sortChanged = false;
@@ -59,12 +57,18 @@ public class MyCasesViewModel extends ViewModel {
         });
     }
 
-    public void onSortSelected(String sorting) {
+    public void onSortSelected(String sorting, int replacePosition) {
         List<String> newOrder = new ArrayList<>();
         if (mCasesState.getValue().data != null && mCasesState.getValue().data.getAppliedSortOrders() != null) {
             newOrder.addAll(mCasesState.getValue().data.getAppliedSortOrders());
         }
-        newOrder.add(sorting);
+        if (replacePosition == -1) {
+            // If not replacing, then add at last
+            newOrder.add(sorting);
+        } else {
+            newOrder.remove(replacePosition);
+            newOrder.add(replacePosition, sorting);
+        }
         mFilter.setValue(new Pair<String, List<String>>(mFilter.getValue().first, newOrder));
     }
 
@@ -77,8 +81,8 @@ public class MyCasesViewModel extends ViewModel {
         mFilter.setValue(new Pair<String, List<String>>(mFilter.getValue().first, newOrder));
     }
 
-    public List<String> getRemainingSortOrders() {
-        return mRemainingSortOrders.getValue();
+    public List<String> getAvailableSortOrders() {
+        return mCasesState.getValue().data.getAvailableSortOrders();
     }
 
     public void loadCases(String filter) {

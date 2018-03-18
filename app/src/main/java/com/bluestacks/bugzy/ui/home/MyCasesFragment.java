@@ -129,6 +129,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
                 if (item.getTitle().equals("Remove")) {
                     mViewModel.removeSortClicked(position);
                 } else {
+                    showSortOrderSelectionMenu(view, position);
                 }
                 return true;
             });
@@ -146,16 +147,20 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         ));
         mSortingRecyclerView.setAdapter(mAppliedSortingsAdapter);
         mAppliedSortingsAdapter.setOnAddClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-            popupMenu.setOnMenuItemClickListener(item -> {
-                mViewModel.onSortSelected(item.getTitle().toString());
-                return true;
-            });
-            for (String sortOrder : mViewModel.getRemainingSortOrders()) {
-                popupMenu.getMenu().add(sortOrder);
-            }
-            popupMenu.show();
+            showSortOrderSelectionMenu(v, -1);
+       });
+    }
+
+    public void showSortOrderSelectionMenu(View v, int replaceWith) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            mViewModel.onSortSelected(item.getTitle().toString(), replaceWith);
+            return true;
         });
+        for (String sortOrder : mViewModel.getAvailableSortOrders()) {
+            popupMenu.getMenu().add(sortOrder);
+        }
+        popupMenu.show();
     }
 
     @Override
