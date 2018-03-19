@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.data.local.db;
 
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Milestone;
+import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 
@@ -42,4 +43,10 @@ public abstract class MiscDao {
 
     @Query("SELECT * FROM `SearchSuggestion` WHERE id LIKE :query")
     public abstract LiveData<List<SearchSuggestion>> loadSearchSuggestions(String query);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertPersons(List<Person> personList);
+
+    @Query("SELECT * FROM Person")
+    public abstract LiveData<List<Person>> loadPersons();
 }

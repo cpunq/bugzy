@@ -269,11 +269,16 @@ public class Repository {
 
     public LiveData<Resource<List<Person>>> getPeople() {
         return new NetworkBoundResource<List<Person>, Response<ListPeopleData>>(mAppExecutors) {
-            List<Person> mPersons;
             @Override
             protected void saveCallResult(@NonNull Response<ListPeopleData> item) {
                 mSsRespository.updatePeopleSearchSuggestion(item.getData().getPersons());
-                mPersons = item.getData().getPersons();
+                try {
+                    db.beginTransaction();
+                    db.miscDao().insertPersons(item.getData().getPersons());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
             }
 
             @Override
@@ -284,13 +289,7 @@ public class Repository {
             @NonNull
             @Override
             protected LiveData<List<Person>> loadFromDb() {
-                return new LiveData<List<Person>>() {
-                    @Override
-                    protected void onActive() {
-                        super.onActive();
-                        setValue(mPersons);
-                    }
-                };
+                return mMiscDao.loadPersons();
             }
 
             @NonNull

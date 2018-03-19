@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,10 +87,11 @@ public class PeopleFragment extends Fragment implements Injectable {
             mHomeActivityCallbacks.onFragmentsActivityCreated(this, "People", getTag());
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new RecyclerAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 //        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         subscribeToViewModel();
-
     }
 
     protected void subscribeToViewModel() {
@@ -116,8 +118,7 @@ public class PeopleFragment extends Fragment implements Injectable {
     @UiThread
     protected void updatePeople(List<Person> persons) {
         people = persons;
-        mAdapter = new RecyclerAdapter(persons);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setData(people);
         showContent();
     }
 
@@ -131,8 +132,8 @@ public class PeopleFragment extends Fragment implements Injectable {
         if (people == null) {
             // Hiding content only when the people are null
             mRecyclerView.setVisibility(View.GONE);
+            mErrorView.showProgress("Fetching people..." );
         }
-        mErrorView.showProgress("Fetching people..." );
     }
 
     @UiThread
@@ -145,13 +146,14 @@ public class PeopleFragment extends Fragment implements Injectable {
         if (people == null) {
             // Hiding content only when the people are null
             mRecyclerView.setVisibility(View.GONE);
+            mErrorView.showError(message);
         }
-        mErrorView.showError(message);
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<PersonHolder> {
         private List<Person> mPersons;
-        public RecyclerAdapter(List<Person> persons) {
+
+        public void setData(List<Person> persons) {
             mPersons = persons ;
         }
 
@@ -170,7 +172,7 @@ public class PeopleFragment extends Fragment implements Injectable {
 
         @Override
         public int getItemCount() {
-            return mPersons.size();
+            return mPersons == null ? 0 : mPersons.size();
         }
     }
 
