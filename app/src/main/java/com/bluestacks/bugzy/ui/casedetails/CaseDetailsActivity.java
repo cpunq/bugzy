@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.ui.casedetails;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +21,9 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
+
+    @BindView(R.id.fab)
+    protected FloatingActionButton fab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +37,7 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
         Case aCase = (Case) extras.getSerializable("bug");
 
         setupToolbar();
+        setupViews();
 
         if (savedInstanceState == null) {
             CaseDetailsFragment fragment = CaseDetailsFragment.getInstance(mFogBugzId, aCase);
@@ -40,6 +46,12 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
 
             ft.commit();
         }
+    }
+
+    public void setupViews() {
+        fab.setOnClickListener(viewRef -> {
+            startActivity(new Intent(this, CaseEditActivity.class));
+        });
     }
 
     private void setupToolbar() {
