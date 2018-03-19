@@ -2,6 +2,7 @@ package com.bluestacks.bugzy.di.module;
 
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.search.SearchActivity;
@@ -25,4 +26,7 @@ public abstract class ActivityBindingModule {
 
     @ContributesAndroidInjector
     abstract SearchActivity contributeSearchActivity();
+
+    @ContributesAndroidInjector
+    abstract CaseEditActivity contributeCaseEditActivity();
 }

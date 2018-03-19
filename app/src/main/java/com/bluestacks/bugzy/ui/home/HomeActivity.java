@@ -26,6 +26,7 @@ import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.common.ErrorView;
 import com.bluestacks.bugzy.ui.BaseActivity;
@@ -111,7 +112,7 @@ public class HomeActivity extends BaseActivity
 
     protected void setupFab() {
         fab.setOnClickListener(viewRef -> {
-
+            startActivity(new Intent(this, CaseEditActivity.class));
         });
     }
 
