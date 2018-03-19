@@ -106,6 +106,13 @@ public class HomeActivity extends BaseActivity
         mUserEmail = navigationView.getHeaderView(0).findViewById(R.id.user_email);
 
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setupFab();
+    }
+
+    protected void setupFab() {
+        fab.setOnClickListener(viewRef -> {
+
+        });
     }
 
     private void subscribeToViewModel() {
