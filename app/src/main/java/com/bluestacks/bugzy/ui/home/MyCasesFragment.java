@@ -241,8 +241,9 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
             mRecyclerView.setVisibility(View.GONE);
             mErrorView.showError(message);
             return;
+        } else {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
         }
-        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
 
     public static class ItemOffsetDecoration extends RecyclerView.ItemDecoration {
