@@ -144,7 +144,7 @@ public class CasesRepository {
                 public void run() {
                     filterData.data.setCases(sort(filterData.data.getCases(), filterData.data.getAppliedSortOrders()));
                     filterData.data.setAvailableSortOrders(getSortingOrders(filterData.data.getAppliedSortOrders()));
-                    sortedLiveData.postValue(Resource.success(filterData.data));
+                    sortedLiveData.postValue(filterData);
                 }
             });
             return sortedLiveData;
