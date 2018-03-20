@@ -3,6 +3,8 @@ package com.bluestacks.bugzy.ui.home;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.DimenRes;
@@ -15,11 +17,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.common.AppliedSortAdapter;
@@ -51,6 +55,9 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     private HomeActivityCallbacks mHomeActivityCallbacks;
     private CaseAdapter mAdapter;
     private AppliedSortAdapter mAppliedSortingsAdapter;
+    private Snackbar mSyncSnackbar;
+    private Snackbar mRetrySnackbar;
+
 
     @Inject
     protected ViewModelProvider.Factory mViewModelFactory;
@@ -119,6 +126,29 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mRecyclerView.setAdapter(mAdapter);
 
         mViewModel.loadCases(mFilter);  // Load cases
+    }
+
+    public Snackbar getSyncSnackbar() {
+        Snackbar bar = Snackbar.make(getView(), "Syncing..", Snackbar.LENGTH_INDEFINITE);
+        ViewGroup contentLay = (ViewGroup) bar.getView().findViewById(android.support.design.R.id.snackbar_text).getParent();
+        ProgressBar item = new ProgressBar(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(inDp(24), inDp(24));
+        params.gravity = Gravity.CENTER_VERTICAL;
+        item.setLayoutParams(params);
+        contentLay.addView(item,0);
+        return bar;
+    }
+
+    public Snackbar getRetrySnackbar() {
+        Snackbar snackbar = Snackbar
+                .make(getView(), "Failed to sync cases", Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mViewModel.retryClicked();
+                    }
+                });
+        return snackbar;
     }
 
     public void setupSortingView() {
@@ -191,7 +221,6 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
                 this.hideLoading();
             }
         });
-
     }
 
     protected void showSortOrders(List<String> sortOrders) {
@@ -202,7 +231,6 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         }
     }
 
-
     @UiThread
     protected void showCases(List<Case> cases) {
         mCases = cases;
@@ -211,20 +239,53 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mAdapter.notifyDataSetChanged();
     }
 
+    private void showRetrySnackbar() {
+        mRetrySnackbar = getRetrySnackbar();
+        mRetrySnackbar.show();
+    }
+
+    private void hideRetrySnackbar() {
+        if (mRetrySnackbar == null) {
+            return;
+        }
+        mRetrySnackbar.dismiss();
+        mRetrySnackbar = null;
+    }
+
+    private void showSyncProgress() {
+        mSyncSnackbar = getSyncSnackbar();
+        mSyncSnackbar.show();
+    }
+
+    private void hideSyncProgress() {
+        if (mSyncSnackbar == null) {
+            return;
+        }
+        mSyncSnackbar.dismiss();
+        mSyncSnackbar = null;
+    }
+
     @UiThread
     private void hideLoading() {
         mErrorView.hide();
+        hideSyncProgress();
+//        hideRetrySnackbar();
     }
 
     @UiThread
     protected void showLoading() {
-        if (mCases == null) {
-            mSortingRecyclerView.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.GONE);
-            mErrorView.showProgress("Fetching " + mFilterText + "..." );
+        if (mCases != null) {
+            showSyncProgress();
             return;
         }
-        // TODO: Show some modern way of fetching
+        mSortingRecyclerView.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorView.showProgress("Fetching " + mFilterText + "..." );
+        hideRetrySnackbar();
+    }
+
+    private int inDp(int dps) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, getResources().getDisplayMetrics());
     }
 
     @UiThread
@@ -236,14 +297,13 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
 
     @UiThread
     private void showError(String message) {
-        if (mCases == null) {
-            mSortingRecyclerView.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.GONE);
-            mErrorView.showError(message);
+        if (mCases != null) {
+            showRetrySnackbar();
             return;
-        } else {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
         }
+        mSortingRecyclerView.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorView.showError(message);
     }
 
     public static class ItemOffsetDecoration extends RecyclerView.ItemDecoration {

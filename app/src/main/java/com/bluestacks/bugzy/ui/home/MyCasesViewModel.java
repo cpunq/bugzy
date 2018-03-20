@@ -85,6 +85,10 @@ public class MyCasesViewModel extends ViewModel {
         return mCasesState.getValue().data.getAvailableSortOrders();
     }
 
+    public void retryClicked() {
+        mFilter.setValue(new Pair<String, List<String>>(mFilter.getValue().first, null));
+    }
+
     public void loadCases(String filter) {
         mFilter.setValue(new Pair<>(filter, null));
     }
