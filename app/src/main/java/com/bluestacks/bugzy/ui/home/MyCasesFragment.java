@@ -137,9 +137,9 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         return bar;
     }
 
-    public Snackbar getRetrySnackbar() {
+    public Snackbar getRetrySnackbar(String message) {
         Snackbar snackbar = Snackbar
-                .make(getView(), "Failed to sync cases", Snackbar.LENGTH_INDEFINITE)
+                .make(getView(), message, Snackbar.LENGTH_INDEFINITE)
                 .setAction("RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -237,8 +237,8 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mAdapter.notifyDataSetChanged();
     }
 
-    private void showRetrySnackbar() {
-        mRetrySnackbar = getRetrySnackbar();
+    private void showRetrySnackbar(String message) {
+        mRetrySnackbar = getRetrySnackbar(message);
         mRetrySnackbar.show();
     }
 
@@ -307,7 +307,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
     @UiThread
     private void showError(String message) {
         if (mCases != null) {
-            showRetrySnackbar();
+            showRetrySnackbar(message);
             return;
         }
         mSortingRecyclerView.setVisibility(View.GONE);
