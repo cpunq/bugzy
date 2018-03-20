@@ -288,6 +288,17 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, getResources().getDisplayMetrics());
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mRetrySnackbar != null && mRetrySnackbar.isShown()) {
+            mRetrySnackbar.dismiss();
+        }
+        if (mSyncSnackbar != null && mSyncSnackbar.isShown()) {
+            mSyncSnackbar.dismiss();
+        }
+    }
+
     @UiThread
     protected void showContent() {
         mRecyclerView.setVisibility(View.VISIBLE);
