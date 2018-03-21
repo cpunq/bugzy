@@ -31,55 +31,7 @@
         </LinearLayout>
 
     </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_toRightOf="@+id/priority"
-            android:layout_centerVertical="true"
+    <include layout="@layout/bug_event_row_content"/>
 
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_alignParentTop="true">
-            <TextView
-                android:id="@+id/item_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-
-                android:text="Some date"
-                android:textColor="#181717"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/item_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:text="Some "
-                android:textColor="@color/main_color"
-                android:ellipsize="end"
-                android:maxLines="5"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/changes"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/change_content"
-                android:textSize="14sp"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/attachment"/>
-        </LinearLayout>
-    </RelativeLayout>
 </LinearLayout>

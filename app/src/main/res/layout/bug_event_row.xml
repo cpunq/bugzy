@@ -1,88 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-        <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <LinearLayout
             android:layout_width="16dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
             android:orientation="vertical">
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="12dp"
                 android:gravity="left|center_vertical"
                 android:background="@color/stroke_color"
                 android:layout_marginLeft="5dp"
                 android:layout_gravity="center_vertical|left">
-            </LinearLayout>
-            <ImageView
+        </LinearLayout>
+        <ImageView
                 android:layout_width="12dp"
                 android:layout_gravity="center_vertical|left"
                 android:layout_height="12dp"
                 android:src="@drawable/timeline_marker"/>
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:gravity="left|center_vertical"
                 android:background="@color/stroke_color"
                 android:layout_marginLeft="5dp"
                 android:layout_gravity="center_vertical|left">
-            </LinearLayout>
         </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@+id/priority"
-                android:layout_centerVertical="true"
-
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:layout_alignParentTop="true">
-                <TextView
-                    android:id="@+id/item_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-
-                    android:text="Some date"
-                    android:textColor="#181717"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/item_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:text="Some "
-                    android:textColor="@color/main_color"
-                    android:ellipsize="end"
-                    android:maxLines="5"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/changes"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/change_content"
-                    android:textSize="14sp"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:id="@+id/attachment"/>
-            </LinearLayout>
-        </RelativeLayout>
-
+    <include layout="@layout/bug_event_row_content"/>
 
 </LinearLayout>

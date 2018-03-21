@@ -257,6 +257,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         private Context mContext;
         private CaseDetailsFragmentContract homeActivity;
         private String mToken;
+        private LinearLayout mContentContainer;
 
         //4
         private EventHolder (View v,Context context, CaseDetailsFragmentContract activity, String token) {
@@ -266,6 +267,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             mChanges = v.findViewById(R.id.changes);
             mChangesContent = v.findViewById(R.id.change_content);
             mImageAttachment = v.findViewById(R.id.attachment);
+            mContentContainer = v.findViewById(R.id.content_container);
             mContext = context;
             homeActivity = activity;
             mToken = token;
@@ -281,6 +283,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         public void bindData(CaseEvent bug) {
             DateFormat format2 = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.US);
             mItemDate.setText(format2.format(bug.getDate()));
+            mContentContainer.setVisibility(View.VISIBLE);
 
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
             if(!TextUtils.isEmpty(bug.getContentHtml())) {
@@ -308,6 +311,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 }
             } else {
                 mImageAttachment.setVisibility(View.GONE);
+                if (TextUtils.isEmpty(bug.getContent())) {
+                    mContentContainer.setVisibility(View.GONE);
+                }
             }
         }
     }
