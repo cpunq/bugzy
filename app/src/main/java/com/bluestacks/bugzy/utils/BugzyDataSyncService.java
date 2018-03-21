@@ -31,16 +31,19 @@ public class BugzyDataSyncService extends LifecycleService {
     }
 
     public void sync() {
-        mRepository.getAreasLiveData().observe(this, value -> {
+        mRepository.getAreas(true).observe(this, value -> {
             Log.d(TAG, "received areas" + value.status);
         });
-        mRepository.getMilestonesLiveData().observe(this, value -> {
+        mRepository.getMilestones(true).observe(this, value -> {
             Log.d(TAG, "received miletsones" + value.status);
         });
-        mRepository.getProjectsLiveData().observe(this, value -> {
+        mRepository.getProjects(true).observe(this, value -> {
             Log.d(TAG, "received projects" + value.status);
         });
-        // After all 3 are received, call this.stopSelf
+        mRepository.getPeople(true).observe(this, value -> {
+            Log.d(TAG, "received people" + value.status);
+        });
+        // After all 4 are received, call this.stopSelf
     }
 
     @Override

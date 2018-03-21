@@ -142,11 +142,19 @@ public class PeopleFragment extends Fragment implements Injectable {
     }
 
     protected void showError(String message) {
-        if (people == null || people.size() == 0) {
-            // Hiding content only when the people are null
-            mRecyclerView.setVisibility(View.GONE);
-            mErrorView.showError(message);
+        if (people != null && people.size() != 0) {
+            // People are present, don't bother to show the error
+            return;
         }
+        // Hiding content only when the people are null
+        mRecyclerView.setVisibility(View.GONE);
+        mErrorView.showError(message);
+        mErrorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewModel.reloadPeople();
+            }
+        });
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<PersonHolder> {

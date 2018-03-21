@@ -12,6 +12,7 @@ import com.bluestacks.bugzy.data.local.db.MiscDao;
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Project;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
@@ -62,9 +63,16 @@ public class Repository {
     private SearchSuggestionRepository mSsRespository;
 
 
-    private MediatorLiveData<Resource<List<Area>>> mAreasLiveData = new MediatorLiveData<>();
-    private MediatorLiveData<Resource<List<Project>>> mProjectsLiveData = new MediatorLiveData<>();
-    private MediatorLiveData<Resource<List<Milestone>>> mMilestonesLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Area>>> mAreasPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Project>>> mProjectsPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Milestone>>> mMilestonesPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Person>>> mPeoplePublicLiveData = new MediatorLiveData<>();
+
+
+    private LiveData<Resource<List<Area>>> mFetchAreasLiveData;
+    private LiveData<Resource<List<Project>>> mFetchProjectsLiveData;
+    private LiveData<Resource<List<Milestone>>> mFetchMilestonesLiveData;
+    private LiveData<Resource<List<Person>>> mFetchPeopleLiveData;
 
     @Inject
     Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository) {
@@ -90,22 +98,6 @@ public class Repository {
                 }
             }
         };
-
-        mAreasLiveData.addSource(fetchAreas(), value -> mAreasLiveData.setValue(value));
-        mMilestonesLiveData.addSource(fetchMilestones(), value -> mMilestonesLiveData.setValue(value));
-        mProjectsLiveData.addSource(fetchProjects(), value -> mProjectsLiveData.setValue(value));
-    }
-
-    public MediatorLiveData<Resource<List<Area>>> getAreasLiveData() {
-        return mAreasLiveData;
-    }
-
-    public MediatorLiveData<Resource<List<Project>>> getProjectsLiveData() {
-        return mProjectsLiveData;
-    }
-
-    public MediatorLiveData<Resource<List<Milestone>>> getMilestonesLiveData() {
-        return mMilestonesLiveData;
     }
 
     public LiveData<Resource<Response<LoginData>>> temp(String email, String password) {
@@ -267,8 +259,16 @@ public class Repository {
         }.asLiveData();
     }
 
-    public LiveData<Resource<List<Person>>> getPeople() {
-        return new NetworkBoundResource<List<Person>, Response<ListPeopleData>>(mAppExecutors) {
+    public LiveData<Resource<List<Person>>> getPeople(boolean mustFetch) {
+        if (mFetchPeopleLiveData != null) {
+            if (mFetchPeopleLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mPeoplePublicLiveData;
+            }
+            mPeoplePublicLiveData.removeSource(mFetchPeopleLiveData);
+            mFetchPeopleLiveData = null;
+        }
+        mFetchPeopleLiveData = new NetworkBoundResource<List<Person>, Response<ListPeopleData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListPeopleData> item) {
                 mSsRespository.updatePeopleSearchSuggestion(item.getData().getPersons());
@@ -283,7 +283,13 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Person> data) {
-                return true;
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
             }
 
             @NonNull
@@ -298,10 +304,22 @@ public class Repository {
                 return mApiService.listPeople(new ListPeopleRequest());
             }
         }.asLiveData();
+        mPeoplePublicLiveData.addSource(mFetchPeopleLiveData, value -> {
+            mPeoplePublicLiveData.setValue(value);
+        });
+        return mPeoplePublicLiveData;
     }
 
-    private LiveData<Resource<List<Area>>> fetchAreas() {
-        return new NetworkBoundResource<List<Area>, Response<ListAreasData>>(mAppExecutors) {
+    public MediatorLiveData<Resource<List<Area>>> getAreas(boolean mustFetch) {
+        if (mFetchAreasLiveData != null) {
+            if (mFetchAreasLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mAreasPublicLiveData;
+            }
+            mAreasPublicLiveData.removeSource(mFetchAreasLiveData);
+            mFetchAreasLiveData = null;
+        }
+        mFetchAreasLiveData = new NetworkBoundResource<List<Area>, Response<ListAreasData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListAreasData> item) {
                 mSsRespository.updateAreaSearchSuggestion(item.getData().getAreas());
@@ -316,8 +334,13 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Area> data) {
-                // Always fetch
-                return true;
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
             }
 
             @NonNull
@@ -332,10 +355,23 @@ public class Repository {
                 return mApiService.getAreas(new Request("listAreas"));
             }
         }.asLiveData();
+
+        mAreasPublicLiveData.addSource(mFetchAreasLiveData, value -> {
+            mAreasPublicLiveData.setValue(value);
+        });
+        return mAreasPublicLiveData;
     }
 
-    private LiveData<Resource<List<Milestone>>> fetchMilestones() {
-        return new NetworkBoundResource<List<Milestone>, Response<ListMilestonesData>>(mAppExecutors) {
+    public LiveData<Resource<List<Milestone>>> getMilestones(boolean mustFetch) {
+        if (mFetchMilestonesLiveData != null) {
+            if (mFetchMilestonesLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mMilestonesPublicLiveData;
+            }
+            mMilestonesPublicLiveData.removeSource(mFetchMilestonesLiveData);
+            mFetchMilestonesLiveData = null;
+        }
+        mFetchMilestonesLiveData = new NetworkBoundResource<List<Milestone>, Response<ListMilestonesData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListMilestonesData> item) {
                 mSsRespository.updateMilestoneSearchSuggestion(item.getData().getMilestones());
@@ -350,8 +386,13 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Milestone> data) {
-                // Always fetch
-                return true;
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
             }
 
             @NonNull
@@ -366,10 +407,22 @@ public class Repository {
                 return mApiService.getMilestones(new Request("listFixFors"));
             }
         }.asLiveData();
+        mMilestonesPublicLiveData.addSource(mFetchMilestonesLiveData, value -> {
+            mMilestonesPublicLiveData.setValue(value);
+        });
+        return mMilestonesPublicLiveData;
     }
 
-    public LiveData<Resource<List<Project>>> fetchProjects() {
-        return new NetworkBoundResource<List<Project>, Response<ListProjectsData>>(mAppExecutors) {
+    public LiveData<Resource<List<Project>>> getProjects(boolean mustFetch) {
+        if (mFetchProjectsLiveData != null) {
+            if (mFetchProjectsLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mProjectsPublicLiveData;
+            }
+            mProjectsPublicLiveData.removeSource(mFetchProjectsLiveData);
+            mFetchProjectsLiveData = null;
+        }
+        mFetchProjectsLiveData = new NetworkBoundResource<List<Project>, Response<ListProjectsData>>(mAppExecutors) {
             @Override
             protected void saveCallResult(@NonNull Response<ListProjectsData> item) {
                 db.beginTransaction();
@@ -383,8 +436,13 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Project> data) {
-                // Always fetch
-                return true;
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
             }
 
             @NonNull
@@ -399,6 +457,10 @@ public class Repository {
                 return mApiService.getProjects(new Request("listProjects"));
             }
         }.asLiveData();
+        mProjectsPublicLiveData.addSource(mFetchProjectsLiveData, value -> {
+            mProjectsPublicLiveData.setValue(value);
+        });
+        return mProjectsPublicLiveData;
     }
 
     public MutableLiveData<String> getToken() {

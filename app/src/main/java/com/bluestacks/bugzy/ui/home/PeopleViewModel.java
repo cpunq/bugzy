@@ -28,7 +28,11 @@ public class PeopleViewModel extends ViewModel {
             }
         });
 
-        mPeopleState.addSource(mRepository.getPeople(), filtersDataResource -> mPeopleState.setValue(filtersDataResource));
+        mPeopleState.addSource(mRepository.getPeople(false), filtersDataResource -> mPeopleState.setValue(filtersDataResource));
+    }
+
+    public void reloadPeople() {
+        mRepository.getPeople(false);
     }
 
     public MediatorLiveData<Boolean> getIsLoggedIn() {
