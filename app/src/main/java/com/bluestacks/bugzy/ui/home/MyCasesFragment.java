@@ -313,6 +313,9 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mSortingRecyclerView.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.GONE);
         mErrorView.showError(message);
+        mErrorView.setOnClickListener(view -> {
+            mViewModel.loadCases(mFilter);  // Load cases
+        });
     }
 
     public static class ItemOffsetDecoration extends RecyclerView.ItemDecoration {
