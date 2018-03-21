@@ -149,11 +149,9 @@ public class PeopleFragment extends Fragment implements Injectable {
         // Hiding content only when the people are null
         mRecyclerView.setVisibility(View.GONE);
         mErrorView.showError(message);
-        mErrorView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mViewModel.reloadPeople();
-            }
+        mErrorView.setOnClickListener(view -> {
+            mViewModel.reloadPeople();
+            mErrorView.setOnClickListener(null);
         });
     }
 

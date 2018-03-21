@@ -315,6 +315,7 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
         mErrorView.showError(message);
         mErrorView.setOnClickListener(view -> {
             mViewModel.loadCases(mFilter);  // Load cases
+            mErrorView.setOnClickListener(null);
         });
     }
 
