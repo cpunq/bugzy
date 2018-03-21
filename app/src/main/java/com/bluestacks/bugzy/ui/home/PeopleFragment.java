@@ -90,7 +90,6 @@ public class PeopleFragment extends Fragment implements Injectable {
         mAdapter = new RecyclerAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         subscribeToViewModel();
     }
 
@@ -143,7 +142,7 @@ public class PeopleFragment extends Fragment implements Injectable {
     }
 
     protected void showError(String message) {
-        if (people == null) {
+        if (people == null || people.size() == 0) {
             // Hiding content only when the people are null
             mRecyclerView.setVisibility(View.GONE);
             mErrorView.showError(message);
