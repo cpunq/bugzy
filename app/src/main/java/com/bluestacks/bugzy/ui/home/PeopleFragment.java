@@ -222,7 +222,7 @@ public class PeopleFragment extends Fragment implements Injectable {
             if (!TextUtils.isEmpty(img_path)) {
                 Glide.with(mFragment).load(img_path)
                         .apply(RequestOptions.circleCropTransform())
-                        .thumbnail(Glide.with(mFragment).load(R.drawable.loading_ring))
+                        .thumbnail(Glide.with(mFragment).load(R.drawable.avatar_placeholder))
                         .into(mImageView);
             }
         }
