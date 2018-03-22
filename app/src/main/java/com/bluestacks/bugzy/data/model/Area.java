@@ -50,4 +50,9 @@ public class Area {
     public void setProject(String project) {
         this.project = project;
     }
+
+    @Override
+    public String toString() {
+        return area;
+    }
 }
