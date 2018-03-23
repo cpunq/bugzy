@@ -10,7 +10,10 @@ import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.MiscDao;
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.CaseStatus;
+import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
+import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
@@ -19,8 +22,11 @@ import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.remote.model.ListAreasData;
+import com.bluestacks.bugzy.data.remote.model.ListCategoriesData;
 import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
+import com.bluestacks.bugzy.data.remote.model.ListPrioritiesData;
 import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
+import com.bluestacks.bugzy.data.remote.model.ListStatusesData;
 import com.bluestacks.bugzy.data.remote.model.Request;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.model.Filter;
@@ -67,12 +73,18 @@ public class Repository {
     private MediatorLiveData<Resource<List<Project>>> mProjectsPublicLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<Milestone>>> mMilestonesPublicLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<Person>>> mPeoplePublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Priority>>> mPrioritiesPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<CaseStatus>>> mStatusesPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Category>>> mCategoriesPublicLiveData = new MediatorLiveData<>();
 
 
     private LiveData<Resource<List<Area>>> mFetchAreasLiveData;
     private LiveData<Resource<List<Project>>> mFetchProjectsLiveData;
     private LiveData<Resource<List<Milestone>>> mFetchMilestonesLiveData;
     private LiveData<Resource<List<Person>>> mFetchPeopleLiveData;
+    private LiveData<Resource<List<Priority>>> mFetchPrioritiesLiveData;
+    private LiveData<Resource<List<Category>>> mFetchCategoriesLiveData;
+    private LiveData<Resource<List<CaseStatus>>> mFetchStatusesLiveData;
 
     @Inject
     Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository) {
@@ -465,5 +477,155 @@ public class Repository {
 
     public MutableLiveData<String> getToken() {
         return mToken;
+    }
+
+    public LiveData<Resource<List<Priority>>> getPriorities(boolean mustFetch) {
+        if (mFetchPrioritiesLiveData != null) {
+            if (mFetchPrioritiesLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mPrioritiesPublicLiveData;
+            }
+            mPrioritiesPublicLiveData.removeSource(mFetchPrioritiesLiveData);
+            mFetchPrioritiesLiveData = null;
+        }
+        mFetchPrioritiesLiveData = new NetworkBoundResource<List<Priority>, Response<ListPrioritiesData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListPrioritiesData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertPriorities(item.getData().getPriorities());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Priority> data) {
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Priority>> loadFromDb() {
+                return mMiscDao.loadPriorities();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListPrioritiesData>>> createCall() {
+                return mApiService.getPriorities(new Request("listPriorities"));
+            }
+        }.asLiveData();
+        mPrioritiesPublicLiveData.addSource(mFetchPrioritiesLiveData, value -> {
+            mPrioritiesPublicLiveData.setValue(value);
+        });
+        return mPrioritiesPublicLiveData;
+    }
+
+    public LiveData<Resource<List<Category>>> getCategories(boolean mustFetch) {
+        if (mFetchCategoriesLiveData != null) {
+            if (mFetchCategoriesLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mCategoriesPublicLiveData;
+            }
+            mCategoriesPublicLiveData.removeSource(mFetchCategoriesLiveData);
+            mFetchCategoriesLiveData = null;
+        }
+        mFetchCategoriesLiveData = new NetworkBoundResource<List<Category>, Response<ListCategoriesData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListCategoriesData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertCategories(item.getData().getCategories());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Category> data) {
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Category>> loadFromDb() {
+                return mMiscDao.loadCategories();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListCategoriesData>>> createCall() {
+                return mApiService.getCategories(new Request("listCategories"));
+            }
+        }.asLiveData();
+        mCategoriesPublicLiveData.addSource(mFetchCategoriesLiveData, value -> {
+            mCategoriesPublicLiveData.setValue(value);
+        });
+        return mCategoriesPublicLiveData;
+    }
+
+    public LiveData<Resource<List<CaseStatus>>> getStatuses(boolean mustFetch) {
+        if (mFetchStatusesLiveData != null) {
+            if (mFetchStatusesLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mStatusesPublicLiveData;
+            }
+            mStatusesPublicLiveData.removeSource(mFetchStatusesLiveData);
+            mFetchStatusesLiveData = null;
+        }
+        mFetchStatusesLiveData = new NetworkBoundResource<List<CaseStatus>, Response<ListStatusesData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListStatusesData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertStatuses(item.getData().getStatuses());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<CaseStatus> data) {
+                if (data == null) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<CaseStatus>> loadFromDb() {
+                return mMiscDao.loadStatuses();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListStatusesData>>> createCall() {
+                return mApiService.getStatuses(new Request("listStatuses"));
+            }
+        }.asLiveData();
+        mStatusesPublicLiveData.addSource(mFetchStatusesLiveData, value -> {
+            mStatusesPublicLiveData.setValue(value);
+        });
+        return mStatusesPublicLiveData;
     }
 }

@@ -2,8 +2,11 @@ package com.bluestacks.bugzy.data.local.db;
 
 
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.CaseStatus;
+import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
+import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 
@@ -28,6 +31,15 @@ public abstract class MiscDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertProjects(List<Project> projects);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertStatuses(List<CaseStatus> statuses);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertPriorities(List<Priority> priorities);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertCategories(List<Category> categories);
+
     @Query("SELECT * from `Milestone`")
     public abstract LiveData<List<Milestone>> loadMilestones();
 
@@ -36,6 +48,15 @@ public abstract class MiscDao {
 
     @Query("SELECT * from `Project`")
     public abstract LiveData<List<Project>> loadProjects();
+
+    @Query("SELECT * from `CaseStatus`")
+    public abstract LiveData<List<CaseStatus>> loadStatuses();
+
+    @Query("SELECT * from `Priority`")
+    public abstract LiveData<List<Priority>> loadPriorities();
+
+    @Query("SELECT * from `Category`")
+    public abstract LiveData<List<Category>> loadCategories();
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

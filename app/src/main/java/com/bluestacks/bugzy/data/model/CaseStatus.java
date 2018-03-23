@@ -3,6 +3,9 @@ package com.bluestacks.bugzy.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import android.arch.persistence.room.Entity;
+
+@Entity(primaryKeys = "id")
 public class CaseStatus {
     @SerializedName("ixStatus")
     private int id;
