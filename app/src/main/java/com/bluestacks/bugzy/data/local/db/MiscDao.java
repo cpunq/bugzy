@@ -43,8 +43,14 @@ public abstract class MiscDao {
     @Query("SELECT * from `Milestone`")
     public abstract LiveData<List<Milestone>> loadMilestones();
 
+    @Query("SELECT * from `Milestone` WHERE projectId = :projectId OR projectId = 0")
+    public abstract LiveData<List<Milestone>> loadMilestones(int projectId);
+
     @Query("SELECT * from `Area`")
     public abstract LiveData<List<Area>> loadAreas();
+
+    @Query("SELECT * from `Area` WHERE projectId = :projectId")
+    public abstract LiveData<List<Area>> loadAreas(int projectId);
 
     @Query("SELECT * from `Project`")
     public abstract LiveData<List<Project>> loadProjects();

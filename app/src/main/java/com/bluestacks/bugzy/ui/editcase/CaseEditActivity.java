@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -68,12 +70,12 @@ public class CaseEditActivity extends BaseActivity {
 
     public void subscribeToViewModel() {
         mCaseEditViewModel.getMilestones().observe(this, value -> {
-            if (value.data != null) {
+            if (value != null && value.data != null) {
                 showMilestones(value.data);
             }
         });
         mCaseEditViewModel.getAreas().observe(this, value -> {
-            if (value.data != null) {
+            if (value != null && value.data != null) {
                 showAreas(value.data);
             }
         });
@@ -119,7 +121,10 @@ public class CaseEditActivity extends BaseActivity {
 
     }
 
+    List<Project> mProjects;
+
     public void showProjects(List<Project> projects) {
+        mProjects = projects;
         ArrayAdapter<Project> dataAdapter = new ArrayAdapter<Project>(this,
                 android.R.layout.simple_spinner_item, projects);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -160,6 +165,18 @@ public class CaseEditActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24px);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mProjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.projectSelected(mProjects.get(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     @Override
@@ -183,7 +200,4 @@ public class CaseEditActivity extends BaseActivity {
         super.finish();
         overridePendingTransition(0, R.anim.exit_slide_down);
     }
-
-
-
 }

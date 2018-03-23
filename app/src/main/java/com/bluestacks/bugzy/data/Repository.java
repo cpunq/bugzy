@@ -39,11 +39,13 @@ import com.bluestacks.bugzy.data.remote.model.LoginRequest;
 import com.bluestacks.bugzy.data.remote.model.MyDetailsData;
 import com.bluestacks.bugzy.data.remote.model.MyDetailsRequest;
 import com.bluestacks.bugzy.data.model.Person;
+import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -372,6 +374,31 @@ public class Repository {
             mAreasPublicLiveData.setValue(value);
         });
         return mAreasPublicLiveData;
+    }
+
+
+    public LiveData<Resource<List<Milestone>>> getMilestones(int projectId) {
+        return Transformations.switchMap(getMilestones(false), mileStonesResource -> {
+            if(mileStonesResource.data == null || mileStonesResource.data.size() == 0) {
+                return AbsentLiveData.create();
+            }
+            // If the milestones are fetched, then get milestones for this project
+            return Transformations.map(mMiscDao.loadMilestones(projectId), mileStonesForProject -> {
+                return new Resource<List<Milestone>>(mileStonesResource.status, mileStonesForProject, mileStonesResource.message);
+            });
+        });
+    }
+
+    public LiveData<Resource<List<Area>>> getAreas(int projectId) {
+        return Transformations.switchMap(getAreas(false), alreasResource -> {
+            if(alreasResource.data == null || alreasResource.data.size() == 0) {
+                return AbsentLiveData.create();
+            }
+            // If the milestones are fetched, then get milestones for this project
+            return Transformations.map(mMiscDao.loadAreas(projectId), areasForProject -> {
+                return new Resource<List<Area>>(alreasResource.status, areasForProject, alreasResource.message);
+            });
+        });
     }
 
     public LiveData<Resource<List<Milestone>>> getMilestones(boolean mustFetch) {

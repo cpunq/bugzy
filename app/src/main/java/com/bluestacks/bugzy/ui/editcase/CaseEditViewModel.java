@@ -13,6 +13,8 @@ import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Resource;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
@@ -22,19 +24,34 @@ import javax.inject.Inject;
 public class CaseEditViewModel extends ViewModel {
     Repository mRepository;
     CasesRepository mCasesRepository;
+    private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
+
+    private LiveData<Resource<List<Area>>> mAreas;
+    private LiveData<Resource<List<Milestone>>> mMilestones;
 
     @Inject
     CaseEditViewModel(Repository repository, CasesRepository casesRepository) {
         mRepository = repository;
         mCasesRepository = casesRepository;
+
+        mAreas = Transformations.switchMap(mCurrentProject, val -> {
+            return mRepository.getAreas(val.getId());
+        });
+        mMilestones = Transformations.switchMap(mCurrentProject, val -> {
+            return mRepository.getMilestones(val.getId());
+        });
+    }
+
+    public void projectSelected(Project project) {
+        mCurrentProject.setValue(project);
     }
 
     public LiveData<Resource<List<Milestone>>> getMilestones() {
-        return mRepository.getMilestones(false);
+        return mMilestones;
     }
 
     public LiveData<Resource<List<Area>>> getAreas() {
-        return mRepository.getAreas(false);
+        return mAreas;
     }
 
     public LiveData<Resource<List<Project>>> getProjects() {

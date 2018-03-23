@@ -53,6 +53,6 @@ public class Milestone {
 
     @Override
     public String toString() {
-        return name;
+        return ("".equals(project.trim()) ? "All Projects" : project) +": " + name;
     }
 }
