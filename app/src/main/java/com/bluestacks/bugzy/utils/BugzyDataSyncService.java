@@ -43,7 +43,16 @@ public class BugzyDataSyncService extends LifecycleService {
         mRepository.getPeople(true).observe(this, value -> {
             Log.d(TAG, "received people" + value.status);
         });
-        // After all 4 are received, call this.stopSelf
+        mRepository.getStatuses(true).observe(this, value -> {
+            Log.d(TAG, "received statuses" + value.status);
+        });
+        mRepository.getPriorities(true).observe(this, value -> {
+            Log.d(TAG, "received priorities" + value.status);
+        });
+        mRepository.getCategories(true).observe(this, value -> {
+            Log.d(TAG, "received categories" + value.status);
+        });
+        // After all 7 are received, call this.stopSelf
     }
 
     @Override
