@@ -68,6 +68,6 @@ public abstract class MiscDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertPersons(List<Person> personList);
 
-    @Query("SELECT * FROM Person")
+    @Query("SELECT * FROM Person ORDER BY fullname ASC")
     public abstract LiveData<List<Person>> loadPersons();
 }
