@@ -295,7 +295,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Person> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -346,7 +346,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Area> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -398,7 +398,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Milestone> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -448,7 +448,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Project> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -502,7 +502,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Priority> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -552,7 +552,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Category> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
@@ -602,7 +602,7 @@ public class Repository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<CaseStatus> data) {
-                if (data == null) {
+                if (data == null || data.size() == 0) {
                     return true;
                 }
                 if (mustFetch) {
