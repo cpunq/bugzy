@@ -279,4 +279,76 @@ public class CaseEvent implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getsFrom() {
+        return sFrom;
+    }
+
+    public void setsFrom(String sFrom) {
+        this.sFrom = sFrom;
+    }
+
+    public String getsTo() {
+        return sTo;
+    }
+
+    public void setsTo(String sTo) {
+        this.sTo = sTo;
+    }
+
+    public String getsCC() {
+        return sCC;
+    }
+
+    public void setsCC(String sCC) {
+        this.sCC = sCC;
+    }
+
+    public String getsBCC() {
+        return sBCC;
+    }
+
+    public void setsBCC(String sBCC) {
+        this.sBCC = sBCC;
+    }
+
+    public String getsReplyTo() {
+        return sReplyTo;
+    }
+
+    public void setsReplyTo(String sReplyTo) {
+        this.sReplyTo = sReplyTo;
+    }
+
+    public String getsSubject() {
+        return sSubject;
+    }
+
+    public void setsSubject(String sSubject) {
+        this.sSubject = sSubject;
+    }
+
+    public String getsDate() {
+        return sDate;
+    }
+
+    public void setsDate(String sDate) {
+        this.sDate = sDate;
+    }
+
+    public String getsBodyText() {
+        return sBodyText;
+    }
+
+    public void setsBodyText(String sBodyText) {
+        this.sBodyText = sBodyText;
+    }
+
+    public String getsBodyHTML() {
+        return sBodyHTML;
+    }
+
+    public void setsBodyHTML(String sBodyHTML) {
+        this.sBodyHTML = sBodyHTML;
+    }
 }
