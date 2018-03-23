@@ -10,7 +10,11 @@ import android.widget.Spinner;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.CaseStatus;
+import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
+import com.bluestacks.bugzy.data.model.Person;
+import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.ui.BaseActivity;
 
@@ -39,6 +43,18 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.spinner_milestone)
     Spinner mMileStoneSpinner;
 
+    @BindView(R.id.spinner_category)
+    Spinner mCategorySpinner;
+
+    @BindView(R.id.spinner_assigned_to)
+    Spinner mAssignedToSpinner;
+
+    @BindView(R.id.spinner_status)
+    Spinner mStatusesSpinner;
+
+    @BindView(R.id.spinner_priority)
+    Spinner mPrioritySpinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +82,26 @@ public class CaseEditActivity extends BaseActivity {
                 showProjects(value.data);
             }
         });
-
+        mCaseEditViewModel.getPeople().observe(this, value -> {
+            if (value.data != null) {
+                showPeople(value.data);
+            }
+        });
+        mCaseEditViewModel.getPriorities().observe(this, value -> {
+            if (value.data != null) {
+                showPriorities(value.data);
+            }
+        });
+        mCaseEditViewModel.getCategories().observe(this, value -> {
+            if (value.data != null) {
+                showCategories(value.data);
+            }
+        });
+        mCaseEditViewModel.getStatuses().observe(this, value -> {
+            if (value.data != null) {
+                showStatuses(value.data);
+            }
+        });
     }
 
     public void showMilestones(List<Milestone> milestones) {
@@ -89,7 +124,35 @@ public class CaseEditActivity extends BaseActivity {
                 android.R.layout.simple_spinner_item, projects);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProjectSpinner.setAdapter(dataAdapter);
+    }
 
+    public void showPeople(List<Person> list) {
+        ArrayAdapter<Person> dataAdapter = new ArrayAdapter<Person>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mAssignedToSpinner.setAdapter(dataAdapter);
+    }
+
+    public void showStatuses(List<CaseStatus> list) {
+        ArrayAdapter<CaseStatus> dataAdapter = new ArrayAdapter<CaseStatus>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mStatusesSpinner.setAdapter(dataAdapter);
+
+    }
+
+    public void showCategories(List<Category> categories) {
+        ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(this,
+                android.R.layout.simple_spinner_item, categories);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCategorySpinner.setAdapter(dataAdapter);
+    }
+
+    public void showPriorities(List<Priority> priorities) {
+        ArrayAdapter<Priority> dataAdapter = new ArrayAdapter<Priority>(this,
+                android.R.layout.simple_spinner_item, priorities);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPrioritySpinner.setAdapter(dataAdapter);
     }
 
     public void setupViews() {

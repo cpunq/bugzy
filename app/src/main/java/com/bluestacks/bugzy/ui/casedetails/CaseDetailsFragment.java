@@ -286,12 +286,17 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             mContentContainer.setVisibility(View.VISIBLE);
 
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
-            if(!TextUtils.isEmpty(bug.getContentHtml())) {
-                mChangesContent.setText(Html.fromHtml(bug.getContentHtml()));
-            } else if(!TextUtils.isEmpty(bug.getContent())) {
-                mChangesContent.setText(Html.fromHtml(bug.getContent()));
+
+            if (bug.isfEmail()) {
+                mChangesContent.setText(Html.fromHtml(bug.getsBodyHTML()));
             } else {
-                mChangesContent.setVisibility(View.GONE);
+                if (!TextUtils.isEmpty(bug.getContentHtml())) {
+                    mChangesContent.setText(Html.fromHtml(bug.getContentHtml()));
+                } else if (!TextUtils.isEmpty(bug.getContent())) {
+                    mChangesContent.setText(Html.fromHtml(bug.getContent()));
+                } else {
+                    mChangesContent.setVisibility(View.GONE);
+                }
             }
 
             if(!TextUtils.isEmpty(bug.getsChanges())) {
