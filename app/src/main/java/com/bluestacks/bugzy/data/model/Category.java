@@ -57,4 +57,9 @@ public class Category {
     public void setDefaultStatus(int defaultStatus) {
         this.defaultStatus = defaultStatus;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
