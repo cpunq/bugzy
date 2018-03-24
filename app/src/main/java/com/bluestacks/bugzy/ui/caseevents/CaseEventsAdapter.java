@@ -194,6 +194,7 @@ public class CaseEventsAdapter extends RecyclerView.Adapter<CaseEventsAdapter.Ev
             mItemDate.setText(format2.format(bug.getDate()));
             mContentContainer.setVisibility(View.VISIBLE);
             mChanges.setVisibility(View.VISIBLE);
+            mChangesContent.setVisibility(View.VISIBLE);
 
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
 
@@ -244,7 +245,7 @@ public class CaseEventsAdapter extends RecyclerView.Adapter<CaseEventsAdapter.Ev
             } else {
                 // If attachments and content are empty, then hide mContentContainer
                 mAttachmentsRecyclerView.setVisibility(View.GONE);
-                if (TextUtils.isEmpty(bug.getContent())) {
+                if (TextUtils.isEmpty(bug.getContent()) && TextUtils.isEmpty(bug.getContentHtml())) {
                     mContentContainer.setVisibility(View.GONE);
                 }
             }
