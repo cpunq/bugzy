@@ -3,10 +3,7 @@ package com.bluestacks.bugzy.ui.home;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.DimenRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
@@ -31,6 +28,7 @@ import com.bluestacks.bugzy.ui.common.Injectable;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.ui.common.ItemOffsetDecoration;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager;
 
@@ -317,25 +315,5 @@ public class MyCasesFragment extends Fragment implements Injectable, OnItemClick
             mViewModel.loadCases(mFilter);  // Load cases
             mErrorView.setOnClickListener(null);
         });
-    }
-
-    public static class ItemOffsetDecoration extends RecyclerView.ItemDecoration {
-
-        private int mItemOffset;
-
-        public ItemOffsetDecoration(int itemOffset) {
-            mItemOffset = itemOffset;
-        }
-
-        public ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
-            this(context.getResources().getDimensionPixelSize(itemOffsetId));
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                   RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-            outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
-        }
     }
 }
