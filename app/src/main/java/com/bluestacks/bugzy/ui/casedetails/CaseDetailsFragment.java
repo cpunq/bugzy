@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
+import com.bluestacks.bugzy.ui.common.EmailView;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
 import android.arch.lifecycle.ViewModelProvider;
@@ -258,6 +259,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         private CaseDetailsFragmentContract homeActivity;
         private String mToken;
         private LinearLayout mContentContainer;
+        private EmailView mEmailView;
 
         //4
         private EventHolder (View v,Context context, CaseDetailsFragmentContract activity, String token) {
@@ -268,6 +270,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             mChangesContent = v.findViewById(R.id.change_content);
             mImageAttachment = v.findViewById(R.id.attachment);
             mContentContainer = v.findViewById(R.id.content_container);
+            mEmailView = v.findViewById(R.id.view_email);
             mContext = context;
             homeActivity = activity;
             mToken = token;
@@ -284,12 +287,31 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             DateFormat format2 = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.US);
             mItemDate.setText(format2.format(bug.getDate()));
             mContentContainer.setVisibility(View.VISIBLE);
+            mChanges.setVisibility(View.VISIBLE);
 
             mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
 
-            if (bug.isfEmail()) {
-                mChangesContent.setText(Html.fromHtml(bug.getsBodyHTML()));
+            // Decide to show Changes
+            if(!TextUtils.isEmpty(bug.getsChanges())) {
+                mChanges.setText(Html.fromHtml(bug.getsChanges()));
             } else {
+                mChanges.setVisibility(View.GONE);
+            }
+
+            // Decide to show Email or mChangesContent
+            if (bug.isfEmail()) {
+                mEmailView.setVisibility(View.VISIBLE);
+                mContentContainer.setVisibility(View.GONE);
+
+                mEmailView.mFromView.setText(bug.getsFrom());
+                mEmailView.mCcView.setText(bug.getsCC());
+                mEmailView.mToView.setText(bug.getsTo());
+                mEmailView.mSubject.setText(bug.getsSubject());
+                mEmailView.mDateView.setText(bug.getsDate());
+                mEmailView.mBodyContent.setText(Html.fromHtml(bug.getsBodyHTML()));
+            } else {
+                mEmailView.setVisibility(View.GONE);
+
                 if (!TextUtils.isEmpty(bug.getContentHtml())) {
                     mChangesContent.setText(Html.fromHtml(bug.getContentHtml()));
                 } else if (!TextUtils.isEmpty(bug.getContent())) {
@@ -299,13 +321,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 }
             }
 
-            if(!TextUtils.isEmpty(bug.getsChanges())) {
-                mChanges.setText(Html.fromHtml(bug.getsChanges()));
-            } else {
-                mChanges.setVisibility(View.GONE);
-            }
-
+            // Decide to show attachments
             if(bug.getsAttachments().size()>0) {
+                mContentContainer.setVisibility(View.VISIBLE);
                 if(bug.getsAttachments().get(0).getFilename().endsWith(".png") || bug.getsAttachments().get(0).getFilename().endsWith(".jpg") ) {
                     mImageAttachment.setVisibility(View.VISIBLE);
                     final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
@@ -315,6 +333,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                     mImageAttachment.setOnClickListener(view -> homeActivity.openImageActivity(img_path));
                 }
             } else {
+                // If attachments and content are empty, then hide mContentContainer
                 mImageAttachment.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(bug.getContent())) {
                     mContentContainer.setVisibility(View.GONE);

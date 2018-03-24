@@ -98,4 +98,15 @@
     </style>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="EmailOption" parent="android:Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/body_1</item>
+    </style>
+
+    <style name="EmailOptionText" parent="android:Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/body_1</item>
+    </style>
+
 </resources>
