@@ -134,10 +134,10 @@ public class CaseEventsAdapter extends RecyclerView.Adapter<CaseEventsAdapter.Ev
         @Nullable
         private LinearLayoutManager mLayoutManager;
         private RecyclerView mAttachmentsRecyclerView;
+        private OnAttachmentClickListener mOnAttachmentClickListener;
 
         // Transient data
         private CaseEvent mCaseEvent;
-        private OnAttachmentClickListener mOnAttachmentClickListener;
 
         private EventHolder (View v, Context context, OnAttachmentClickListener attachmentClickListener, String token) {
             super(v);
