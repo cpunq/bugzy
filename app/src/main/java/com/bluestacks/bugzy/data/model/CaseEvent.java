@@ -14,7 +14,7 @@ public class CaseEvent implements Serializable {
     String filename;
 
     @SerializedName( "ixBugEvent" )
-    String bugEvent;
+    int bugEvent;
 
     @SerializedName( "evt")
     int evt;
@@ -26,7 +26,7 @@ public class CaseEvent implements Serializable {
     String personid;
 
     @SerializedName( "ixPersonAssignedTo")
-    String personAssignedTo;
+    int personAssignedTo;
 
     @SerializedName( "dt" )
     Date date;
@@ -52,7 +52,7 @@ public class CaseEvent implements Serializable {
     @SerializedName( "sFormat")
     String sFormat;
 
-    @SerializedName( "attachment")
+    @SerializedName( "attachment_frame")
     String attachment;
 
     @SerializedName( "rgAttachments")
@@ -103,11 +103,11 @@ public class CaseEvent implements Serializable {
     @SerializedName( "sHtml")
     String contentHtml;
 
-    public String getBugEvent() {
+    public int getBugEvent() {
         return bugEvent;
     }
 
-    public void setBugEvent(String bugEvent) {
+    public void setBugEvent(int bugEvent) {
         this.bugEvent = bugEvent;
     }
 
@@ -135,11 +135,11 @@ public class CaseEvent implements Serializable {
         this.personid = personid;
     }
 
-    public String getPersonAssignedTo() {
+    public int getPersonAssignedTo() {
         return personAssignedTo;
     }
 
-    public void setPersonAssignedTo(String personAssignedTo) {
+    public void setPersonAssignedTo(int personAssignedTo) {
         this.personAssignedTo = personAssignedTo;
     }
 

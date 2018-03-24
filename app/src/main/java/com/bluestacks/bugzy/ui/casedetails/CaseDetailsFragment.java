@@ -1,12 +1,15 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
-import com.bluestacks.bugzy.ui.common.EmailView;
+import com.bluestacks.bugzy.data.model.Attachment;
+import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -14,26 +17,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseEvent;
-import com.bumptech.glide.Glide;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -41,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CaseDetailsFragment extends Fragment implements Injectable {
+    public static final String TAG = CaseDetailsFragment.class.getName();
     public interface CaseDetailsFragmentContract {
         void openImageActivity(String imagePath);
     }
@@ -117,8 +113,25 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     private void setupViews() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new RecyclerAdapter();
+        mAdapter = new CaseEventsAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnAttachmentClickListener((view, event, attachmentPosition) -> {
+            // TODO: Move this logic to ViewModel
+            Attachment attachment = event.getsAttachments().get(attachmentPosition);
+            String filename = attachment.getFilename().toLowerCase();
+            if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
+                final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
+                        .replaceAll("&amp;","&");
+                mParentActivity.openImageActivity(img_path);
+                return;
+            }
+            // For other attachments leave things to browser
+            String url = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
+                    .replaceAll("&amp;","&");
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
     }
 
     @Override
@@ -135,6 +148,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 return;
             }
             mToken = token;
+            mAdapter.setToken(mToken);
             // If token is there, only then start observing cases
             mViewModel.getCaseState().observe(this, caseState -> {
                 if (caseState.data != null) {
@@ -147,7 +161,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
         mViewModel.getSnackBarText().observe(this, text -> Snackbar.make(getView(), text, Snackbar.LENGTH_LONG).show());
     }
-    private RecyclerAdapter mAdapter;
+    private CaseEventsAdapter mAdapter;
 
     @UiThread
     protected void showCaseDetails(Case aCase) {
@@ -169,8 +183,6 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         }
         mActiveStatus.setText(String.valueOf(mCase.getStatus()));
         Case bug = mCase;
-        Log.d(Const.TAG," " + mCase.getFixFor());
-        Log.d(Const.TAG," " + mCase.getProjectArea());
         if(bug.getPriority() <= 3){
             mPriorityIndicator.setBackgroundColor(Color.parseColor("#e74c3c"));
         } else if(bug.getPriority() == 4) {
@@ -191,154 +203,5 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     protected void showContent() {
         mProgress.setVisibility(View.GONE);
         mContainer.setVisibility(View.VISIBLE);
-    }
-
-    public class RecyclerAdapter extends RecyclerView.Adapter<EventHolder> {
-        private List<CaseEvent> mCaseEvents;
-
-        private RecyclerAdapter() {
-        }
-
-        public void setData(List<CaseEvent> events) {
-            mCaseEvents = events;
-        }
-
-        @Override
-        public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View inflatedView;
-            switch(viewType) {
-                case 0:
-                    inflatedView =LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.bug_event_row_begin, parent, false);
-                    break;
-
-                case 2:
-                    inflatedView = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.bug_event_row_end, parent, false);
-                    break;
-
-                default:
-                    inflatedView = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.bug_event_row, parent, false);
-                    break;
-            }
-
-            return new EventHolder(inflatedView, getContext(), mParentActivity, mToken);
-        }
-
-        @Override
-        public void onBindViewHolder(EventHolder holder, int position) {
-            CaseEvent bug = mCaseEvents.get(position);
-            holder.bindData(bug);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCaseEvents == null ? 0 : mCaseEvents.size();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if(position == 0) {
-                return 0;
-            }
-            else if(position == mCaseEvents.size()-1) {
-                return 2;
-            }
-            return 1;
-        }
-    }
-
-    public static class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mItemDate;
-        private TextView mItemDescription;
-        private TextView mChanges;
-        private TextView mChangesContent;
-        private ImageView mImageAttachment;
-        private Context mContext;
-        private CaseDetailsFragmentContract homeActivity;
-        private String mToken;
-        private LinearLayout mContentContainer;
-        private EmailView mEmailView;
-
-        //4
-        private EventHolder (View v,Context context, CaseDetailsFragmentContract activity, String token) {
-            super(v);
-            mItemDate =  v.findViewById(R.id.item_id);
-            mItemDescription = v.findViewById(R.id.item_description);
-            mChanges = v.findViewById(R.id.changes);
-            mChangesContent = v.findViewById(R.id.change_content);
-            mImageAttachment = v.findViewById(R.id.attachment);
-            mContentContainer = v.findViewById(R.id.content_container);
-            mEmailView = v.findViewById(R.id.view_email);
-            mContext = context;
-            homeActivity = activity;
-            mToken = token;
-            v.setOnClickListener(this);
-        }
-
-        //5
-        @Override
-        public void onClick(View v) {
-            Log.d("RecyclerView", "CLICK!");
-        }
-
-        public void bindData(CaseEvent bug) {
-            DateFormat format2 = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.US);
-            mItemDate.setText(format2.format(bug.getDate()));
-            mContentContainer.setVisibility(View.VISIBLE);
-            mChanges.setVisibility(View.VISIBLE);
-
-            mItemDescription.setText(Html.fromHtml( bug.getEventDescription()));
-
-            // Decide to show Changes
-            if(!TextUtils.isEmpty(bug.getsChanges())) {
-                mChanges.setText(Html.fromHtml(bug.getsChanges()));
-            } else {
-                mChanges.setVisibility(View.GONE);
-            }
-
-            // Decide to show Email or mChangesContent
-            if (bug.isfEmail()) {
-                mEmailView.setVisibility(View.VISIBLE);
-                mContentContainer.setVisibility(View.GONE);
-
-                mEmailView.mFromView.setText(bug.getsFrom());
-                mEmailView.mCcView.setText(bug.getsCC());
-                mEmailView.mToView.setText(bug.getsTo());
-                mEmailView.mSubject.setText(bug.getsSubject());
-                mEmailView.mDateView.setText(bug.getsDate());
-                mEmailView.mBodyContent.setText(Html.fromHtml(bug.getsBodyHTML()));
-            } else {
-                mEmailView.setVisibility(View.GONE);
-
-                if (!TextUtils.isEmpty(bug.getContentHtml())) {
-                    mChangesContent.setText(Html.fromHtml(bug.getContentHtml()));
-                } else if (!TextUtils.isEmpty(bug.getContent())) {
-                    mChangesContent.setText(Html.fromHtml(bug.getContent()));
-                } else {
-                    mChangesContent.setVisibility(View.GONE);
-                }
-            }
-
-            // Decide to show attachments
-            if(bug.getsAttachments().size()>0) {
-                mContentContainer.setVisibility(View.VISIBLE);
-                if(bug.getsAttachments().get(0).getFilename().endsWith(".png") || bug.getsAttachments().get(0).getFilename().endsWith(".jpg") ) {
-                    mImageAttachment.setVisibility(View.VISIBLE);
-                    final String img_path = ("https://bluestacks.fogbugz.com/" + bug.getsAttachments().get(0).getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
-                    Glide.with(mContext).load(img_path)
-                            .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
-                            .into(mImageAttachment);
-                    mImageAttachment.setOnClickListener(view -> homeActivity.openImageActivity(img_path));
-                }
-            } else {
-                // If attachments and content are empty, then hide mContentContainer
-                mImageAttachment.setVisibility(View.GONE);
-                if (TextUtils.isEmpty(bug.getContent())) {
-                    mContentContainer.setVisibility(View.GONE);
-                }
-            }
-        }
     }
 }

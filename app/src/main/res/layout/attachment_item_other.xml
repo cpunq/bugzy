@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="230dp"
+        android:layout_height="150dp"
+        android:gravity="center"
+        android:foreground="?attr/selectableItemBackground"
+        android:background="@drawable/attachment_frame"
+        android:orientation="vertical">
+
+    <ImageView android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/ic_attachment_black_24px"
+    />
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:maxWidth="200dp"
+              android:singleLine="true"
+              android:ellipsize="end"
+              android:textSize="@dimen/subheading"
+              android:id="@+id/tv_filename"
+    />
+
+</LinearLayout>
