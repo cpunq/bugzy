@@ -2,6 +2,7 @@ package com.bluestacks.bugzy.ui.casedetails;
 
 import com.bluestacks.bugzy.data.model.Attachment;
 import com.bluestacks.bugzy.data.model.CaseStatus;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
@@ -24,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     private CaseDetailsFragmentContract mParentActivity;
     private String mToken;
     LinearLayoutManager mlinearLayoutManager;
+    private Snackbar mSyncSnackbar;
+    private Snackbar mRetrySnackbar;
+
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -173,6 +178,18 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         mReopenButton.setTextColor(getResources().getColor(R.color.textColorSecondary));
     }
 
+    public Snackbar getSyncSnackbar() {
+        Snackbar bar = Snackbar.make(getView(), "Syncing case details..", Snackbar.LENGTH_INDEFINITE);
+        ViewGroup contentLay = (ViewGroup) bar.getView().findViewById(android.support.design.R.id.snackbar_text).getParent();
+        ProgressBar item = new ProgressBar(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(inDp(24), inDp(24));
+        params.gravity = Gravity.CENTER_VERTICAL;
+        item.setLayoutParams(params);
+        contentLay.addView(item,0);
+        return bar;
+    }
+
+
     int mScrollY =  0;
     int mMaxScroll = 0;
 
@@ -239,6 +256,18 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             mViewModel.getCaseState().observe(this, caseState -> {
                 if (caseState.data != null) {
                     showCaseDetails(caseState.data);
+                }
+                if (caseState.status == Status.LOADING) {
+                    showLoading();
+                    return;
+                }
+                if (caseState.status == Status.ERROR) {
+                    showError(caseState.message);
+                    return;
+                }
+                if (caseState.status == Status.SUCCESS) {
+                    this.hideLoading();
+                    return;
                 }
 
             });
@@ -339,9 +368,79 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mRetrySnackbar != null && mRetrySnackbar.isShown()) {
+            mRetrySnackbar.dismiss();
+        }
+        if (mSyncSnackbar != null && mSyncSnackbar.isShown()) {
+            mSyncSnackbar.dismiss();
+        }
+    }
+
+
+    public Snackbar getRetrySnackbar(String message) {
+        Snackbar snackbar = Snackbar
+                .make(getView(), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        mViewModel.retryClicked();
+                    }
+                });
+        return snackbar;
+    }
+
+    private void showRetrySnackbar(String message) {
+        mRetrySnackbar = getRetrySnackbar(message);
+        mRetrySnackbar.show();
+    }
+
+    private void hideRetrySnackbar() {
+        if (mRetrySnackbar == null) {
+            return;
+        }
+        mRetrySnackbar.dismiss();
+        mRetrySnackbar = null;
+    }
+
+
+    private void showSyncProgress() {
+        mSyncSnackbar = getSyncSnackbar();
+        mSyncSnackbar.show();
+    }
+
+    private void hideSyncProgress() {
+        if (mSyncSnackbar == null) {
+            return;
+        }
+        mSyncSnackbar.dismiss();
+        mSyncSnackbar = null;
+    }
+
+    protected void hideLoading() {
+        mProgress.setVisibility(View.GONE);
+        hideSyncProgress();
+    }
+
     @UiThread
     protected void showContent() {
         mProgress.setVisibility(View.GONE);
         mContainer.setVisibility(View.VISIBLE);
+    }
+
+    protected void showLoading() {
+        hideRetrySnackbar();
+        if (mCase.getCaseevents() == null || mCase.getCaseevents().size() == 0) {
+            // Show full screen loading
+            mProgress.setVisibility(View.VISIBLE);
+            return;
+        }
+        showSyncProgress();
+    }
+
+    protected void showError(String message) {
+        showRetrySnackbar(message);
     }
 }
