@@ -199,7 +199,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 mScrollY += dy;
-                Log.d(TAG, String.format("%d, %d", mScrollY, mRecyclerView.computeVerticalScrollOffset()));
+//                Log.d(TAG, String.format("%d, %d", mScrollY, mRecyclerView.computeVerticalScrollOffset()));
                 int requiredScroll = Math.min(0, Math.max(mMaxScroll, -mScrollY));
                 if (requiredScroll == mMaxScroll && mMaxScroll != 0) {
                     ViewCompat.setElevation(mContainer, inDp(4));
