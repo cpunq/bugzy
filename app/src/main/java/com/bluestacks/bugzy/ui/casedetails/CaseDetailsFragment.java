@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -25,7 +24,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,10 +59,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     private CaseEventsAdapter mAdapter;
     private CaseDetailsFragmentContract mParentActivity;
     private String mToken;
-    LinearLayoutManager mlinearLayoutManager;
+    private LinearLayoutManager mlinearLayoutManager;
     private Snackbar mSyncSnackbar;
     private Snackbar mRetrySnackbar;
-
+    int mScrollY =  0;
+    int mMaxScroll = 0;
+    int mLastKnownContainerHeight = 0;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -191,21 +191,20 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         return bar;
     }
 
-
-    int mScrollY =  0;
-    int mMaxScroll = 0;
-
     private void prepareRecyclerScrollListener() {
         mContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                if (mLastKnownContainerHeight == mContainer.getHeight()) {
+                    return;
+                }
                 mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
                         mContainer.getHeight() + inDp(8),
                         mRecyclerView.getPaddingRight(),
                         mRecyclerView.getPaddingBottom());
                 mlinearLayoutManager.scrollToPosition(0);
                 mMaxScroll = -mContainer.getHeight() + inDp(56);
-                mContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mLastKnownContainerHeight = mContainer.getHeight();
             }
         });
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
