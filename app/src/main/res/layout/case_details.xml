@@ -151,6 +151,67 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:paddingRight="8dp"
+                android:gravity="right|center_vertical">
+
+            <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_assign"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/button_assign"
+            />
+
+            <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_done_black_24px"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/button_resolve"
+            />
+
+            <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_reactivate"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/button_reactivate"
+            />
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:drawableLeft="@drawable/ic_add_white_24px"
+                    android:drawablePadding="4dp"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:text="Reopen"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/button_reopen"
+            />
+
+            <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_close_black_24px"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/button_close_case"
+            />
+
+        </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

@@ -7,6 +7,11 @@ import android.arch.persistence.room.Entity;
 
 @Entity(primaryKeys = "id")
 public class CaseStatus {
+    public static final String CLOSED = "closed";
+    public static final String ACTIVE = "active";
+    public static final String OPEN = "open";
+    public static final String RESOLVED = "resolved";
+
     @SerializedName("ixStatus")
     private int id;
 

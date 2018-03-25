@@ -1,6 +1,7 @@
 package com.bluestacks.bugzy.ui.casedetails;
 
 import com.bluestacks.bugzy.data.model.Attachment;
+import com.bluestacks.bugzy.data.model.CaseStatus;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import com.bluestacks.bugzy.ui.common.Injectable;
 
@@ -9,6 +10,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,9 +21,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,12 +35,15 @@ import android.widget.TextView;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseEvent;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class CaseDetailsFragment extends Fragment implements Injectable {
     public static final String TAG = CaseDetailsFragment.class.getName();
@@ -42,6 +52,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     }
     private CaseDetailsFragmentViewModel mViewModel;
     private Case mCase;
+    private CaseEventsAdapter mAdapter;
     private CaseDetailsFragmentContract mParentActivity;
     private String mToken;
 
@@ -77,6 +88,21 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     @BindView(R.id.textview_required_merge)
     protected TextView mRequiredMerge;
+
+    @BindView(R.id.button_assign)
+    protected ImageButton mAssignButton;
+
+    @BindView(R.id.button_reactivate)
+    protected ImageButton mReactivateButton;
+
+    @BindView(R.id.button_close_case)
+    protected ImageButton mCloseCaseButton;
+
+    @BindView(R.id.button_reopen)
+    protected Button mReopenButton;
+
+    @BindView(R.id.button_resolve)
+    protected ImageButton mResolveButton;
 
     public static CaseDetailsFragment getInstance(String bugId, Case aCase) {
         CaseDetailsFragment fragment = new CaseDetailsFragment();
@@ -132,7 +158,22 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             i.setData(Uri.parse(url));
             startActivity(i);
         });
+        prepareActionsButtons();
     }
+
+    private void prepareActionsButtons() {
+        setButtonDrawableColorFilter(mAssignButton.getDrawable());
+        setButtonDrawableColorFilter(mResolveButton.getDrawable());
+        setButtonDrawableColorFilter(mReactivateButton.getDrawable());
+        setButtonDrawableColorFilter(mReopenButton.getCompoundDrawables()[0]);
+        setButtonDrawableColorFilter(mCloseCaseButton.getDrawable());
+        mReopenButton.setTextColor(getResources().getColor(R.color.textColorSecondary));
+    }
+
+    private void setButtonDrawableColorFilter(Drawable d) {
+        d.mutate().setColorFilter(getResources().getColor(R.color.textColorSecondary), PorterDuff.Mode.SRC_ATOP);
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -154,6 +195,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 if (caseState.data != null) {
                     showCaseDetails(caseState.data);
                 }
+
             });
             // Load cases only when token is gotten
             mViewModel.loadCaseDetails(mCase);
@@ -161,12 +203,65 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
         mViewModel.getSnackBarText().observe(this, text -> Snackbar.make(getView(), text, Snackbar.LENGTH_LONG).show());
     }
-    private CaseEventsAdapter mAdapter;
+
+    @OnClick(R.id.button_resolve)
+    public void onResolveClicked() {
+        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+    }
+
+    @OnClick(R.id.button_reopen)
+    public void onReopenClicked() {
+        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+    }
+
+    @OnClick(R.id.button_reactivate)
+    public void onReActivateClicked() {
+        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+    }
+
+    @OnClick(R.id.button_close_case)
+    public void onCloseCaseClicked() {
+        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+    }
+
+    @OnClick(R.id.button_assign)
+    public void onAssignClicked() {
+        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+    }
+
+    private void showActionButtons(Case kase) {
+        String status = kase.getStatus().toLowerCase();
+        if(status.startsWith(CaseStatus.RESOLVED)) {
+            mAssignButton.setVisibility(View.VISIBLE);
+            mResolveButton.setVisibility(View.VISIBLE);
+            mReactivateButton.setVisibility(View.VISIBLE);
+            mReopenButton.setVisibility(View.GONE);
+            mCloseCaseButton.setVisibility(View.VISIBLE);
+            return;
+        }
+        if(status.startsWith(CaseStatus.OPEN) || status.startsWith(CaseStatus.ACTIVE)) {
+            mAssignButton.setVisibility(View.VISIBLE);
+            mResolveButton.setVisibility(View.VISIBLE);
+            mReactivateButton.setVisibility(View.GONE);
+            mReopenButton.setVisibility(View.GONE);
+            mCloseCaseButton.setVisibility(View.GONE);
+            return;
+        }
+        if(status.startsWith(CaseStatus.CLOSED)) {
+            mAssignButton.setVisibility(View.GONE);
+            mResolveButton.setVisibility(View.GONE);
+            mReactivateButton.setVisibility(View.GONE);
+            mReopenButton.setVisibility(View.VISIBLE);
+            mCloseCaseButton.setVisibility(View.GONE);
+            return;
+        }
+    }
 
     @UiThread
     protected void showCaseDetails(Case aCase) {
         mCase = aCase;
         showContent();
+        showActionButtons(mCase);
 
         List<CaseEvent> evs = mCase.getCaseevents();
         if (evs != null) {
