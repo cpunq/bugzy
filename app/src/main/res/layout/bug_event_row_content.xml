@@ -30,7 +30,6 @@
                 android:layout_gravity="left"
                 android:text="Some "
                 android:textColor="@color/main_color"
-                android:textStyle="bold"
                 android:ellipsize="end"
                 android:maxLines="5"/>
             <TextView
