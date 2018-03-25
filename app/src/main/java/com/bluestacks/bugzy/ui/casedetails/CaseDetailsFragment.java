@@ -18,14 +18,16 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -55,6 +57,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     private CaseEventsAdapter mAdapter;
     private CaseDetailsFragmentContract mParentActivity;
     private String mToken;
+    LinearLayoutManager mlinearLayoutManager;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -135,10 +138,9 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         ButterKnife.bind(this, v);
         return v;
     }
-
     private void setupViews() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mlinearLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mlinearLayoutManager);
         mAdapter = new CaseEventsAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnAttachmentClickListener((view, event, attachmentPosition) -> {
@@ -159,6 +161,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             startActivity(i);
         });
         prepareActionsButtons();
+        prepareRecyclerScrollListener();
     }
 
     private void prepareActionsButtons() {
@@ -168,6 +171,48 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         setButtonDrawableColorFilter(mReopenButton.getCompoundDrawables()[0]);
         setButtonDrawableColorFilter(mCloseCaseButton.getDrawable());
         mReopenButton.setTextColor(getResources().getColor(R.color.textColorSecondary));
+    }
+
+    int mScrollY =  0;
+    int mMaxScroll = 0;
+
+    private void prepareRecyclerScrollListener() {
+        mContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
+                        mContainer.getHeight() + inDp(8),
+                        mRecyclerView.getPaddingRight(),
+                        mRecyclerView.getPaddingBottom());
+                mlinearLayoutManager.scrollToPosition(0);
+                mMaxScroll = -mContainer.getHeight() + inDp(56);
+                mContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mScrollY += dy;
+                Log.d(TAG, String.format("%d, %d", mScrollY, mRecyclerView.computeVerticalScrollOffset()));
+                int requiredScroll = Math.min(0, Math.max(mMaxScroll, -mScrollY));
+                if (requiredScroll == mMaxScroll && mMaxScroll != 0) {
+                    ViewCompat.setElevation(mContainer, inDp(4));
+                } else {
+                    ViewCompat.setElevation(mContainer, inDp(0));
+                }
+                mContainer.setTranslationY(requiredScroll);
+            }
+        });
+    }
+
+    private int inDp(int dps) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, getResources().getDisplayMetrics());
     }
 
     private void setButtonDrawableColorFilter(Drawable d) {
