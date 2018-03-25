@@ -15,6 +15,9 @@ public class Case implements Serializable {
     @SerializedName( "operations")
     List<String> operations;
 
+    @SerializedName("requiredxmergexin")
+    private String requiredMergeIn;
+
     @SerializedName("sTitle")
     String title;
 
@@ -150,5 +153,13 @@ public class Case implements Serializable {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getRequiredMergeIn() {
+        return requiredMergeIn;
+    }
+
+    public void setRequiredMergeIn(String requiredMergeIn) {
+        this.requiredMergeIn = requiredMergeIn;
     }
 }

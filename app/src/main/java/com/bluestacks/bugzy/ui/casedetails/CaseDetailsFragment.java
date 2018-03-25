@@ -344,6 +344,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         mBugId.setText(String.valueOf(mCase.getIxBug()));
         mBugTitle.setText(String.valueOf(mCase.getTitle()));
         mAssignedTo.setText(String.valueOf(mCase.getPersonAssignedTo()));
+        mRequiredMerge.setText(mCase.getRequiredMergeIn());
 
         if (!TextUtils.isEmpty(mCase.getFixFor())) {
             mMileStone.setText(String.valueOf(mCase.getFixFor()));

@@ -123,7 +123,6 @@
                         android:id="@+id/textview_assigned_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Manish"
                         android:textStyle="bold" />
             </LinearLayout>
 
@@ -153,7 +152,6 @@
                         android:id="@+id/textview_required_merge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="kitkat-bst"
                         android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

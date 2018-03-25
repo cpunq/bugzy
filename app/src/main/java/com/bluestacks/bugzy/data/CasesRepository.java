@@ -272,7 +272,7 @@ public class CasesRepository {
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
                 String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sPersonAssignedTo", "sPersonOpenedBy", "sArea", "sCategory", "events"
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sPersonAssignedTo", "sPersonOpenedBy", "sArea", "sCategory", "events", "requiredxmergexin"
                 };
                 return mApiService.searchCases(new SearchCasesRequest(cols, kase.getIxBug()+""));
             }
