@@ -2,6 +2,7 @@ package com.bluestacks.bugzy.ui.casedetails;
 
 import com.bluestacks.bugzy.data.model.Attachment;
 import com.bluestacks.bugzy.data.model.CaseStatus;
+import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import com.bluestacks.bugzy.ui.common.Injectable;
@@ -245,36 +246,32 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(CaseDetailsFragmentViewModel.class);
 
         showCaseDetails(mCase);
-        mViewModel.getToken().observe(this, token -> {
-            if (token == null) {
-                // Not logged in
+
+        mViewModel.getCaseState().observe(this, pair -> {
+            Resource<Case> caseState = pair.first;
+            mToken = pair.second;
+            if (mToken == null) {
+                // Clear stuff and navigate to parent activity
+            }
+            mAdapter.setToken(mToken);
+
+            if (caseState.data != null) {
+                showCaseDetails(caseState.data);
+            }
+            if (caseState.status == Status.LOADING) {
+                showLoading();
                 return;
             }
-            mToken = token;
-            mAdapter.setToken(mToken);
-            // If token is there, only then start observing cases
-            mViewModel.getCaseState().observe(this, caseState -> {
-                if (caseState.data != null) {
-                    showCaseDetails(caseState.data);
-                }
-                if (caseState.status == Status.LOADING) {
-                    showLoading();
-                    return;
-                }
-                if (caseState.status == Status.ERROR) {
-                    showError(caseState.message);
-                    return;
-                }
-                if (caseState.status == Status.SUCCESS) {
-                    this.hideLoading();
-                    return;
-                }
-
-            });
-            // Load cases only when token is gotten
-            mViewModel.loadCaseDetails(mCase);
+            if (caseState.status == Status.ERROR) {
+                showError(caseState.message);
+                return;
+            }
+            if (caseState.status == Status.SUCCESS) {
+                this.hideLoading();
+                return;
+            }
         });
-
+        mViewModel.loadCaseDetails(mCase);
         mViewModel.getSnackBarText().observe(this, text -> Snackbar.make(getView(), text, Snackbar.LENGTH_LONG).show());
     }
 
@@ -386,7 +383,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
                 .setAction("RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        mViewModel.retryClicked();
+                        mViewModel.loadCaseDetails(mCase);
                     }
                 });
         return snackbar;
