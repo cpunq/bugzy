@@ -11,6 +11,7 @@ public class CaseStatus {
     public static final String ACTIVE = "active";
     public static final String OPEN = "open";
     public static final String RESOLVED = "resolved";
+    public static final String VERIFIED = "verified";
 
     @SerializedName("ixStatus")
     private int id;

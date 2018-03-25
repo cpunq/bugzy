@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -302,7 +303,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     private void showActionButtons(Case kase) {
         String status = kase.getStatus().toLowerCase();
-        if(status.startsWith(CaseStatus.RESOLVED)) {
+        if(status.startsWith(CaseStatus.RESOLVED) || status.startsWith(CaseStatus.VERIFIED)) {
             mAssignButton.setVisibility(View.VISIBLE);
             mResolveButton.setVisibility(View.VISIBLE);
             mReactivateButton.setVisibility(View.VISIBLE);
