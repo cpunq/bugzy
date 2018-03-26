@@ -2,6 +2,7 @@ package com.bluestacks.bugzy.ui.search;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 import com.bluestacks.bugzy.data.model.Status;
@@ -49,6 +50,9 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
     private SearchSuggestionAdapter mSearchSuggestionAdapter;
     private List<Case> mCases;
     private List<SearchSuggestion> mSearchSuggestions;
+    private List<RecentSearch> mRecentSearches;
+
+    private SearchHistoryAdapter mSearchHistoryAdapter;
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
@@ -67,6 +71,9 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
     @BindView(R.id.searchRecyclerView)
     RecyclerView mSearchSuggestionView;
 
+    @BindView(R.id.search_history_recycler_view)
+    RecyclerView mSearchHistoryRecyclerView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +84,8 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
         setupViews();
         subscribeToViewModel();
         mSearchEditText.clearFocus();
+        // Triggers the search change event, which inturn triggers the search history
+        mSearchEditText.setText("");
     }
 
     private void setupViews() {
@@ -98,6 +107,22 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         mAdapter = new CaseAdapter(mCases, this);
         mRecyclerView.setAdapter(mAdapter);
+        prepareSearchHistoryRecyclerView();
+    }
+
+    private void prepareSearchHistoryRecyclerView() {
+        mSearchHistoryAdapter = new SearchHistoryAdapter(position -> {
+            if (mRecentSearches == null) {
+                return;
+            }
+            mSearchEditText.setText(mRecentSearches.get(position).getText());
+            mSearchEditText.setSelection(mSearchEditText.getText().length());   // Important, as setText doesn't shift the cursor
+            mSearchSuggestionView.setVisibility(View.GONE);    // Important, as setting text will trigger searchChange which will show the searchSuggestions
+            mViewModel.search(mRecentSearches.get(position).getText());     // This does the actual search
+            dismissKeyboard(mSearchEditText.getWindowToken());
+        });
+        mSearchHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchHistoryRecyclerView.setAdapter(mSearchHistoryAdapter);
     }
 
     private void prepareSearchEditText() {
@@ -214,6 +239,17 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
             // Hide suggestions
             mSearchSuggestionView.setVisibility(View.GONE);
+        });
+
+        mViewModel.getRecentSearches().observe(this, searches -> {
+            if (searches == null || searches.size() == 0) {
+                mSearchHistoryRecyclerView.setVisibility(View.GONE);
+            } else {
+                mSearchHistoryRecyclerView.setVisibility(View.VISIBLE);
+                mRecentSearches = searches;
+                mSearchHistoryAdapter.setData(mRecentSearches);
+                mSearchHistoryAdapter.notifyDataSetChanged();
+            }
         });
     }
 

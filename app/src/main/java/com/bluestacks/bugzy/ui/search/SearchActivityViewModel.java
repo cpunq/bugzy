@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.ui.search;
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.data.SearchSuggestionRepository;
 import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
@@ -13,6 +14,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.List;
 
@@ -30,6 +32,8 @@ public class SearchActivityViewModel extends ViewModel {
     private SearchSuggestionRepository mSearchSuggestionRepository;
     private MutableLiveData<String> mSearchTextLive = new MutableLiveData<>();
     private SingleLiveEvent<String> mSearchChangeEvent = new SingleLiveEvent<>();
+
+    private LiveData<List<RecentSearch>> mRecentSearches;
 
     @Inject
     public SearchActivityViewModel(CasesRepository repository, SearchSuggestionRepository ssRepository) {
@@ -62,10 +66,18 @@ public class SearchActivityViewModel extends ViewModel {
             }
             return mSearchSuggestionRepository.search(q.trim());
         });
+
+        mRecentSearches = Transformations.switchMap(mSearchTextLive, query -> {
+            if (query.equals("")) {
+                return mCasesRepository.getRecentSearches();
+            }
+            return AbsentLiveData.create();
+        });
     }
 
 
     public void searchTextChanged(String query) {
+        Log.d(TAG, "serachTextChagned");
         mSearchTextLive.setValue(query);
     }
 
@@ -116,5 +128,9 @@ public class SearchActivityViewModel extends ViewModel {
 
     public SingleLiveEvent<String> getSearchChangeEvent() {
         return mSearchChangeEvent;
+    }
+
+    public LiveData<List<RecentSearch>> getRecentSearches() {
+        return mRecentSearches;
     }
 }

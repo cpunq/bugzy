@@ -1,10 +1,9 @@
 package com.bluestacks.bugzy.ui.search;
 
 import com.bluestacks.bugzy.R;
-import com.bluestacks.bugzy.data.model.SearchSuggestion;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.utils.OnItemClickListener;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,23 +13,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggestionAdapter.SearchSuggestionHolder> {
+public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdapter.SearchSuggestionHolder> {
     private OnItemClickListener mItemClickListener;
     @Nullable
-    private List<SearchSuggestion> mSearchSuggestions;
-    private boolean mShowHistoryImage;
+    private List<RecentSearch> mSearchSuggestions;
 
-    public SearchSuggestionAdapter(@Nullable  OnItemClickListener listener) {
+    public SearchHistoryAdapter(@Nullable  OnItemClickListener listener) {
         mItemClickListener = listener;
-        mShowHistoryImage = false;
     }
 
-    public SearchSuggestionAdapter(boolean showHistoryImage, OnItemClickListener itemClickListener) {
-        mItemClickListener = itemClickListener;
-        mShowHistoryImage = showHistoryImage;
-    }
-
-    public void setData(List<SearchSuggestion> data) {
+    public void setData(List<RecentSearch> data) {
         mSearchSuggestions = data;
     }
 
@@ -55,8 +47,8 @@ public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggesti
 
     @Override
     public void onBindViewHolder(SearchSuggestionHolder holder, int position) {
-        SearchSuggestion bug = mSearchSuggestions.get(position);
-        holder.bindData(bug);
+        RecentSearch search = mSearchSuggestions.get(position);
+        holder.bindData(search);
     }
 
     @Override
@@ -70,13 +62,10 @@ public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggesti
         public SearchSuggestionHolder (View v) {
             super(v);
             mFooter = v.findViewById(R.id.tv_suggestion);
-            if (mShowHistoryImage) {
-                 v.findViewById(R.id.iv_history).setVisibility(View.VISIBLE);
-            }
+            v.findViewById(R.id.iv_history).setVisibility(View.VISIBLE);
         }
 
-        public void bindData(SearchSuggestion bug) {
-
+        public void bindData(RecentSearch bug) {
             mFooter.setText(bug.getText());
         }
     }
