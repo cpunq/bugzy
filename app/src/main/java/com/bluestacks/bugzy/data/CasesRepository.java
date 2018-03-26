@@ -288,10 +288,19 @@ public class CasesRepository {
     }
 
     public void recordResearch(String query) {
+        if (query == null || query.trim().equals("")) {
+            return;
+        }
         mAppExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mMiscDao.insert(new RecentSearch(query));
+                try {
+                    db.beginTransaction();
+                    mMiscDao.insert(new RecentSearch(query));
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
             }
         });
     }
