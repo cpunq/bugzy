@@ -16,6 +16,7 @@ public class RecentSearch {
     public RecentSearch(String text) {
         this.id = text.hashCode();
         this.createdAt = new Date();
+        this.text = text;
     }
 
     public RecentSearch(int id, String text, Date createdAt) {
