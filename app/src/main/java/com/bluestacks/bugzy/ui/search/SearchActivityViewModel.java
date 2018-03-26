@@ -88,7 +88,7 @@ public class SearchActivityViewModel extends ViewModel {
 
     public void clearSearch() {
         mCurrentQuery = null;
-        mClearSearchEvent.setValue(null);
+        mClearSearchEvent.call();
     }
 
     public void searchSuggestionSelected(SearchSuggestion suggestion) {
