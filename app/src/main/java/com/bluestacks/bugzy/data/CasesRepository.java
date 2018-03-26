@@ -310,7 +310,7 @@ public class CasesRepository {
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
                 String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy","events"
+                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy"
                 };
                 return mApiService.searchCases(new SearchCasesRequest(cols, query));
             }
