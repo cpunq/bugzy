@@ -8,6 +8,7 @@ import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 
 import android.arch.lifecycle.LiveData;
@@ -76,4 +77,10 @@ public abstract class MiscDao {
 
     @Query("SELECT * FROM Person ORDER BY fullname ASC")
     public abstract LiveData<List<Person>> loadPersons();
+
+    @Query("SELECT * FROM RecentSearch ORDER BY createdAt DESC LIMIT 50")
+    public abstract LiveData<List<RecentSearch>> loadRecentSearches();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insert(RecentSearch search);
 }

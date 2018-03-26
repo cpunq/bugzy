@@ -12,6 +12,7 @@ import android.arch.persistence.room.TypeConverter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class BugzyTypeConverters {
@@ -61,5 +62,15 @@ public class BugzyTypeConverters {
     public static String stringFromIntegerList(List<Integer> list) {
         String json = sGson.toJson(list);
         return json;
+    }
+
+    @TypeConverter
+    public static Date toDate(long dateLong) {
+        return new Date(dateLong);
+    }
+
+    @TypeConverter
+    public static long fromDate(Date date) {
+        return date.getTime();
     }
 }

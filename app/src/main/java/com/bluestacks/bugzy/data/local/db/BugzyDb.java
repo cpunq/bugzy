@@ -10,6 +10,7 @@ import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 
 import android.arch.persistence.room.Database;
@@ -17,7 +18,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 
 @Database(entities = {Case.class, FilterCasesResult.class, Area.class, Milestone.class, Project.class, SearchSuggestion.class, Person.class,
-        Priority.class, Category.class, CaseStatus.class}, version = 1)
+        Priority.class, Category.class, CaseStatus.class, RecentSearch.class}, version = 1)
 @TypeConverters(BugzyTypeConverters.class)
 public abstract class BugzyDb extends RoomDatabase {
     abstract public CaseDao caseDao();

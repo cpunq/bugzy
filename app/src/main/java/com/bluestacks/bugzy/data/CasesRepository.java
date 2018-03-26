@@ -5,6 +5,8 @@ import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.BugzyTypeConverters;
 import com.bluestacks.bugzy.data.local.db.CaseDao;
+import com.bluestacks.bugzy.data.local.db.MiscDao;
+import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
@@ -54,6 +56,7 @@ public class CasesRepository {
     private PrefsHelper mPrefs;
     private BugzyDb db;
     private CaseDao mCaseDao;
+    private MiscDao mMiscDao;
 
     public static class Sorting {
         public static final String AREA = "Area";
@@ -73,11 +76,12 @@ public class CasesRepository {
 
 
     @Inject
-    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database) {
+    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database, MiscDao miscDao) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mPrefs = prefs;
         mCaseDao = caseDao;
+        mMiscDao = miscDao;
         db = database;
     }
 
@@ -279,7 +283,21 @@ public class CasesRepository {
         }.asLiveData();
     }
 
+    public LiveData<List<RecentSearch>> getRecentSearches() {
+        return mMiscDao.loadRecentSearches();
+    }
+
+    public void recordResearch(String query) {
+        mAppExecutors.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mMiscDao.insert(new RecentSearch(query));
+            }
+        });
+    }
+
     public LiveData<SearchResultsResource<List<Case>>> searchCases(final String query) {
+        this.recordResearch(query);
         return Transformations.map(new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
             List<Case> mCases = null;
 
