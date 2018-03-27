@@ -54,7 +54,7 @@
         <activity
                 android:name=".ui.editcase.CaseEditActivity"
                 android:label="@string/title_activity_case_edit"
-                android:theme="@style/SearchActivityTheme">
+                android:theme="@style/CaseEditTheme">
         </activity>
     </application>
 

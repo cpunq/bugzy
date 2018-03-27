@@ -9,183 +9,281 @@
         tools:showIn="@layout/activity_case_edit"
         tools:context="com.bluestacks.bugzy.ui.editcase.CaseEditActivity">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentLeft="true">
+            android:layout_height="match_parent">
 
-        <EditText
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Title"
-        />
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true">
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <EditText
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Project"
+                    android:minLines="2"
+                    android:lines="2"
+                    android:maxLines="4"
+                    android:gravity="start"
+                    android:hint="Title"
+                    android:textSize="@dimen/headline"
+                    android:scrollHorizontally="false"
+                    android:layout_marginBottom="4dp"
+                    android:inputType="textMultiLine"
             />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_project"
-            />
-        </RelativeLayout>
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Area"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_area"
-            />
-        </RelativeLayout>
+                    style="@style/CaseEditTheme.CasePropStyle"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Project"
+                />
+                <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="textEnd"
+                        android:gravity="end"
+                        android:spinnerMode="dialog"
+                        android:id="@+id/spinner_project"
+                />
+            </RelativeLayout>
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Milestone"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_milestone"
-            />
-        </RelativeLayout>
+                    style="@style/CaseEditTheme.CasePropStyle"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Area"
+                />
+                <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="textEnd"
+                        android:gravity="end"
+                        android:id="@+id/spinner_area"
+                />
+            </RelativeLayout>
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Category"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_category"
-            />
-        </RelativeLayout>
+                    style="@style/CaseEditTheme.CasePropStyle"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Milestone"
+                />
+                <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="textEnd"
+                        android:gravity="end"
+                        android:id="@+id/spinner_milestone"
+                />
+            </RelativeLayout>
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:weightSum="0"
+                          android:orientation="horizontal">
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginRight="4dp"
+                        style="@style/CaseEditTheme.CasePropStyle"
+                        android:orientation="vertical">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category"
+                    />
+                    <Spinner
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:minWidth="100dp"
+                            android:gravity="start"
+                            android:id="@+id/spinner_category"
+                    />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="4dp"
+                        style="@style/CaseEditTheme.CasePropStyle"
+                        android:orientation="vertical">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Status"
+                    />
+                    <Spinner
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:minWidth="100dp"
+                            android:gravity="start"
+                            android:id="@+id/spinner_status"
+                    />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Assigned To"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_assigned_to"
-            />
-        </RelativeLayout>
+                    style="@style/CaseEditTheme.CasePropStyle"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Assigned To"
+                />
+                <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="textEnd"
+                        android:gravity="end"
+                        android:id="@+id/spinner_assigned_to"
+                />
+            </RelativeLayout>
 
 
-          <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Status"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_status"
-            />
-        </RelativeLayout>
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Priority"
-            />
-            <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textAlignment="textEnd"
-                    android:gravity="end"
-                    android:id="@+id/spinner_priority"
-            />
-        </RelativeLayout>
-    </LinearLayout>
+                    style="@style/CaseEditTheme.CasePropStyle"
+                    android:orientation="horizontal">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Priority"
+                />
+                <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="100dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="textEnd"
+                        android:gravity="end"
+                        android:id="@+id/spinner_priority"
+                />
+            </RelativeLayout>
 
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/tv_event_changes"
+            />
+
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="start"
+                    android:hint="Tags"
+                    android:id="@+id/et_tags"
+            />
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:id="@+id/ll_bluestacks_stuff">
+
+            </LinearLayout>
+
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Message"
+                    android:id="@+id/et_event_content"
+                    android:minLines="4"
+                    android:gravity="start"
+                    android:textSize="@dimen/body_1"
+                    android:layout_marginTop="8dp"
+                    android:inputType="textMultiLine"
+
+            />
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:gravity="right|center_vertical">
+
+                <Button android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="save"
+                />
+
+                <Button android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="cancel"
+                />
+
+                <ImageButton
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:scaleType="fitXY"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_attachment_black_24px"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:id="@+id/button_assign"
+                />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:descendantFocusability="blocksDescendants"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:scrollbars="vertical" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

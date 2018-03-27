@@ -12,7 +12,19 @@
     </style>
 
     <style name="LoginTheme" parent="AppTheme">
-        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>
+        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Large</item>
+    </style>
+
+    <style name="CaseEditTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
+        <item name="editTextStyle">@style/CaseEditTheme.EditTextStyle</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Small</item>
+        <item name="android:textColorSecondary">#7D7D7D</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="SearchActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -36,12 +48,19 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <!-- Global button styles -->
-    <style name="AppTheme.PrimaryButton" parent="Widget.AppCompat.Button.Colored">
+    <style name="AppTheme.PrimaryButton.Large" parent="Widget.AppCompat.Button.Colored">
         <item name="android:padding">20dp</item>
         <item name="android:textSize">@dimen/subheading</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:letterSpacing">0.1</item>
     </style>
+    <style name="AppTheme.PrimaryButton.Small" parent="Widget.AppCompat.Button.Colored">
+        <!--<item name="android:padding">20dp</item>-->
+        <!--<item name="android:textSize">@dimen/subheading</item>-->
+        <item name="android:fontFamily">@font/open_sans_bold</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
     <style name="AppTheme.SecondaryButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:padding">20dp</item>
         <item name="android:textSize">@dimen/subheading</item>
@@ -80,6 +99,14 @@
         <item name="android:textColor">#8B999F</item>
     </style>
 
+    <style name="CaseEditTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">@dimen/body_1</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">#8B999F</item>
+    </style>
+
+
     <!-- Others -->
     <style name="AppTheme.NavigationView">
         <item name="android:theme">@style/NavigationDrawerStyle</item>
@@ -107,6 +134,16 @@
     <style name="EmailOptionText" parent="android:Widget.TextView">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/body_1</item>
+    </style>
+
+    <style name="CaseEditTheme.CasePropStyle">
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">@dimen/body_1</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:textColor">#8B999F</item>
+        mar
     </style>
 
 </resources>
