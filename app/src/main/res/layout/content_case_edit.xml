@@ -27,26 +27,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minLines="2"
-                    android:lines="2"
-                    android:maxLines="4"
                     android:gravity="start"
                     android:hint="Title"
                     android:textSize="@dimen/headline"
+                    android:textColor="@color/colorPrimary"
                     android:scrollHorizontally="false"
                     android:layout_marginBottom="4dp"
                     android:inputType="textMultiLine"
+                    android:id="@+id/et_case_title"
             />
 
             <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:id="@+id/container_project_spinner"
                     android:orientation="horizontal">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:textColor="@color/textColorSecondary"
                         android:text="Project"
                 />
                 <Spinner
@@ -54,6 +57,9 @@
                         android:layout_height="wrap_content"
                         android:minWidth="100dp"
                         android:layout_alignParentRight="true"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:layout_centerVertical="true"
                         android:textAlignment="textEnd"
                         android:gravity="end"
@@ -238,6 +244,7 @@
                     android:minLines="4"
                     android:gravity="start"
                     android:textSize="@dimen/body_1"
+                    android:textColor="@color/colorPrimary"
                     android:layout_marginTop="8dp"
                     android:inputType="textMultiLine"
 

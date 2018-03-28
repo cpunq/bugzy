@@ -50,7 +50,10 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
 
     public void setupViews() {
         fab.setOnClickListener(viewRef -> {
-            startActivity(new Intent(this, CaseEditActivity.class));
+            Intent i = new Intent(this, CaseEditActivity.class);
+            i.putExtra(CaseEditActivity.PARAM_MODE, CaseEditActivity.MODE_EDIT);
+            i.putExtra(CaseEditActivity.PARAM_CASE_ID, Integer.parseInt(mFogBugzId));
+            startActivity(i);
         });
     }
 

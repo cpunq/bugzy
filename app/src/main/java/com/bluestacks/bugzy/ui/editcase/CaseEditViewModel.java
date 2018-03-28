@@ -4,6 +4,7 @@ package com.bluestacks.bugzy.ui.editcase;
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.data.Repository;
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseStatus;
 import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
@@ -11,11 +12,15 @@ import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.ui.search.AbsentLiveData;
+
+import static com.bluestacks.bugzy.ui.editcase.CaseEditActivity.*;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.util.Pair;
 
 import java.util.List;
 
@@ -25,14 +30,25 @@ public class CaseEditViewModel extends ViewModel {
     Repository mRepository;
     CasesRepository mCasesRepository;
     private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
+    private MutableLiveData<Pair<String, Integer>> mParamsLiveData = new MutableLiveData<>();
 
     private LiveData<Resource<List<Area>>> mAreas;
+    private LiveData<Resource<Case>> mCaseLiveData;
     private LiveData<Resource<List<Milestone>>> mMilestones;
 
     @Inject
     CaseEditViewModel(Repository repository, CasesRepository casesRepository) {
         mRepository = repository;
         mCasesRepository = casesRepository;
+        mCaseLiveData = Transformations.switchMap(mParamsLiveData, params -> {
+            if (params.first != MODE_NEW) {
+                // Fetch case for param.second
+                Case kase = new Case();
+                kase.setIxBug(params.second);
+                return mCasesRepository.caseDetails(kase);
+            }
+            return AbsentLiveData.create();
+        });
 
         mAreas = Transformations.switchMap(mCurrentProject, val -> {
             return mRepository.getAreas(val.getId());
@@ -40,6 +56,14 @@ public class CaseEditViewModel extends ViewModel {
         mMilestones = Transformations.switchMap(mCurrentProject, val -> {
             return mRepository.getMilestones(val.getId());
         });
+    }
+
+    void setParams(String mode, int caseId) {
+        mParamsLiveData.setValue(new Pair<>(mode, caseId));
+    }
+
+    public LiveData<Resource<Case>> getCaseLiveData() {
+        return mCaseLiveData;
     }
 
     public void projectSelected(Project project) {

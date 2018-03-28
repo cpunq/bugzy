@@ -2,22 +2,26 @@ package com.bluestacks.bugzy.ui.editcase;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseStatus;
 import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.BaseActivity;
 
 import java.util.List;
@@ -26,15 +30,33 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class CaseEditActivity extends BaseActivity {
     public static final String TAG = CaseEditActivity.class.getName();
+    public static final String MODE_NEW = "new_mode";
+    public static final String MODE_EDIT = "edit_mode";
+    public static final String MODE_ASSIGN = "assign_mode";
+    public static final String MODE_RESOLVE = "resolve_mode";
+    public static final String MODE_REOPEN = "reopen_mode";
+    public static final String MODE_REACTIVATE = "reactivate_mode";
+    public static final String MODE_CLOSE = "reopen_mode";
+
+    public static final String PARAM_CASE_ID    = "case_id";
+    public static final String PARAM_MODE       = "mode";
+
     private CaseEditViewModel mCaseEditViewModel;
+    private String mMode;
+    private int  mCaseId;
+
     @Inject
     ViewModelProvider.Factory mFactory;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+
+    @BindView(R.id.et_case_title)
+    EditText mCaseTitle;
 
     @BindView(R.id.spinner_project)
     Spinner mProjectSpinner;
@@ -63,9 +85,21 @@ public class CaseEditActivity extends BaseActivity {
         overridePendingTransition(R.anim.enter_slide_up, 0);
         setContentView(R.layout.activity_case_edit);
         ButterKnife.bind(this);
+        parseArgs(getIntent());
         setupViews();
         mCaseEditViewModel = ViewModelProviders.of(this, mFactory).get(CaseEditViewModel.class);
+        mCaseEditViewModel.setParams(mMode, mCaseId);
         subscribeToViewModel();
+    }
+
+    private void parseArgs(Intent intent) {
+        mMode = intent.getStringExtra(PARAM_MODE);
+        if (mMode != MODE_NEW) {
+            mCaseId = intent.getIntExtra(PARAM_CASE_ID, -1);
+            if (mCaseId == -1) {
+                throw new RuntimeException("PARAM_CASE_ID not sent");
+            }
+        }
     }
 
     public void subscribeToViewModel() {
@@ -104,6 +138,29 @@ public class CaseEditActivity extends BaseActivity {
                 showStatuses(value.data);
             }
         });
+        mCaseEditViewModel.getCaseLiveData().observe(this, value ->  {
+            if (value == null) {
+                return;
+            }
+            if (value.data != null) {
+                showCaseDetails(value.data);
+            }
+            if (value.status == Status.LOADING) {
+                // Show working somewhere
+                return;
+            }
+        });
+    }
+
+    @OnClick(R.id.container_project_spinner)
+    void onProjectSpinnerClicked() {
+        mProjectSpinner.performClick();
+    }
+
+    public void showCaseDetails(Case kase) {
+        mCaseTitle.setText(kase.getTitle());
+        getSupportActionBar().setTitle(kase.getIxBug() + "");
+        // Get indices for project, area, milestone, category, status, assignedTo, priority
     }
 
     public void showMilestones(List<Milestone> milestones) {
@@ -118,7 +175,6 @@ public class CaseEditActivity extends BaseActivity {
                 android.R.layout.simple_spinner_item, areas);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mAreaSpinner.setAdapter(dataAdapter);
-
     }
 
     List<Project> mProjects;
@@ -162,7 +218,8 @@ public class CaseEditActivity extends BaseActivity {
 
     public void setupViews() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24px);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
