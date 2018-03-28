@@ -58,6 +58,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.et_case_title)
     EditText mCaseTitle;
 
+    @BindView(R.id.et_tags)
+    EditText mTagsView;
+
     @BindView(R.id.spinner_project)
     Spinner mProjectSpinner;
 
@@ -160,7 +163,21 @@ public class CaseEditActivity extends BaseActivity {
     public void showCaseDetails(Case kase) {
         mCaseTitle.setText(kase.getTitle());
         getSupportActionBar().setTitle(kase.getIxBug() + "");
+        mTagsView.setText(getTagsString(kase.getTags()));
+//        String.join(", ", kase.getTags())
+
+
         // Get indices for project, area, milestone, category, status, assignedTo, priority
+    }
+    private String getTagsString(List<String> tags) {
+        StringBuilder tagStringBuilder = new StringBuilder();
+        for (String tag : tags) {
+            tagStringBuilder.append(tag.toString() + ", ");
+        }
+        if (tags.size() > 0) {
+            tagStringBuilder.replace(tagStringBuilder.length() - 2, tagStringBuilder.length(), "");
+        }
+        return tagStringBuilder.toString();
     }
 
     public void showMilestones(List<Milestone> milestones) {
