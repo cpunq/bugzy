@@ -94,7 +94,7 @@ public class CaseEditActivity extends BaseActivity {
 
     private void parseArgs(Intent intent) {
         mMode = intent.getStringExtra(PARAM_MODE);
-        if (mMode != MODE_NEW) {
+        if (!mMode.equals(MODE_NEW)) {
             mCaseId = intent.getIntExtra(PARAM_CASE_ID, -1);
             if (mCaseId == -1) {
                 throw new RuntimeException("PARAM_CASE_ID not sent");

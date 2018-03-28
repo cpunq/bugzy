@@ -41,7 +41,7 @@ public class CaseEditViewModel extends ViewModel {
         mRepository = repository;
         mCasesRepository = casesRepository;
         mCaseLiveData = Transformations.switchMap(mParamsLiveData, params -> {
-            if (params.first != MODE_NEW) {
+            if (!params.first.equals(MODE_NEW)) {
                 // Fetch case for param.second
                 Case kase = new Case();
                 kase.setIxBug(params.second);
