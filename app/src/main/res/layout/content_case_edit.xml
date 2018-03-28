@@ -63,7 +63,6 @@
                         android:layout_centerVertical="true"
                         android:textAlignment="textEnd"
                         android:gravity="end"
-                        android:spinnerMode="dialog"
                         android:id="@+id/spinner_project"
                 />
             </RelativeLayout>
@@ -185,6 +184,7 @@
                         android:layout_centerVertical="true"
                         android:textAlignment="textEnd"
                         android:gravity="end"
+                        android:spinnerMode="dialog"
                         android:id="@+id/spinner_assigned_to"
                 />
             </RelativeLayout>
@@ -220,19 +220,128 @@
                       android:id="@+id/tv_event_changes"
             />
 
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:paddingBottom="8dp"
+                      android:text="Tags"
+            />
             <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:gravity="start"
-                    android:hint="Tags"
+                    android:textColor="@color/colorPrimary"
                     android:id="@+id/et_tags"
             />
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:orientation="vertical"
-                          android:id="@+id/ll_bluestacks_stuff">
+                          android:id="@+id/ll_custom_params">
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:weightSum="3"
+                              android:layout_marginTop="16dp"
+                              android:layout_marginBottom="4dp"
+                              android:orientation="horizontal">
+                    <LinearLayout android:layout_width="0dp"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:layout_marginRight="4dp"
+                                  android:orientation="vertical">
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:paddingBottom="8dp"
+                                  android:text="Found In"
+                        />
+
+                        <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textMultiLine"
+                                android:gravity="start"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/et_found_in"
+                        />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:layout_marginLeft="4dp"
+                                  android:layout_marginRight="4dp"
+                                  android:orientation="vertical">
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:paddingBottom="8dp"
+                                  android:text="Fixed In"
+                        />
+
+                        <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textMultiLine"
+                                android:gravity="start"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/et_fixed_in"
+                        />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:layout_marginLeft="4dp"
+                                  android:orientation="vertical">
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:paddingBottom="8dp"
+                                  android:text="Verified In"
+                        />
+
+                        <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textMultiLine"
+                                android:gravity="start"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/et_verified_in"
+                        />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/CaseEditTheme.CasePropStyle"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:text="Required merge in"
+                    />
+                    <Spinner
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="100dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:textAlignment="textEnd"
+                            android:gravity="end"
+                            android:id="@+id/spinner_requiredmerg"
+                    />
+                </RelativeLayout>
 
             </LinearLayout>
 
