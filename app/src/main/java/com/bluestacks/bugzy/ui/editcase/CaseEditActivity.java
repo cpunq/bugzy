@@ -82,6 +82,15 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.spinner_priority)
     Spinner mPrioritySpinner;
 
+    @BindView(R.id.et_found_in)
+    EditText mFoundInView;
+
+    @BindView(R.id.et_verified_in)
+    EditText mVerifiedInView;
+
+    @BindView(R.id.et_fixed_in)
+    EditText mFixedInView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,6 +173,10 @@ public class CaseEditActivity extends BaseActivity {
         mCaseTitle.setText(kase.getTitle());
         getSupportActionBar().setTitle(kase.getIxBug() + "");
         mTagsView.setText(getTagsString(kase.getTags()));
+
+        mVerifiedInView.setText(kase.getVerifiedIn());
+        mFixedInView.setText(kase.getFixedIn());
+        mFoundInView.setText(kase.getFoundIn());
 //        String.join(", ", kase.getTags())
 
 
