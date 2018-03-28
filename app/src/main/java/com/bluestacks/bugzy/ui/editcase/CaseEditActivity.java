@@ -34,19 +34,19 @@ import butterknife.OnClick;
 
 public class CaseEditActivity extends BaseActivity {
     public static final String TAG = CaseEditActivity.class.getName();
-    public static final String MODE_NEW = "new_mode";
-    public static final String MODE_EDIT = "edit_mode";
-    public static final String MODE_ASSIGN = "assign_mode";
-    public static final String MODE_RESOLVE = "resolve_mode";
-    public static final String MODE_REOPEN = "reopen_mode";
-    public static final String MODE_REACTIVATE = "reactivate_mode";
-    public static final String MODE_CLOSE = "reopen_mode";
+    public static final int MODE_NEW = 0;
+    public static final int MODE_EDIT = 1;
+    public static final int MODE_ASSIGN = 2;
+    public static final int MODE_RESOLVE = 3;
+    public static final int MODE_REOPEN = 4;
+    public static final int MODE_REACTIVATE = 5;
+    public static final int MODE_CLOSE = 6;
 
     public static final String PARAM_CASE_ID    = "case_id";
     public static final String PARAM_MODE       = "mode";
 
     private CaseEditViewModel mCaseEditViewModel;
-    private String mMode;
+    private int mMode;
     private int  mCaseId;
 
     @Inject
@@ -93,8 +93,8 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     private void parseArgs(Intent intent) {
-        mMode = intent.getStringExtra(PARAM_MODE);
-        if (!mMode.equals(MODE_NEW)) {
+        mMode = intent.getIntExtra(PARAM_MODE, MODE_NEW);
+        if (mMode != MODE_NEW) {
             mCaseId = intent.getIntExtra(PARAM_CASE_ID, -1);
             if (mCaseId == -1) {
                 throw new RuntimeException("PARAM_CASE_ID not sent");

@@ -301,7 +301,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         editCase(MODE_ASSIGN);
     }
 
-    private void editCase(String mode) {
+    private void editCase(int mode) {
         Intent i = new Intent(getActivity(), CaseEditActivity.class);
         i.putExtra(CaseEditActivity.PARAM_MODE, mode);
         i.putExtra(CaseEditActivity.PARAM_CASE_ID, mCase.getIxBug());

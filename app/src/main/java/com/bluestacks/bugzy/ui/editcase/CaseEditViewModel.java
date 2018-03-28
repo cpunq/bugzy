@@ -30,7 +30,7 @@ public class CaseEditViewModel extends ViewModel {
     Repository mRepository;
     CasesRepository mCasesRepository;
     private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
-    private MutableLiveData<Pair<String, Integer>> mParamsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Pair<Integer, Integer>> mParamsLiveData = new MutableLiveData<>();
 
     private LiveData<Resource<List<Area>>> mAreas;
     private LiveData<Resource<Case>> mCaseLiveData;
@@ -41,7 +41,7 @@ public class CaseEditViewModel extends ViewModel {
         mRepository = repository;
         mCasesRepository = casesRepository;
         mCaseLiveData = Transformations.switchMap(mParamsLiveData, params -> {
-            if (!params.first.equals(MODE_NEW)) {
+            if (params.first != MODE_NEW) {
                 // Fetch case for param.second
                 Case kase = new Case();
                 kase.setIxBug(params.second);
@@ -58,7 +58,7 @@ public class CaseEditViewModel extends ViewModel {
         });
     }
 
-    void setParams(String mode, int caseId) {
+    void setParams(int mode, int caseId) {
         mParamsLiveData.setValue(new Pair<>(mode, caseId));
     }
 
