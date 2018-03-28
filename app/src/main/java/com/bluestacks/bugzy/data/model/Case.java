@@ -18,6 +18,15 @@ public class Case implements Serializable {
     @SerializedName("requiredxmergexin")
     private String requiredMergeIn;
 
+    @SerializedName("productxversion")
+    private String foundIn;
+
+    @SerializedName("verifiedxin")
+    private String verifiedIn;
+
+    @SerializedName("fixedxin")
+    private String fixedIn;
+
     @SerializedName("sTitle")
     String title;
 
@@ -50,6 +59,9 @@ public class Case implements Serializable {
 
     @SerializedName( "sCategory")
     String categoryName;
+
+    @SerializedName("tags")
+    List<String> tags;
 
     public int getIxBug() {
         return ixBug;
@@ -161,5 +173,37 @@ public class Case implements Serializable {
 
     public void setRequiredMergeIn(String requiredMergeIn) {
         this.requiredMergeIn = requiredMergeIn;
+    }
+
+    public String getFoundIn() {
+        return foundIn;
+    }
+
+    public void setFoundIn(String foundIn) {
+        this.foundIn = foundIn;
+    }
+
+    public String getVerifiedIn() {
+        return verifiedIn;
+    }
+
+    public void setVerifiedIn(String verifiedIn) {
+        this.verifiedIn = verifiedIn;
+    }
+
+    public String getFixedIn() {
+        return fixedIn;
+    }
+
+    public void setFixedIn(String fixedIn) {
+        this.fixedIn = fixedIn;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
