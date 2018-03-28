@@ -40,6 +40,7 @@ import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseEvent;
 import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
+import static com.bluestacks.bugzy.ui.editcase.CaseEditActivity.*;
 
 import java.util.List;
 
@@ -277,27 +278,34 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     @OnClick(R.id.button_resolve)
     public void onResolveClicked() {
-        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+        editCase(MODE_RESOLVE);
     }
 
     @OnClick(R.id.button_reopen)
     public void onReopenClicked() {
-        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+        editCase(MODE_REOPEN);
     }
 
     @OnClick(R.id.button_reactivate)
     public void onReActivateClicked() {
-        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+        editCase(MODE_REACTIVATE);
     }
 
     @OnClick(R.id.button_close_case)
     public void onCloseCaseClicked() {
-        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+        editCase(MODE_CLOSE);
     }
 
     @OnClick(R.id.button_assign)
     public void onAssignClicked() {
-        startActivity(new Intent(getActivity(), CaseEditActivity.class));
+        editCase(MODE_ASSIGN);
+    }
+
+    private void editCase(String mode) {
+        Intent i = new Intent(getActivity(), CaseEditActivity.class);
+        i.putExtra(CaseEditActivity.PARAM_MODE, mode);
+        i.putExtra(CaseEditActivity.PARAM_CASE_ID, mCase.getIxBug());
+        startActivity(i);
     }
 
     private void showActionButtons(Case kase) {

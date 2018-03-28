@@ -112,7 +112,9 @@ public class HomeActivity extends BaseActivity
 
     protected void setupFab() {
         fab.setOnClickListener(viewRef -> {
-            startActivity(new Intent(this, CaseEditActivity.class));
+            Intent i = new Intent(this, CaseEditActivity.class);
+            i.putExtra(CaseEditActivity.PARAM_MODE, CaseEditActivity.MODE_NEW);
+            startActivity(i);
         });
     }
 
