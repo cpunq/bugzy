@@ -17,7 +17,6 @@ import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import static com.bluestacks.bugzy.ui.editcase.CaseEditActivity.*;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
@@ -28,16 +27,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class CaseEditViewModel extends ViewModel {
-    Repository mRepository;
-    CasesRepository mCasesRepository;
+    private Repository mRepository;
+    private CasesRepository mCasesRepository;
     private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
     private MutableLiveData<Pair<Integer, Integer>> mParamsLiveData = new MutableLiveData<>();
-
     private LiveData<Resource<List<Area>>> mAreas;
     private LiveData<Resource<Case>> mCaseLiveData;
+    private LiveData<String> mToken;
     private LiveData<Resource<List<Milestone>>> mMilestones;
-
-    private LiveData<String> mToken = new MediatorLiveData<>();
 
     @Inject
     CaseEditViewModel(Repository repository, CasesRepository casesRepository) {
