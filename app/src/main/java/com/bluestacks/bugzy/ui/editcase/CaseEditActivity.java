@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.Spinner;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Case;
+import com.bluestacks.bugzy.data.model.CaseEvent;
 import com.bluestacks.bugzy.data.model.CaseStatus;
 import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
@@ -23,6 +26,7 @@ import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.BaseActivity;
+import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 
 import java.util.List;
 
@@ -48,6 +52,7 @@ public class CaseEditActivity extends BaseActivity {
     private CaseEditViewModel mCaseEditViewModel;
     private int mMode;
     private int  mCaseId;
+    private CaseEventsAdapter mAdapter;
 
     @Inject
     ViewModelProvider.Factory mFactory;
@@ -91,6 +96,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.et_fixed_in)
     EditText mFixedInView;
 
+    @BindView(R.id.recycler_view_events)
+    RecyclerView mEventsRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +110,15 @@ public class CaseEditActivity extends BaseActivity {
         mCaseEditViewModel = ViewModelProviders.of(this, mFactory).get(CaseEditViewModel.class);
         mCaseEditViewModel.setParams(mMode, mCaseId);
         subscribeToViewModel();
+        setupEventsRecyclerView();
+    }
+
+    private void setupEventsRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mEventsRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new CaseEventsAdapter(this);
+        mEventsRecyclerView.setAdapter(mAdapter);
+        mEventsRecyclerView.setNestedScrollingEnabled(false);
     }
 
     private void parseArgs(Intent intent) {
@@ -177,6 +194,13 @@ public class CaseEditActivity extends BaseActivity {
         mVerifiedInView.setText(kase.getVerifiedIn());
         mFixedInView.setText(kase.getFixedIn());
         mFoundInView.setText(kase.getFoundIn());
+
+        List<CaseEvent> evs = kase.getCaseevents();
+        if (evs != null) {
+            mAdapter.setData(evs);
+            mAdapter.notifyDataSetChanged();
+        }
+
 //        String.join(", ", kase.getTags())
 
 
