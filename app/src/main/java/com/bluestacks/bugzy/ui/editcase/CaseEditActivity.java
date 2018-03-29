@@ -27,6 +27,7 @@ import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
+import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
 
 import java.util.List;
 
@@ -147,7 +148,7 @@ public class CaseEditActivity extends BaseActivity {
                 showProjects(value.data);
             }
         });
-        mCaseEditViewModel.getPeople().observe(this, value -> {
+        mCaseEditViewModel.getPersons().observe(this, value -> {
             if (value.data != null) {
                 showPeople(value.data);
             }
@@ -182,6 +183,16 @@ public class CaseEditActivity extends BaseActivity {
                 return;
             }
         });
+
+        mCaseEditViewModel.getDefaultPropSelectionLiveData().observe(this, map -> {
+            mProjectSpinner.setSelection(map.get(PROJECT));
+            mAreaSpinner.setSelection(map.get(AREA));
+            mMileStoneSpinner.setSelection(map.get(MILESTONE));
+            mCategorySpinner.setSelection(map.get(CATEGORY));
+            mStatusesSpinner.setSelection(map.get(STATUS));
+            mAssignedToSpinner.setSelection(map.get(ASSIGNEDTO));
+            mPrioritySpinner.setSelection(map.get(PRIORITY));
+        });
     }
 
     @OnClick(R.id.container_project_spinner)
@@ -203,11 +214,6 @@ public class CaseEditActivity extends BaseActivity {
             mAdapter.setData(evs);
             mAdapter.notifyDataSetChanged();
         }
-
-//        String.join(", ", kase.getTags())
-
-
-        // Get indices for project, area, milestone, category, status, assignedTo, priority
     }
     private String getTagsString(List<String> tags) {
         StringBuilder tagStringBuilder = new StringBuilder();
