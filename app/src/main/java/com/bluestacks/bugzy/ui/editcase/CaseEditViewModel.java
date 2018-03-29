@@ -17,6 +17,7 @@ import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import static com.bluestacks.bugzy.ui.editcase.CaseEditActivity.*;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
@@ -36,18 +37,28 @@ public class CaseEditViewModel extends ViewModel {
     private LiveData<Resource<Case>> mCaseLiveData;
     private LiveData<Resource<List<Milestone>>> mMilestones;
 
+    private LiveData<String> mToken = new MediatorLiveData<>();
+
     @Inject
     CaseEditViewModel(Repository repository, CasesRepository casesRepository) {
         mRepository = repository;
         mCasesRepository = casesRepository;
-        mCaseLiveData = Transformations.switchMap(mParamsLiveData, params -> {
-            if (params.first != MODE_NEW) {
-                // Fetch case for param.second
-                Case kase = new Case();
-                kase.setIxBug(params.second);
-                return mCasesRepository.caseDetails(kase);
+
+        mToken = mRepository.getToken();
+
+        mCaseLiveData = Transformations.switchMap(mToken, token -> {
+            if (token == null) {
+                return AbsentLiveData.create();
             }
-            return AbsentLiveData.create();
+            return Transformations.switchMap(mParamsLiveData, params -> {
+                if (params.first != MODE_NEW) {
+                    // Fetch case for param.second
+                    Case kase = new Case();
+                    kase.setIxBug(params.second);
+                    return mCasesRepository.caseDetails(kase);
+                }
+                return AbsentLiveData.create();
+            });
         });
 
         mAreas = Transformations.switchMap(mCurrentProject, val -> {
@@ -96,5 +107,9 @@ public class CaseEditViewModel extends ViewModel {
 
     public LiveData<Resource<List<Person>>> getPeople() {
         return mRepository.getPeople(false);
+    }
+
+    public LiveData<String> getToken() {
+        return mToken;
     }
 }

@@ -167,6 +167,9 @@ public class CaseEditActivity extends BaseActivity {
                 showStatuses(value.data);
             }
         });
+        mCaseEditViewModel.getToken().observe(this, token -> {
+            mAdapter.setToken(token);
+        });
         mCaseEditViewModel.getCaseLiveData().observe(this, value ->  {
             if (value == null) {
                 return;
