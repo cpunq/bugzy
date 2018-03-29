@@ -58,6 +58,50 @@ public class CasesRepository {
     private CaseDao mCaseDao;
     private MiscDao mMiscDao;
 
+    private String[] mColsForCaseList =new String[]{
+            "sTitle",
+            "ixPriority",
+            "sStatus",
+            "ixStatus",
+            "sProject",
+            "ixProject",
+            "sFixFor",
+            "ixFixFor",
+            "sPersonAssignedTo",
+            "ixPersonAssignedTo",
+            "sPersonOpenedBy",
+            "sArea",
+            "ixArea",
+            "sCategory",
+            "ixCategory"
+    };
+
+    private String[] mColsForCaseDetails =new String[]{
+            "sTitle",
+            "ixPriority",
+            "sStatus",
+            "ixStatus",
+            "sProject",
+            "ixProject",
+            "sFixFor",
+            "ixFixFor",
+            "sPersonAssignedTo",
+            "ixPersonAssignedTo",
+            "sPersonOpenedBy",
+            "sArea",
+            "ixArea",
+            "sCategory",
+            "ixCategory",
+
+            // New cols
+            "events",
+            "requiredxmergexin",
+            "tags",
+            "fixedxin",
+            "productxversion",
+            "verifiedxin"
+    };
+
     public static class Sorting {
         public static final String AREA = "Area";
         public static final String CATEGORY = "Category";
@@ -238,10 +282,7 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
-                String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor", "sPersonAssignedTo","sPersonOpenedBy", "sArea", "sCategory"
-                };
-                ListCasesRequest request = new ListCasesRequest(cols, filter);
+                ListCasesRequest request = new ListCasesRequest(mColsForCaseList, filter);
                 return mApiService.listCases(request);
             }
         }.asLiveData());
@@ -275,10 +316,7 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
-                String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sPersonAssignedTo", "sPersonOpenedBy", "sArea", "sCategory", "events", "requiredxmergexin", "tags", "fixedxin", "productxversion", "verifiedxin"
-                };
-                return mApiService.searchCases(new SearchCasesRequest(cols, kase.getIxBug()+""));
+                return mApiService.searchCases(new SearchCasesRequest(mColsForCaseDetails, kase.getIxBug()+""));
             }
         }.asLiveData();
     }
@@ -336,10 +374,7 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
-                String[] cols =new String[]{
-                        "sTitle","ixPriority","sStatus","sProject","sFixFor","sArea","sPersonAssignedTo","sPersonOpenedBy"
-                };
-                return mApiService.searchCases(new SearchCasesRequest(cols, query));
+                return mApiService.searchCases(new SearchCasesRequest(mColsForCaseList, query));
             }
         }.asLiveData(), v -> {
             return new SearchResultsResource<>(query, v);

@@ -33,20 +33,35 @@ public class Case implements Serializable {
     @SerializedName( "ixPriority")
     int priority;
 
+    @SerializedName( "ixFixFor")
+    int fixForId;
+
     @SerializedName( "sFixFor")
     String fixFor;
 
     @SerializedName( "sProject")
     String projectName;
 
+    @SerializedName( "ixProject")
+    int projectId;
+
     @SerializedName( "sArea")
     String projectArea;
+
+    @SerializedName( "ixArea")
+    int projectAreaId;
 
     @SerializedName( "sStatus")
     String status;
 
+    @SerializedName( "ixStatus")
+    int statusId;
+
     @SerializedName( "sPersonAssignedTo")
     String personAssignedTo;
+
+    @SerializedName( "ixPersonAssignedTo")
+    int personAssignedToId;
 
     @SerializedName( "sPersonOpenedBy")
     String personOpenedBy;
@@ -59,6 +74,9 @@ public class Case implements Serializable {
 
     @SerializedName( "sCategory")
     String categoryName;
+
+    @SerializedName( "ixCategory")
+    int categoryId;
 
     @SerializedName("tags")
     List<String> tags;
@@ -205,5 +223,53 @@ public class Case implements Serializable {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public int getFixForId() {
+        return fixForId;
+    }
+
+    public void setFixForId(int fixForId) {
+        this.fixForId = fixForId;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public int getProjectAreaId() {
+        return projectAreaId;
+    }
+
+    public void setProjectAreaId(int projectAreaId) {
+        this.projectAreaId = projectAreaId;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public int getPersonAssignedToId() {
+        return personAssignedToId;
+    }
+
+    public void setPersonAssignedToId(int personAssignedToId) {
+        this.personAssignedToId = personAssignedToId;
     }
 }
