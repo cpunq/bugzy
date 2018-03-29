@@ -35,6 +35,8 @@ public class CaseEditViewModel extends ViewModel {
     private Repository mRepository;
     private CasesRepository mCasesRepository;
     private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
+    private MutableLiveData<Category> mCurrentCategory = new MutableLiveData<>();
+
     private MutableLiveData<Pair<Integer, Integer>> mParamsLiveData = new MutableLiveData<>();
     private LiveData<Resource<List<Area>>> mAreas;
     private LiveData<Resource<List<Milestone>>> mMilestones;
@@ -86,6 +88,10 @@ public class CaseEditViewModel extends ViewModel {
 
         // Assuming that mCaseLiveData is already being observed
         mDefaultPropSelectionLiveData.addSource(mCaseLiveData, caseResource -> {
+            if (mParamsLiveData.getValue().first == MODE_NEW) {
+                // For a new case, no need to do further stuff
+                return;
+            }
             // TODO: make sure, you disable the interactions, until this step completes
             updateDefaultSelections(caseResource.data);
         });
@@ -96,11 +102,13 @@ public class CaseEditViewModel extends ViewModel {
         mMilestones = Transformations.switchMap(mCurrentProject, val -> {
             return mRepository.getMilestones(val.getId());
         });
+        mStatuses = Transformations.switchMap(mCurrentCategory, val -> {
+            return mRepository.getStatuses(val.getId());
+        });
 
         mProjects = mRepository.getProjects(false);
         mCategories =  mRepository.getCategories(false);
         mPriorities =  mRepository.getPriorities(false);
-        mStatuses = mRepository.getStatuses(false);
         mPersons = mRepository.getPeople(false);
     }
 
@@ -115,6 +123,10 @@ public class CaseEditViewModel extends ViewModel {
 
     public void projectSelected(Project project) {
         mCurrentProject.setValue(project);
+    }
+
+    public void categorySelected(Category cat) {
+        mCurrentCategory.setValue(cat);
     }
 
     public LiveData<Resource<List<Area>>> getAreas() {

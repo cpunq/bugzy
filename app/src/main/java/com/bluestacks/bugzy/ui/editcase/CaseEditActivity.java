@@ -29,6 +29,7 @@ import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,6 +55,9 @@ public class CaseEditActivity extends BaseActivity {
     private int mMode;
     private int  mCaseId;
     private CaseEventsAdapter mAdapter;
+    private List<Project> mProjects;
+    private List<Category> mCategories;
+
 
     @Inject
     ViewModelProvider.Factory mFactory;
@@ -166,6 +170,8 @@ public class CaseEditActivity extends BaseActivity {
         mCaseEditViewModel.getStatuses().observe(this, value -> {
             if (value.data != null) {
                 showStatuses(value.data);
+            } else {
+                showStatuses(new ArrayList<CaseStatus>());
             }
         });
         mCaseEditViewModel.getToken().observe(this, token -> {
@@ -240,8 +246,6 @@ public class CaseEditActivity extends BaseActivity {
         mAreaSpinner.setAdapter(dataAdapter);
     }
 
-    List<Project> mProjects;
-
     public void showProjects(List<Project> projects) {
         mProjects = projects;
         ArrayAdapter<Project> dataAdapter = new ArrayAdapter<Project>(this,
@@ -266,6 +270,7 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     public void showCategories(List<Category> categories) {
+        mCategories = categories;
         ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(this,
                 android.R.layout.simple_spinner_item, categories);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -295,6 +300,17 @@ public class CaseEditActivity extends BaseActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.categorySelected(mCategories.get(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
     }

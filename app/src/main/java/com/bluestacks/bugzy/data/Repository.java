@@ -39,7 +39,6 @@ import com.bluestacks.bugzy.data.remote.model.LoginRequest;
 import com.bluestacks.bugzy.data.remote.model.MyDetailsData;
 import com.bluestacks.bugzy.data.remote.model.MyDetailsRequest;
 import com.bluestacks.bugzy.data.model.Person;
-import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
 import android.arch.lifecycle.LiveData;
@@ -380,7 +379,7 @@ public class Repository {
     public LiveData<Resource<List<Milestone>>> getMilestones(int projectId) {
         return Transformations.switchMap(getMilestones(false), mileStonesResource -> {
             if(mileStonesResource.data == null || mileStonesResource.data.size() == 0) {
-                return AbsentLiveData.create();
+                return mileStonesResource.asLiveData();
             }
             // If the milestones are fetched, then get milestones for this project
             return Transformations.map(mMiscDao.loadMilestones(projectId), mileStonesForProject -> {
@@ -392,12 +391,23 @@ public class Repository {
     public LiveData<Resource<List<Area>>> getAreas(int projectId) {
         return Transformations.switchMap(getAreas(false), alreasResource -> {
             if(alreasResource.data == null || alreasResource.data.size() == 0) {
-                return AbsentLiveData.create();
+                return alreasResource.asLiveData();
             }
             // If the milestones are fetched, then get milestones for this project
             return Transformations.map(mMiscDao.loadAreas(projectId), areasForProject -> {
                 return new Resource<List<Area>>(alreasResource.status, areasForProject, alreasResource.message);
             });
+        });
+    }
+
+    public LiveData<Resource<List<CaseStatus>>> getStatuses(int categoryId) {
+        return Transformations.switchMap(getStatuses(false), statusResource -> {
+            if(statusResource.data == null || statusResource.data.size() == 0) {
+                return statusResource.asLiveData();
+            }
+            // If the milestones are fetched, then get milestones for this project
+            return Transformations.map(mMiscDao.loadStatuses(categoryId),
+                    statusForCategory -> new Resource<>(statusResource.status, statusForCategory, statusResource.message));
         });
     }
 

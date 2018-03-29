@@ -16,6 +16,7 @@
 
 package com.bluestacks.bugzy.data.model;
 
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -54,6 +55,16 @@ public class Resource<T> {
 
     public static <T> Resource<T> loading(@Nullable T data) {
         return new Resource<>(LOADING, data, null);
+    }
+
+    public LiveData<Resource<T>> asLiveData() {
+        return new LiveData<Resource<T>>() {
+            @Override
+            protected void onActive() {
+                super.onActive();
+                setValue(Resource.this);
+            }
+        };
     }
 
     @Override

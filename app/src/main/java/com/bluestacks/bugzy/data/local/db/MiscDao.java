@@ -59,6 +59,9 @@ public abstract class MiscDao {
     @Query("SELECT * from `CaseStatus`")
     public abstract LiveData<List<CaseStatus>> loadStatuses();
 
+    @Query("SELECT * from `CaseStatus` WHERE category = :categoryId")
+    public abstract LiveData<List<CaseStatus>> loadStatuses(int categoryId);
+
     @Query("SELECT * from `Priority`")
     public abstract LiveData<List<Priority>> loadPriorities();
 
