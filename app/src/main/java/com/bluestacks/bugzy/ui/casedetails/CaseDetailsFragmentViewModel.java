@@ -9,7 +9,6 @@ import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
@@ -23,7 +22,6 @@ public class CaseDetailsFragmentViewModel extends ViewModel {
 
     private MutableLiveData<Case> mCase = new MutableLiveData<>();
     private SingleLiveEvent<String> mSnackBarText =  new SingleLiveEvent<>();
-    private MediatorLiveData<String> mToken = new MediatorLiveData<>();
     private LiveData<Pair<Resource<Case>, String>> mCaseState;
 
     @Inject
@@ -57,7 +55,4 @@ public class CaseDetailsFragmentViewModel extends ViewModel {
         return mSnackBarText;
     }
 
-    public MediatorLiveData<String> getToken() {
-        return mToken;
-    }
 }
