@@ -438,6 +438,9 @@ public class CaseEditActivity extends BaseActivity {
         }
     }
     private String getTagsString(List<String> tags) {
+        if (tags == null) {
+            return "";
+        }
         StringBuilder tagStringBuilder = new StringBuilder();
         for (String tag : tags) {
             tagStringBuilder.append(tag.toString() + ", ");
