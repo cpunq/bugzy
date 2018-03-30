@@ -428,4 +428,8 @@ public class CasesRepository {
         mAppExecutors.networkIO().execute(task);
         return task.asLiveData();
     }
+
+    public LiveData<List<String>> getRequiredMergeIns() {
+        return mCaseDao.getRequiredMergeIns();
+    }
 }

@@ -122,6 +122,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.spinner_assigned_to)
     Spinner mAssignedToSpinner;
 
+    @BindView(R.id.spinner_requiredmerg)
+    Spinner mRequiredMergeInSpinner;
+
     @BindView(R.id.spinner_status)
     Spinner mStatusesSpinner;
 
@@ -246,6 +249,11 @@ public class CaseEditActivity extends BaseActivity {
         mCaseEditViewModel.getCategories().observe(this, value -> {
             if (value.data != null) {
                 showCategories(value.data);
+            }
+        });
+        mCaseEditViewModel.getRequiredMergeIns().observe(this, value -> {
+            if (value != null) {
+                showRequiredMergeIns(value);
             }
         });
         mCaseEditViewModel.getStatuses().observe(this, value -> {
@@ -417,7 +425,8 @@ public class CaseEditActivity extends BaseActivity {
                 mFoundInView.getText().toString(),
                 mFixedInView.getText().toString(),
                 mVerifiedInView.getText().toString(),
-                mEventContent.getText().toString()
+                mEventContent.getText().toString(),
+                mRequiredMergeInSpinner.getSelectedItem().toString()
         );
     }
 
@@ -485,6 +494,13 @@ public class CaseEditActivity extends BaseActivity {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStatusesSpinner.setAdapter(dataAdapter);
 
+    }
+
+    public void showRequiredMergeIns(List<String> list) {
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRequiredMergeInSpinner.setAdapter(dataAdapter);
     }
 
     public void showCategories(List<Category> categories) {

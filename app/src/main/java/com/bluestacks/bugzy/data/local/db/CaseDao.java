@@ -88,4 +88,7 @@ public abstract class CaseDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insert(FilterCasesResult filterCases);
+
+    @Query("SELECT DISTINCT requiredMergeIn FROM `Case`")
+    public abstract LiveData<List<String>> getRequiredMergeIns( );
 }

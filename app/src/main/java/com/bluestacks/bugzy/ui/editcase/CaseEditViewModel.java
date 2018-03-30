@@ -28,6 +28,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class CaseEditViewModel extends ViewModel {
     private LiveData<Resource<List<Category>>> mCategories;
     private LiveData<Resource<List<Person>>> mPersons;
     private LiveData<Resource<List<Priority>>> mPriorities;
+    private LiveData<List<String>> mRequiredMergeIns;
     private SingleLiveEvent<Void> mOpenPeopleSelector = new SingleLiveEvent<>();
     private MediatorLiveData<String> mPrimaryButtonText = new MediatorLiveData<>();
     private MutableLiveData<String> mEventNote = new MutableLiveData<>();
@@ -71,7 +73,8 @@ public class CaseEditViewModel extends ViewModel {
         CATEGORY,
         STATUS,
         ASSIGNEDTO,
-        PRIORITY
+        PRIORITY,
+        REQUIRED_MERGE_IN,
     }
 
     @Inject
@@ -174,10 +177,36 @@ public class CaseEditViewModel extends ViewModel {
             return mCasesRepository.editCase(val.first, val.second);
         });
 
+        mRequiredMergeIns = Transformations.switchMap(mCaseLiveData, caseStatus -> {
+            return Transformations.map(mCasesRepository.getRequiredMergeIns(), v -> {
+                // If we don't get from the db
+                // we get it generate it from the current case
+                if (v == null || v.size() == 0) {
+                    List<String> l =new ArrayList<>();
+                    if (caseStatus != null && caseStatus.data != null && !TextUtils.isEmpty(caseStatus.data.getRequiredMergeIn())) {
+                        l.add(caseStatus.data.getRequiredMergeIn());
+                    }
+                    return l;
+                }
+                List<String> list = new ArrayList<>();
+                for (String entry : v) {
+                    if (!TextUtils.isEmpty(entry)) {
+                        list.add(entry);
+                    }
+                }
+                return list;
+            });
+
+        });
+
         mProjects = mRepository.getProjects(false);
         mCategories =  mRepository.getCategories(false);
         mPriorities =  mRepository.getPriorities(false);
         mPersons = mRepository.getPeople(false);
+    }
+
+    public LiveData<List<String>> getRequiredMergeIns() {
+        return mRequiredMergeIns;
     }
 
     public LiveData<Resource<Response<EditCaseData>>> getEditCaseStatus() {
@@ -262,6 +291,7 @@ public class CaseEditViewModel extends ViewModel {
                     map.put(PropType.ASSIGNEDTO, getIndex(kase.getPersonAssignedToId(), getPersons()));
                 }
                 map.put(PropType.PRIORITY, getIndex(kase.getPriority(), getPriorities()));
+                map.put(PropType.REQUIRED_MERGE_IN, getIndex(kase.getPriority(), getPriorities()));
                 mDefaultPropSelectionLiveData.postValue(map);
             }
         });
@@ -323,7 +353,7 @@ public class CaseEditViewModel extends ViewModel {
 
     void saveClicked(String title, Project project, Area area, Milestone milestone, Category category, CaseStatus caseStatus,
                                                            Person p, Priority priority, String tags, String foundIn, String fixedIn,
-                                                           String verifiedIn, String eventContent) {
+                                                           String verifiedIn, String eventContent, String requiredMergeIn) {
         int mode = mParamsLiveData.getValue().first;
 
         CaseEditRequest request = new CaseEditRequest();
@@ -342,6 +372,7 @@ public class CaseEditViewModel extends ViewModel {
             request.setTags(Arrays.asList(tags.split(", ")));
         }
 
+        request.setRequiredMergeIn(requiredMergeIn);
         request.setFoundIn(foundIn);
         request.setFixedIn(fixedIn);
         request.setVerifiedIn(verifiedIn);
