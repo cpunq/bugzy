@@ -24,10 +24,11 @@ public abstract class CaseDao {
     public abstract int update(Case kase);
 
     @Query("UPDATE `Case` SET title = :title, priority = :priority, fixFor = :fixFor, projectName = :project, projectArea = :area, " +
-            "status = :status, personAssignedTo = :personAssignedTo, personOpenedBy = :personOpenedBy, favorite = :favorite WHERE ixBug = :id")
+            "status = :status, personAssignedTo = :personAssignedTo, personOpenedBy = :personOpenedBy, favorite = :favorite, " +
+            "projectId = :projectId, fixForId = :fixForId, personAssignedToId = :personAssignedToId, personOpenedById = :personOpenedById, projectAreaId = :areaId, categoryId = :categoryId WHERE ixBug = :id")
     public abstract int updatePartial(String title, int priority, String fixFor, String project, String area,
-                                      String status, String personAssignedTo, String personOpenedBy, boolean favorite, int id);
-
+                                      String status, String personAssignedTo, String personOpenedBy, boolean favorite, int id,
+                                      int projectId, int fixForId, int personAssignedToId, int personOpenedById, int areaId, int categoryId);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long[] insertCases(List<Case> cases);
@@ -55,7 +56,8 @@ public abstract class CaseDao {
                 // cautiously update
                 Case kase = cases.get(i);
                 updatePartial(kase.getTitle(), kase.getPriority(), kase.getFixFor(), kase.getProjectName(), kase.getProjectArea(),
-                        kase.getStatus(), kase.getPersonAssignedTo(), kase.getPersonOpenedBy(), kase.isFavorite(), kase.getIxBug());
+                        kase.getStatus(), kase.getPersonAssignedTo(), kase.getPersonOpenedBy(), kase.isFavorite(), kase.getIxBug(),
+                        kase.getProjectId(), kase.getFixForId(), kase.getPersonAssignedToId(), kase.getPersonOpenedById(), kase.getProjectAreaId(), kase.getCategoryId());
             }
             i++;
         }
