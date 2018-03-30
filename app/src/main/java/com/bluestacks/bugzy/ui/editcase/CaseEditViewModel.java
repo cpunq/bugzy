@@ -54,6 +54,8 @@ public class CaseEditViewModel extends ViewModel {
     private SingleLiveEvent<Void> mOpenPeopleSelector = new SingleLiveEvent<>();
     private MediatorLiveData<String> mPrimaryButtonText = new MediatorLiveData<>();
     private MutableLiveData<String> mEventNote = new MutableLiveData<>();
+    private MutableLiveData<Pair<CaseEditRequest, Integer>> mEditCaseRequest = new MutableLiveData<>();
+    private LiveData<Resource<Response<EditCaseData>>> mEditCaseStatus;
 
 
     private LiveData<Resource<Case>> mCaseLiveData;
@@ -143,11 +145,18 @@ public class CaseEditViewModel extends ViewModel {
         mStatuses = Transformations.switchMap(mCurrentCategory, val -> {
             return mRepository.getStatuses(val.getId());
         });
+        mEditCaseStatus = Transformations.switchMap(mEditCaseRequest, val -> {
+            return mCasesRepository.editCase(val.first, val.second);
+        });
 
         mProjects = mRepository.getProjects(false);
         mCategories =  mRepository.getCategories(false);
         mPriorities =  mRepository.getPriorities(false);
         mPersons = mRepository.getPeople(false);
+    }
+
+    public LiveData<Resource<Response<EditCaseData>>> getEditCaseStatus() {
+        return mEditCaseStatus;
     }
 
     public MediatorLiveData<String> getPrimaryButtonText() {
@@ -283,7 +292,7 @@ public class CaseEditViewModel extends ViewModel {
         return -1;
     }
 
-    LiveData<Resource<Response<EditCaseData>>> saveClicked(String title, Project project, Area area, Milestone milestone, Category category, CaseStatus caseStatus,
+    void saveClicked(String title, Project project, Area area, Milestone milestone, Category category, CaseStatus caseStatus,
                                                            Person p, Priority priority, String tags, String foundIn, String fixedIn,
                                                            String verifiedIn, String eventContent) {
         int mode = mParamsLiveData.getValue().first;
@@ -308,7 +317,6 @@ public class CaseEditViewModel extends ViewModel {
         request.setFixedIn(fixedIn);
         request.setVerifiedIn(verifiedIn);
         request.setEventText(eventContent);
-
-        return mCasesRepository.editCase(request, mode);
+        mEditCaseRequest.setValue(new Pair(request, mode));
     }
 }

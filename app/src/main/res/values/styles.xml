@@ -146,4 +146,13 @@
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
+    <style name="CaseEditTheme.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonBarButtonStyle">@style/AppTheme.PrimaryButton.Small</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppTheme.PrimaryButton.Small</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+    </style>
+
 </resources>

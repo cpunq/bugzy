@@ -3,8 +3,11 @@ package com.bluestacks.bugzy.ui.editcase;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +36,7 @@ import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.ui.BaseActivity;
+import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
 
@@ -70,6 +75,9 @@ public class CaseEditActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     @BindView(R.id.et_case_title)
     EditText mCaseTitle;
@@ -139,6 +147,9 @@ public class CaseEditActivity extends BaseActivity {
 
     @BindView(R.id.btn_save)
     Button mSaveButton;
+
+    @BindView(R.id.btn_cancel)
+    Button mCancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,8 +263,35 @@ public class CaseEditActivity extends BaseActivity {
                 showCaseDetails(value.data);
             }
             if (value.status == Status.LOADING) {
-                // Show working somewhere
+                showLoading();
                 return;
+            }
+            if (value.status == Status.ERROR) {
+                showCaseFetchError(value.message);
+                return;
+            }
+            if (value.status == Status.SUCCESS) {
+                hideLoading();
+            }
+        });
+
+        mCaseEditViewModel.getEditCaseStatus().observe(this, status -> {
+            if (status.status == Status.LOADING) {
+                showLoading();
+                return;
+            }
+            if (status.status == Status.ERROR) {
+                showEditCaseError(status.message);
+                return;
+            }
+            if (status.status == Status.SUCCESS) {
+                Intent i = new Intent(this, CaseDetailsActivity.class);
+                Bundle args = new Bundle();
+                args.putString("bug_id", String.valueOf(status.data.getData().getCase().getIxBug()));
+                args.putSerializable("bug", status.data.getData().getCase());
+                i.putExtras(args);
+                startActivity(i);
+                finish();
             }
         });
 
@@ -274,6 +312,51 @@ public class CaseEditActivity extends BaseActivity {
         mCaseEditViewModel.getPrimaryButtonText().observe(this, v -> {
             mSaveButton.setText(v);
         });
+    }
+
+    private AlertDialog getCaseErrorAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CaseEditTheme_AlertDialog);
+        builder.setMessage("Failed to update the Case details");
+        builder.setPositiveButton("RETRY", (dialogInterface, i) -> {
+            mCaseEditViewModel.setParams(mMode, mCaseId);
+        });
+        builder.setCancelable(false);
+        return builder.create();
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(mProjectContainer, message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("OK", view -> {
+                })
+                .show();
+    }
+
+    private void showLoading() {
+        if (mCaseErrorAlertDialog != null && mCaseErrorAlertDialog.isShowing()) {
+            mCaseErrorAlertDialog.dismiss();
+        }
+        mProgressBar.setVisibility(View.VISIBLE);
+        setInteractionEnabled(false);
+    }
+
+    private void hideLoading() {
+        setInteractionEnabled(true);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    private void showEditCaseError(String error) {
+        mProgressBar.setVisibility(View.GONE);
+        setInteractionEnabled(true);
+        showSnackbar(error);
+    }
+
+    AlertDialog mCaseErrorAlertDialog;
+    private void showCaseFetchError(String message) {
+        // Disable interaction
+        mProgressBar.setVisibility(View.GONE);
+        setInteractionEnabled(false);
+        mCaseErrorAlertDialog = getCaseErrorAlertDialog();
+        mCaseErrorAlertDialog.show();
     }
 
     @OnClick(R.id.container_project_spinner)
@@ -307,7 +390,7 @@ public class CaseEditActivity extends BaseActivity {
 
     @OnClick(R.id.btn_save)
     void onSaveClicked() {
-       LiveData<Resource<Response<EditCaseData>>> l =  mCaseEditViewModel.saveClicked(mCaseTitle.getText().toString(),
+        mCaseEditViewModel.saveClicked(mCaseTitle.getText().toString(),
                 (Project)mProjectSpinner.getSelectedItem(),
                 (Area)mAreaSpinner.getSelectedItem(),
                 (Milestone)mMileStoneSpinner.getSelectedItem(),
@@ -321,9 +404,6 @@ public class CaseEditActivity extends BaseActivity {
                 mVerifiedInView.getText().toString(),
                 mEventContent.getText().toString()
         );
-        l.observe(this, val -> {
-            l.removeObservers(this);
-        });
     }
 
     public void showCaseDetails(Case kase) {
@@ -455,5 +535,11 @@ public class CaseEditActivity extends BaseActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(0, R.anim.exit_slide_down);
+    }
+
+    public void setInteractionEnabled(boolean enabled) {
+        mSaveButton.setEnabled(enabled);
+        mCancelButton.setEnabled(enabled);
+
     }
 }
