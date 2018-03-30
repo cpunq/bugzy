@@ -151,8 +151,20 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:buttonBarButtonStyle">@style/AppTheme.PrimaryButton.Small</item>
-        <item name="buttonBarPositiveButtonStyle">@style/AppTheme.PrimaryButton.Small</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppTheme.PrimaryButton.Large</item>
         <item name="android:textColorPrimary">@color/colorPrimary</item>
     </style>
+
+      <style name="CaseEditTheme.AlertDialog.Title" parent="android:Widget.TextView">
+          <item name="android:textSize">@dimen/title</item>
+          <item name="android:textStyle">bold</item>
+          <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+     <style name="CaseEditTheme.AlertDialog.Message" parent="android:Widget.TextView">
+          <item name="android:textSize">@dimen/title</item>
+         <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 
 </resources>

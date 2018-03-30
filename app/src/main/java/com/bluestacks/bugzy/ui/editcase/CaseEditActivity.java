@@ -1,9 +1,7 @@
 package com.bluestacks.bugzy.ui.editcase;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -31,13 +29,12 @@ import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
-import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
-import com.bluestacks.bugzy.data.remote.model.EditCaseData;
-import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
+import com.bluestacks.bugzy.ui.common.BugzyAlertDialog;
+
 import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
 
 import java.util.ArrayList;
@@ -314,14 +311,22 @@ public class CaseEditActivity extends BaseActivity {
         });
     }
 
-    private AlertDialog getCaseErrorAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CaseEditTheme_AlertDialog);
-        builder.setMessage("Failed to update the Case details");
-        builder.setPositiveButton("RETRY", (dialogInterface, i) -> {
+    private AlertDialog getCaseErrorAlertDialog(String message) {
+        BugzyAlertDialog dialog = new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        dialog.setTitle("Error");
+        dialog.setMessage("Failed to refresh the Case details.\nDescription: " + message);
+        dialog.setPositiveButtonText("Retry");
+        dialog.setNegativeButtonText("Cancel");
+        dialog.setOnPositiveButtonClickListener(view -> {
             mCaseEditViewModel.setParams(mMode, mCaseId);
         });
-        builder.setCancelable(false);
-        return builder.create();
+        dialog.setOnNegativeButtonClickListener(view -> {
+            if (mCaseErrorAlertDialog != null && mCaseErrorAlertDialog.isShowing()) {
+                mCaseErrorAlertDialog.dismiss();
+            }
+        });
+        dialog.setCancelable(false);
+        return dialog;
     }
 
     private void showSnackbar(String message) {
@@ -355,7 +360,7 @@ public class CaseEditActivity extends BaseActivity {
         // Disable interaction
         mProgressBar.setVisibility(View.GONE);
         setInteractionEnabled(false);
-        mCaseErrorAlertDialog = getCaseErrorAlertDialog();
+        mCaseErrorAlertDialog = getCaseErrorAlertDialog(message);
         mCaseErrorAlertDialog.show();
     }
 
@@ -541,5 +546,13 @@ public class CaseEditActivity extends BaseActivity {
         mSaveButton.setEnabled(enabled);
         mCancelButton.setEnabled(enabled);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mCaseErrorAlertDialog != null && mCaseErrorAlertDialog.isShowing()) {
+            mCaseErrorAlertDialog.dismiss();
+        }
     }
 }
