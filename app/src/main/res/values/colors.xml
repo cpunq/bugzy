@@ -12,6 +12,7 @@
     <color name="windowBackground">#F4F4F4</color>
     <color name="navItemText">#80979BA0</color>
 
+    <color name="disabled">#F8F8F8</color>
 
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#7D7D7D</color>

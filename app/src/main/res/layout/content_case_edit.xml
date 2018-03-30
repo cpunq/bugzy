@@ -43,7 +43,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
-                    android:foreground="?attr/selectableItemBackground"
                     android:id="@+id/container_project_spinner"
                     android:orientation="horizontal">
                 <TextView
@@ -63,6 +62,8 @@
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:layout_centerVertical="true"
+                        android:paddingEnd="32dp"
+                        android:paddingRight="32dp"
                         android:textAlignment="textEnd"
                         android:gravity="end"
                         android:id="@+id/spinner_project"
@@ -88,7 +89,12 @@
                         android:minWidth="100dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:textAlignment="textEnd"
+                        android:paddingEnd="32dp"
+                        android:paddingRight="32dp"
                         android:gravity="end"
                         android:id="@+id/spinner_area"
                 />
@@ -106,6 +112,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:text="Milestone"
+                        android:id="@+id/label_milestone"
                 />
                 <Spinner
                         android:layout_width="wrap_content"
@@ -113,7 +120,14 @@
                         android:minWidth="100dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:layout_toRightOf="@+id/label_milestone"
+                        android:layout_marginLeft="16dp"
                         android:textAlignment="textEnd"
+                        android:paddingEnd="32dp"
+                        android:paddingRight="32dp"
                         android:gravity="end"
                         android:id="@+id/spinner_milestone"
                 />
@@ -131,6 +145,7 @@
                         android:layout_weight="1"
                         android:layout_marginRight="4dp"
                         style="@style/CaseEditTheme.CasePropStyle"
+                        android:id="@+id/container_category"
                         android:orientation="vertical">
                     <TextView
                             android:layout_width="wrap_content"
@@ -142,6 +157,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:minWidth="100dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
                             android:gravity="start"
                             android:id="@+id/spinner_category"
                     />
@@ -152,6 +170,7 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="4dp"
                         style="@style/CaseEditTheme.CasePropStyle"
+                        android:id="@+id/container_status"
                         android:orientation="vertical">
                     <TextView
                             android:layout_width="wrap_content"
@@ -162,6 +181,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
                             android:minWidth="100dp"
                             android:gravity="start"
                             android:id="@+id/spinner_status"
@@ -181,6 +203,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:text="Assigned To"
+                        android:id="@+id/label_assigned_to"
                 />
                 <Spinner
                         android:layout_width="wrap_content"
@@ -189,6 +212,13 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textAlignment="textEnd"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:layout_toRightOf="@+id/label_assigned_to"
+                        android:layout_marginLeft="16dp"
+                        android:paddingEnd="32dp"
+                        android:paddingRight="32dp"
                         android:gravity="end"
                         android:spinnerMode="dialog"
                         android:id="@+id/spinner_assigned_to"
@@ -217,7 +247,12 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textAlignment="textEnd"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:gravity="end"
+                        android:paddingEnd="32dp"
+                        android:paddingRight="32dp"
                         android:id="@+id/spinner_priority"
                 />
             </RelativeLayout>

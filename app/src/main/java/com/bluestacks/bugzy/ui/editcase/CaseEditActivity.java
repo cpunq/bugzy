@@ -92,6 +92,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.container_assigned_to)
     View mAssignedToContainer;
 
+    @BindView(R.id.container_status)
+    View mStatusContainer;
+
     @BindView(R.id.label_tags)
     TextView mTagsLabel;
 
@@ -169,17 +172,23 @@ public class CaseEditActivity extends BaseActivity {
         }
 
         if (mMode == MODE_EDIT || mMode == MODE_ASSIGN) {
+            mStatusContainer.setEnabled(false);
             mStatusesSpinner.setEnabled(false);
         }
         if (mMode == MODE_RESOLVE) {
+            mProjectContainer.setEnabled(false);
             mProjectSpinner.setEnabled(false);
+            mAreaContainer.setEnabled(false);
             mAreaSpinner.setEnabled(false);
+
             // TODO: assigned to will contain the case opener
             // TODO: in the statuses, active status will no longer be there,
             // by default Resolved will be selected
         }
         if (mMode == MODE_REOPEN || mMode == MODE_REACTIVATE) {
             // TODO: status will be Active and disabled
+            mStatusContainer.setEnabled(false);
+            mStatusesSpinner.setEnabled(false);
         }
         if (mMode == MODE_CLOSE) {
             mCaseTitle.setVisibility(View.GONE);
@@ -270,6 +279,30 @@ public class CaseEditActivity extends BaseActivity {
     @OnClick(R.id.container_project_spinner)
     void onProjectSpinnerClicked() {
         mProjectSpinner.performClick();
+    }
+    @OnClick(R.id.container_area)
+    void onAreaSpinnerClicked() {
+        mAreaSpinner.performClick();
+    }
+    @OnClick(R.id.container_milestone)
+    void onMilestoneSpinnerClicked() {
+        mMileStoneSpinner.performClick();
+    }
+    @OnClick(R.id.container_assigned_to)
+    void onAssignedToSpinnerClicked() {
+        mAssignedToSpinner.performClick();
+    }
+    @OnClick(R.id.container_priority)
+    void onPrioritySpinnerClicked() {
+        mPrioritySpinner.performClick();
+    }
+    @OnClick(R.id.container_category)
+    void onCategorySpinnerClicked() {
+        mCategorySpinner.performClick();
+    }
+    @OnClick(R.id.container_status)
+    void onStatusSpinnerClicked() {
+        mStatusesSpinner.performClick();
     }
 
     @OnClick(R.id.btn_save)
