@@ -190,12 +190,11 @@ public class CaseEditActivity extends BaseActivity {
             mAreaContainer.setEnabled(false);
             mAreaSpinner.setEnabled(false);
 
-            // TODO: assigned to will contain the case opener
-            // TODO: in the statuses, active status will no longer be there,
-            // by default Resolved will be selected
+            // Assigned to will contain the case opener
+            // In the statuses, active status will no longer be there - handled in ViewModel
         }
         if (mMode == MODE_REOPEN || mMode == MODE_REACTIVATE) {
-            // TODO: status will be Active and disabled
+            // Status will be Active and disabled - Handled in ViewModel
             mStatusContainer.setEnabled(false);
             mStatusesSpinner.setEnabled(false);
         }

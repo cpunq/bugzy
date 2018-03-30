@@ -30,6 +30,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -133,7 +134,7 @@ public class CaseEditViewModel extends ViewModel {
                 return;
             }
             // TODO: make sure, you disable the interactions, until this step completes
-            updateDefaultSelections(caseResource.data);
+            updateDefaultSelections(caseResource.data, mParamsLiveData.getValue().first);
         });
 
         mAreas = Transformations.switchMap(mCurrentProject, val -> {
@@ -143,7 +144,31 @@ public class CaseEditViewModel extends ViewModel {
             return mRepository.getMilestones(val.getId());
         });
         mStatuses = Transformations.switchMap(mCurrentCategory, val -> {
-            return mRepository.getStatuses(val.getId());
+            return Transformations.map(mRepository.getStatuses(val.getId()), v -> {
+                if (v.data == null) {
+                    return v;
+                }
+                if (mParamsLiveData.getValue().first == MODE_RESOLVE) {
+                    List<CaseStatus> statuses = new ArrayList<>();
+                    for (CaseStatus status : v.data) {
+                        // Only keep non-active statuses
+                        if (!status.getName().toLowerCase().contains("active")) {
+                            statuses.add(status);
+                        }
+                    }
+                    return new Resource<>(v.status, statuses, v.message);
+                }
+                if (mParamsLiveData.getValue().first == MODE_REOPEN || mParamsLiveData.getValue().first == MODE_REACTIVATE) {
+                    List<CaseStatus> statuses = new ArrayList<>();
+                    for (CaseStatus status : v.data) {
+                        if (status.getName().toLowerCase().contains("active")) {
+                            statuses.add(status);
+                            return new Resource<>(v.status, statuses, v.message);
+                        }
+                    }
+                }
+                return v;
+            });
         });
         mEditCaseStatus = Transformations.switchMap(mEditCaseRequest, val -> {
             return mCasesRepository.editCase(val.first, val.second);
@@ -216,7 +241,7 @@ public class CaseEditViewModel extends ViewModel {
     }
 
     @UiThread
-    private void updateDefaultSelections(Case kase) {
+    private void updateDefaultSelections(Case kase, int mode) {
         if (kase == null) {
             return;
         }
@@ -231,7 +256,11 @@ public class CaseEditViewModel extends ViewModel {
                 map.put(PropType.MILESTONE, getIndex(kase.getFixForId(), getMilestones()));
                 map.put(PropType.CATEGORY, getIndex(kase.getCategoryId(), getCategories()));
                 map.put(PropType.STATUS, getIndex(kase.getStatusId(), getStatuses()));
-                map.put(PropType.ASSIGNEDTO, getIndex(kase.getPersonAssignedToId(), getPersons()));
+                if (mode == MODE_RESOLVE) {
+                    map.put(PropType.ASSIGNEDTO, getIndex(kase.getPersonOpenedById(), getPersons()));
+                } else {
+                    map.put(PropType.ASSIGNEDTO, getIndex(kase.getPersonAssignedToId(), getPersons()));
+                }
                 map.put(PropType.PRIORITY, getIndex(kase.getPriority(), getPriorities()));
                 mDefaultPropSelectionLiveData.postValue(map);
             }
