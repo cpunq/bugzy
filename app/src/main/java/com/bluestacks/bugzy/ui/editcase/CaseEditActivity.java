@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -211,6 +212,12 @@ public class CaseEditActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_case, menu);
+        return true;
+    }
+
     public void subscribeToViewModel() {
         mCaseEditViewModel.getMilestones().observe(this, value -> {
             if (value != null && value.data != null) {
@@ -341,16 +348,19 @@ public class CaseEditActivity extends BaseActivity {
             mCaseErrorAlertDialog.dismiss();
         }
         mProgressBar.setVisibility(View.VISIBLE);
+        invalidateOptionsMenu();
         setInteractionEnabled(false);
     }
 
     private void hideLoading() {
         setInteractionEnabled(true);
         mProgressBar.setVisibility(View.GONE);
+        invalidateOptionsMenu();
     }
 
     private void showEditCaseError(String error) {
         mProgressBar.setVisibility(View.GONE);
+        invalidateOptionsMenu();
         setInteractionEnabled(true);
         showSnackbar(error);
     }
@@ -359,6 +369,7 @@ public class CaseEditActivity extends BaseActivity {
     private void showCaseFetchError(String message) {
         // Disable interaction
         mProgressBar.setVisibility(View.GONE);
+        invalidateOptionsMenu();
         setInteractionEnabled(false);
         mCaseErrorAlertDialog = getCaseErrorAlertDialog(message);
         mCaseErrorAlertDialog.show();
@@ -527,7 +538,25 @@ public class CaseEditActivity extends BaseActivity {
             this.onBackPressed();
             return true;
         }
+       if (item.getItemId() == R.id.action_refresh) {
+            mCaseEditViewModel.setParams(mMode, mCaseId);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_refresh);
+        if (item == null) {
+            return super.onPrepareOptionsMenu(menu);
+        }
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
+            item.setEnabled(false);
+        } else {
+            item.setEnabled(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

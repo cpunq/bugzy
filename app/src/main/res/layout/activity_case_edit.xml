@@ -22,8 +22,8 @@
                           android:layout_height="match_parent"
                           android:gravity="right|center_vertical"
                           android:paddingRight="16dp">
-                <ProgressBar android:layout_width="28dp"
-                             android:layout_height="28dp"
+                <ProgressBar android:layout_width="24dp"
+                             android:layout_height="24dp"
                              android:id="@+id/progress_bar"
                              android:visibility="gone"
                 />
