@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.ui.editcase;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Area;
@@ -24,7 +27,10 @@ import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
+import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.remote.model.EditCaseData;
+import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
@@ -68,6 +74,27 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.et_case_title)
     EditText mCaseTitle;
 
+    @BindView(R.id.container_project_spinner)
+    View mProjectContainer;
+
+    @BindView(R.id.container_area)
+    View mAreaContainer;
+
+    @BindView(R.id.container_cat_bug)
+    View mCategoryBugContainer;
+
+    @BindView(R.id.container_milestone)
+    View mMileStoneContainer;
+
+    @BindView(R.id.container_priority)
+    View mPriorityContainer;
+
+    @BindView(R.id.container_assigned_to)
+    View mAssignedToContainer;
+
+    @BindView(R.id.label_tags)
+    TextView mTagsLabel;
+
     @BindView(R.id.et_tags)
     EditText mTagsView;
 
@@ -95,6 +122,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.et_found_in)
     EditText mFoundInView;
 
+    @BindView(R.id.et_event_content)
+    EditText mEventContent;
+
     @BindView(R.id.et_verified_in)
     EditText mVerifiedInView;
 
@@ -103,6 +133,9 @@ public class CaseEditActivity extends BaseActivity {
 
     @BindView(R.id.recycler_view_events)
     RecyclerView mEventsRecyclerView;
+
+    @BindView(R.id.btn_save)
+    Button mSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +166,31 @@ public class CaseEditActivity extends BaseActivity {
             if (mCaseId == -1) {
                 throw new RuntimeException("PARAM_CASE_ID not sent");
             }
+        }
+
+        if (mMode == MODE_EDIT || mMode == MODE_ASSIGN) {
+            mStatusesSpinner.setEnabled(false);
+        }
+        if (mMode == MODE_RESOLVE) {
+            mProjectSpinner.setEnabled(false);
+            mAreaSpinner.setEnabled(false);
+            // TODO: assigned to will contain the case opener
+            // TODO: in the statuses, active status will no longer be there,
+            // by default Resolved will be selected
+        }
+        if (mMode == MODE_REOPEN || mMode == MODE_REACTIVATE) {
+            // TODO: status will be Active and disabled
+        }
+        if (mMode == MODE_CLOSE) {
+            mCaseTitle.setVisibility(View.GONE);
+            mProjectContainer.setVisibility(View.GONE);
+            mAreaContainer.setVisibility(View.GONE);
+            mCategoryBugContainer.setVisibility(View.GONE);
+            mMileStoneContainer.setVisibility(View.GONE);
+            mPriorityContainer.setVisibility(View.GONE);
+            mTagsView.setVisibility(View.GONE);
+            mTagsLabel.setVisibility(View.GONE);
+            mAssignedToContainer.setVisibility(View.GONE);
         }
     }
 
@@ -199,11 +257,40 @@ public class CaseEditActivity extends BaseActivity {
             mAssignedToSpinner.setSelection(map.get(ASSIGNEDTO));
             mPrioritySpinner.setSelection(map.get(PRIORITY));
         });
+
+        mCaseEditViewModel.getOpenPeopleSelector().observe(this, v -> {
+            mAssignedToSpinner.performClick();
+        });
+
+        mCaseEditViewModel.getPrimaryButtonText().observe(this, v -> {
+            mSaveButton.setText(v);
+        });
     }
 
     @OnClick(R.id.container_project_spinner)
     void onProjectSpinnerClicked() {
         mProjectSpinner.performClick();
+    }
+
+    @OnClick(R.id.btn_save)
+    void onSaveClicked() {
+       LiveData<Resource<Response<EditCaseData>>> l =  mCaseEditViewModel.saveClicked(mCaseTitle.getText().toString(),
+                (Project)mProjectSpinner.getSelectedItem(),
+                (Area)mAreaSpinner.getSelectedItem(),
+                (Milestone)mMileStoneSpinner.getSelectedItem(),
+                (Category)mCategorySpinner.getSelectedItem(),
+                (CaseStatus)mStatusesSpinner.getSelectedItem(),
+                (Person)mAssignedToSpinner.getSelectedItem(),
+                (Priority)mPrioritySpinner.getSelectedItem(),
+                mTagsView.getText().toString(),
+                mFoundInView.getText().toString(),
+                mFixedInView.getText().toString(),
+                mVerifiedInView.getText().toString(),
+                mEventContent.getText().toString()
+        );
+        l.observe(this, val -> {
+            l.removeObservers(this);
+        });
     }
 
     public void showCaseDetails(Case kase) {

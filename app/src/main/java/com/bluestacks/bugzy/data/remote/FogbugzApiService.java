@@ -2,6 +2,8 @@ package com.bluestacks.bugzy.data.remote;
 
 import com.google.gson.JsonElement;
 
+import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
+import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.ListAreasData;
 import com.bluestacks.bugzy.data.remote.model.ListCategoriesData;
 import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
@@ -67,4 +69,22 @@ public interface FogbugzApiService {
 
     @POST("/api/listCategories")
     LiveData<ApiResponse<Response<ListCategoriesData>>> getCategories(@Body Request request);
+
+    @POST("/api/edit")
+    Call<Response<EditCaseData>> editCase(@Body CaseEditRequest request);
+
+    @POST("/api/new")
+    Call<Response<EditCaseData>> newCase(@Body CaseEditRequest request);
+
+    @POST("/api/resolve")
+    Call<Response<EditCaseData>> resolveCase(@Body CaseEditRequest request);
+
+    @POST("/api/close")
+    Call<Response<EditCaseData>> closeCase(@Body CaseEditRequest request);
+
+    @POST("/api/reopen")
+    Call<Response<EditCaseData>> reopenCase(@Body CaseEditRequest request);
+
+    @POST("/api/reactivate")
+    Call<Response<EditCaseData>> reactivateCase(@Body CaseEditRequest request);
 }

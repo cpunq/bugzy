@@ -73,6 +73,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
+                    android:id="@+id/container_area"
                     android:orientation="horizontal">
                 <TextView
                         android:layout_width="wrap_content"
@@ -97,6 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
+                    android:id="@+id/container_milestone"
                     android:orientation="horizontal">
                 <TextView
                         android:layout_width="wrap_content"
@@ -120,6 +122,7 @@
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:weightSum="0"
+                          android:id="@+id/container_cat_bug"
                           android:orientation="horizontal">
 
                 <LinearLayout
@@ -170,6 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
+                    android:id="@+id/container_assigned_to"
                     android:orientation="horizontal">
                 <TextView
                         android:layout_width="wrap_content"
@@ -197,6 +201,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/CaseEditTheme.CasePropStyle"
+                    android:id="@+id/container_priority"
                     android:orientation="horizontal">
                 <TextView
                         android:layout_width="wrap_content"
@@ -227,7 +232,9 @@
                       android:layout_height="wrap_content"
                       android:paddingBottom="8dp"
                       android:text="Tags"
+                      android:id="@+id/label_tags"
             />
+
             <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -358,22 +365,31 @@
                     android:textColor="@color/colorPrimary"
                     android:layout_marginTop="8dp"
                     android:inputType="textMultiLine"
-
             />
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:orientation="horizontal"
+                          android:paddingTop="8dp"
+                          android:paddingBottom="8dp"
+                          android:clipChildren="false"
+                          android:clipToPadding="false"
                           android:gravity="right|center_vertical">
 
                 <Button android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="save"
+                        android:layout_marginRight="4dp"
+                        android:id="@+id/btn_save"
                 />
 
                 <Button android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="cancel"
+                        android:textColor="?attr/colorAccent"
+                        android:backgroundTint="@android:color/white"
+                        android:layout_marginRight="8dp"
+                        android:id="@+id/btn_cancel"
                 />
 
                 <ImageButton
@@ -396,6 +412,7 @@
                     android:descendantFocusability="blocksDescendants"
                     android:clipChildren="false"
                     android:clipToPadding="false"
+                    android:layout_marginTop="4dp"
                     android:layout_marginLeft="-16dp"
                     android:layout_marginRight="-16dp"
                     android:paddingLeft="16dp"

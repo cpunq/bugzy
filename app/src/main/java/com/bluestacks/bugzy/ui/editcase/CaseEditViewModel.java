@@ -12,8 +12,12 @@ import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
+import com.bluestacks.bugzy.data.remote.model.EditCaseData;
+import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
+import com.bluestacks.bugzy.utils.SingleLiveEvent;
 
 import static com.bluestacks.bugzy.ui.editcase.CaseEditActivity.*;
 
@@ -26,6 +30,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.Pair;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +51,9 @@ public class CaseEditViewModel extends ViewModel {
     private LiveData<Resource<List<Category>>> mCategories;
     private LiveData<Resource<List<Person>>> mPersons;
     private LiveData<Resource<List<Priority>>> mPriorities;
+    private SingleLiveEvent<Void> mOpenPeopleSelector = new SingleLiveEvent<>();
+    private MediatorLiveData<String> mPrimaryButtonText = new MediatorLiveData<>();
+    private MutableLiveData<String> mEventNote = new MutableLiveData<>();
 
 
     private LiveData<Resource<Case>> mCaseLiveData;
@@ -86,8 +94,38 @@ public class CaseEditViewModel extends ViewModel {
             });
         });
 
+        mPrimaryButtonText.addSource(mParamsLiveData, params -> {
+            if (params.first == MODE_RESOLVE) {
+                mPrimaryButtonText.setValue("Resolve");
+                return;
+            }
+            if (params.first == MODE_ASSIGN) {
+                mPrimaryButtonText.setValue("Assign");
+                return;
+            }
+            if (params.first == MODE_EDIT) {
+                mPrimaryButtonText.setValue("Save");
+                return;
+            }
+            if (params.first == MODE_REOPEN) {
+                mPrimaryButtonText.setValue("Reopen");
+                return;
+            }
+            if (params.first == MODE_REACTIVATE) {
+                mPrimaryButtonText.setValue("Reactivate");
+                return;
+            }
+            if (params.first == MODE_CLOSE) {
+                mPrimaryButtonText.setValue("Close");
+                return;
+            }
+        });
+
         // Assuming that mCaseLiveData is already being observed
         mDefaultPropSelectionLiveData.addSource(mCaseLiveData, caseResource -> {
+            if (mParamsLiveData.getValue().first == MODE_ASSIGN) {
+                mOpenPeopleSelector.call();
+            }
             if (mParamsLiveData.getValue().first == MODE_NEW) {
                 // For a new case, no need to do further stuff
                 return;
@@ -112,6 +150,9 @@ public class CaseEditViewModel extends ViewModel {
         mPersons = mRepository.getPeople(false);
     }
 
+    public MediatorLiveData<String> getPrimaryButtonText() {
+        return mPrimaryButtonText;
+    }
 
     void setParams(int mode, int caseId) {
         mParamsLiveData.setValue(new Pair<>(mode, caseId));
@@ -188,6 +229,10 @@ public class CaseEditViewModel extends ViewModel {
         });
     }
 
+    public SingleLiveEvent<Void> getOpenPeopleSelector() {
+        return mOpenPeopleSelector;
+    }
+
     /**
      *
      * @param id - id of the object for which you wanna find the index
@@ -236,5 +281,34 @@ public class CaseEditViewModel extends ViewModel {
             return ((Priority) o).getId();
         }
         return -1;
+    }
+
+    LiveData<Resource<Response<EditCaseData>>> saveClicked(String title, Project project, Area area, Milestone milestone, Category category, CaseStatus caseStatus,
+                                                           Person p, Priority priority, String tags, String foundIn, String fixedIn,
+                                                           String verifiedIn, String eventContent) {
+        int mode = mParamsLiveData.getValue().first;
+
+        CaseEditRequest request = new CaseEditRequest();
+        if (mode != MODE_NEW) {
+            request.setBugId(mCaseLiveData.getValue().data.getIxBug());
+        }
+        if (mode != MODE_CLOSE) {
+            request.setTitle(title);
+            request.setProjectId(project.getId());
+            request.setProjectAreaId(area.getId());
+            request.setFixForId(milestone.getId());
+            request.setCategoryId(category.getId());
+            request.setStatusId(caseStatus.getId());
+            request.setPersonAssignedToId(p.getPersonid());
+            request.setPriority(priority.getId());
+            request.setTags(Arrays.asList(tags.split(", ")));
+        }
+
+        request.setFoundIn(foundIn);
+        request.setFixedIn(fixedIn);
+        request.setVerifiedIn(verifiedIn);
+        request.setEventText(eventContent);
+
+        return mCasesRepository.editCase(request, mode);
     }
 }

@@ -1,6 +1,8 @@
 package com.bluestacks.bugzy.data;
 
 
+import com.google.gson.Gson;
+
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.BugzyTypeConverters;
@@ -12,12 +14,16 @@ import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
+import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
+import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.FilterCasesResult;
 import com.bluestacks.bugzy.data.remote.model.ListCasesData;
 import com.bluestacks.bugzy.data.remote.model.ListCasesRequest;
 import com.bluestacks.bugzy.data.remote.model.SearchCasesRequest;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
@@ -35,6 +41,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import retrofit2.Call;
 
 import static com.bluestacks.bugzy.data.CasesRepository.Sorting.AREA;
 import static com.bluestacks.bugzy.data.CasesRepository.Sorting.AREA_R;
@@ -57,6 +65,7 @@ public class CasesRepository {
     private BugzyDb db;
     private CaseDao mCaseDao;
     private MiscDao mMiscDao;
+    private Gson mGson;
 
     private String[] mColsForCaseList =new String[]{
             "sTitle",
@@ -120,13 +129,14 @@ public class CasesRepository {
 
 
     @Inject
-    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database, MiscDao miscDao) {
+    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database, MiscDao miscDao, Gson gson) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mPrefs = prefs;
         mCaseDao = caseDao;
         mMiscDao = miscDao;
         db = database;
+        mGson = gson;
     }
 
     @WorkerThread
@@ -379,5 +389,41 @@ public class CasesRepository {
         }.asLiveData(), v -> {
             return new SearchResultsResource<>(query, v);
         });
+    }
+
+    public LiveData<Resource<Response<EditCaseData>>> editCase(final CaseEditRequest request, int mode) {
+        NetworkBoundTask<Response<EditCaseData>> task =  new NetworkBoundTask<Response<EditCaseData>>(mAppExecutors, mGson) {
+            @Override
+            public void saveCallResult(@NonNull Response<EditCaseData> result) {
+                // Save?? ;)
+                if (result.getData() == null) {
+                    return;
+                }
+            }
+
+            @NonNull
+            @Override
+            protected Call<Response<EditCaseData>> createCall() {
+                switch (mode) {
+                    case CaseEditActivity.MODE_EDIT:
+                    case CaseEditActivity.MODE_ASSIGN:
+                        return mApiService.editCase(request);
+                    case CaseEditActivity.MODE_NEW:
+                        return mApiService.newCase(request);
+                    case CaseEditActivity.MODE_CLOSE:
+                        return mApiService.closeCase(request);
+                    case CaseEditActivity.MODE_RESOLVE:
+                        return mApiService.resolveCase(request);
+                    case CaseEditActivity.MODE_REACTIVATE:
+                        return mApiService.reactivateCase(request);
+                    case CaseEditActivity.MODE_REOPEN:
+                        return mApiService.reopenCase(request);
+                    default:
+                        return mApiService.editCase(request);
+                }
+            }
+        };
+        mAppExecutors.networkIO().execute(task);
+        return task.asLiveData();
     }
 }
