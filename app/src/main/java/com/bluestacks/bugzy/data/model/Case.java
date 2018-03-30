@@ -66,6 +66,9 @@ public class Case implements Serializable {
     @SerializedName( "sPersonOpenedBy")
     String personOpenedBy;
 
+    @SerializedName( "ixPersonOpenedBy")
+    int personOpenedById;
+
     @SerializedName( "events")
     List<CaseEvent> caseevents;
 
@@ -271,5 +274,13 @@ public class Case implements Serializable {
 
     public void setPersonAssignedToId(int personAssignedToId) {
         this.personAssignedToId = personAssignedToId;
+    }
+
+    public int getPersonOpenedById() {
+        return personOpenedById;
+    }
+
+    public void setPersonOpenedById(int personOpenedById) {
+        this.personOpenedById = personOpenedById;
     }
 }
