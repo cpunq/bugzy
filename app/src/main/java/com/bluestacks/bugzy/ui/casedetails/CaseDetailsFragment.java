@@ -309,7 +309,10 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     }
 
     private void showActionButtons(Case kase) {
-        String status = kase.getStatus().toLowerCase();
+        String status = "";
+        if (!TextUtils.isEmpty(kase.getStatus())) {
+            status = kase.getStatus().toLowerCase();
+        }
         if(status.startsWith(CaseStatus.RESOLVED) || status.startsWith(CaseStatus.VERIFIED)) {
             mAssignButton.setVisibility(View.VISIBLE);
             mResolveButton.setVisibility(View.VISIBLE);
