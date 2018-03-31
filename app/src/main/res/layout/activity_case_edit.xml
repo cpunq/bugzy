@@ -34,8 +34,9 @@
 
     <com.flipboard.bottomsheet.BottomSheetLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/layout_bottom_sheet"
-            android:layout_height="match_parent">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <include layout="@layout/content_case_edit"/>
     </com.flipboard.bottomsheet.BottomSheetLayout>
 
