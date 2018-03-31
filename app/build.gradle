@@ -80,6 +80,9 @@ dependencies {
     // UI
     implementation 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
 
+    implementation 'com.flipboard:bottomsheet-core:1.5.3'
+    implementation 'com.flipboard:bottomsheet-commons:1.5.3'
+
     implementation 'com.squareup.okhttp3:okhttp:3.8.0'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'

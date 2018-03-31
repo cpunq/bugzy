@@ -3,10 +3,12 @@ package com.bluestacks.bugzy.ui.caseevents;
 
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Attachment;
+import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bumptech.glide.Glide;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,14 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mContext = context;
     }
 
+    public void setToken(String token) {
+        mToken = token;
+    }
+
+    public void setList(List<Attachment> list) {
+        mList = list;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
         switch (viewType) {
@@ -44,7 +54,15 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        String filename = mList.get(position).getFilename().toLowerCase();
+        if (mList.get(position).getUri() != null) {
+            // Assuming we are only supporting image attachments as of now
+            return IMAGE_ATTACHMENT;
+        }
+        String filename = mList.get(position).getFilename();
+        if (TextUtils.isEmpty(filename)) {
+            return OTHER_ATTACHMENT;
+        }
+        filename = filename.toLowerCase();
         if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
             return IMAGE_ATTACHMENT;
         }
@@ -124,6 +142,14 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         public void bind(Attachment attachment) {
+            if (attachment.getUri() != null) {
+                // Local attachment
+                Glide.with(mContext)
+                        .load(attachment.getUri())
+                        .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
+                        .into(view);
+                return;
+            }
             final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
             Glide.with(mContext).load(img_path)
                     .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
