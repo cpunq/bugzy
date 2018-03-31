@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -29,13 +30,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluestacks.bugzy.BuildConfig;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Attachment;
@@ -50,6 +49,7 @@ import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
 import com.bluestacks.bugzy.ui.caseevents.AttachmentsAdapter;
 import com.bluestacks.bugzy.ui.caseevents.CaseEventsAdapter;
 import com.bluestacks.bugzy.ui.common.BugzyAlertDialog;
@@ -95,9 +95,11 @@ public class CaseEditActivity extends BaseActivity {
     private int  mCaseId;
     private CaseEventsAdapter mAdapter;
     private AttachmentsAdapter mAttachmentsAdapter;
+    private LinearLayoutManager mAttachmentsLayoutManager;
     private List<Project> mProjects;
     private List<Category> mCategories;
     private AlertDialog mCloseDialog;
+    List<Attachment> mAttachments = new ArrayList<>();
 
     @BindView(R.id.layout_bottom_sheet)
     BottomSheetLayout mBottomSheetLayout;
@@ -210,14 +212,20 @@ public class CaseEditActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mEventsRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new CaseEventsAdapter(this);
+        mAdapter.setOnAttachmentClickListener(new CaseEventsAdapter.OnAttachmentClickListener() {
+            @Override
+            public void onAttachmentClick(View v, CaseEvent event, int attachmentPosition) {
+                openImageActivity(event.getsAttachments().get(attachmentPosition).getUrl());
+            }
+        });
         mEventsRecyclerView.setAdapter(mAdapter);
         mEventsRecyclerView.setNestedScrollingEnabled(false);
     }
 
     private void setupAttachmentsRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mAttachmentsRecyclerView.setLayoutManager(linearLayoutManager);
+        mAttachmentsLayoutManager = new LinearLayoutManager(this);
+        mAttachmentsLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mAttachmentsRecyclerView.setLayoutManager(mAttachmentsLayoutManager);
         mAttachmentsRecyclerView.addItemDecoration(new ItemOffsetDecoration(
                 (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, 8f, getResources().getDisplayMetrics()
@@ -229,7 +237,35 @@ public class CaseEditActivity extends BaseActivity {
         mAttachmentsRecyclerView.setHasFixedSize(true);
         mAttachmentsAdapter = new AttachmentsAdapter(null, this, "");
         mAttachmentsRecyclerView.setAdapter(mAttachmentsAdapter);
-//        adapter.setOnItemClickListener(this);
+        mAttachmentsAdapter.setOnItemClickListener(new AttachmentsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                PopupMenu popupMenu = new PopupMenu(CaseEditActivity.this, view);
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    if (item.getTitle().equals("Remove")) {
+                        mCaseEditViewModel.removeAttachment(position);
+                    } else {
+                        openImageActivity(mAttachments.get(position).getUri().getPath());
+                    }
+                    return true;
+                });
+                popupMenu.getMenu().add("View");
+                popupMenu.getMenu().add("Remove");
+                popupMenu.show();
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+            }
+        });
+    }
+
+    public void openImageActivity(String filePath) {
+        Bundle arg = new Bundle();
+        arg.putString("img_path", filePath);
+        Intent i  = new Intent(this, FullScreenImageActivity.class);
+        i.putExtras(arg);
+        this.startActivity(i);
     }
 
     @OnClick(R.id.btn_attachments)
@@ -282,29 +318,19 @@ public class CaseEditActivity extends BaseActivity {
                 .setMaxItems(30)
                 .setShowCameraOption(createCameraIntent() != null)
                 .setShowPickerOption(createPickIntent() != null)
-                .setImageProvider(new ImagePickerSheetView.ImageProvider() {
-                    @Override
-                    public void onProvideImage(ImageView imageView, Uri imageUri, int size) {
-                        Glide.with(CaseEditActivity.this)
-                                .load(imageUri)
-//                                .centerCrop()
-//                                .crossFade()
-                                .into(imageView);
-                    }
-                })
-                .setOnTileSelectedListener(new ImagePickerSheetView.OnTileSelectedListener() {
-                    @Override
-                    public void onTileSelected(ImagePickerSheetView.ImagePickerTile selectedTile) {
-                        mBottomSheetLayout.dismissSheet();
-                        if (selectedTile.isCameraTile()) {
-                            dispatchTakePictureIntent();
-                        } else if (selectedTile.isPickerTile()) {
-                            startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
-                        } else if (selectedTile.isImageTile()) {
-                            showSelectedImage(selectedTile.getImageUri());
-                        } else {
-//                            genericError();
-                        }
+                .setImageProvider((imageView, imageUri, size) -> Glide.with(CaseEditActivity.this)
+                        .load(imageUri)
+                        .into(imageView))
+                .setOnTileSelectedListener(selectedTile -> {
+                    mBottomSheetLayout.dismissSheet();
+                    if (selectedTile.isCameraTile()) {
+                        dispatchTakePictureIntent();
+                    } else if (selectedTile.isPickerTile()) {
+                        startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
+                    } else if (selectedTile.isImageTile()) {
+                        showSelectedImage(selectedTile.getImageUri());
+                    } else {
+//                        genericError();
                     }
                 })
                 .setTitle("Choose an image...")
@@ -394,14 +420,8 @@ public class CaseEditActivity extends BaseActivity {
         Snackbar.make(mCaseTitle, message == null ? "Something went wrong" :message, Snackbar.LENGTH_SHORT).show();
     }
 
-    List<Attachment> mAttachments = new ArrayList<>();
-
     private void showSelectedImage(Uri selectedImage) {
-        Attachment at = new Attachment();
-        at.setUri(selectedImage);
-        mAttachments.add(at);
-        mAttachmentsAdapter.setList(mAttachments);
-        mAttachmentsAdapter.notifyDataSetChanged();
+        mCaseEditViewModel.addAttachment(selectedImage);
     }
 
 
@@ -589,6 +609,19 @@ public class CaseEditActivity extends BaseActivity {
         mCaseEditViewModel.getPrimaryButtonText().observe(this, v -> {
             mSaveButton.setText(v);
         });
+
+        mCaseEditViewModel.getScrollAttachmentsToLast().observe(this,v -> {
+            if (mAttachments.size() > 0) {
+                mAttachmentsRecyclerView.smoothScrollToPosition(mAttachments.size() - 1);
+            }
+        });
+
+        mCaseEditViewModel.getAttachmentsLiveData().observe(this, attachments -> {
+            mAttachments = attachments;
+            mAttachmentsAdapter.setList(attachments);
+            mAttachmentsAdapter.notifyDataSetChanged();
+        });
+
     }
 
     private AlertDialog getCaseErrorAlertDialog(String message) {

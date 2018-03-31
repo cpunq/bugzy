@@ -4,6 +4,7 @@ package com.bluestacks.bugzy.ui.editcase;
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.data.Repository;
 import com.bluestacks.bugzy.data.model.Area;
+import com.bluestacks.bugzy.data.model.Attachment;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.CaseStatus;
 import com.bluestacks.bugzy.data.model.Category;
@@ -26,6 +27,7 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.net.Uri;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
@@ -59,7 +61,8 @@ public class CaseEditViewModel extends ViewModel {
     private MutableLiveData<String> mEventNote = new MutableLiveData<>();
     private MutableLiveData<Pair<CaseEditRequest, Integer>> mEditCaseRequest = new MutableLiveData<>();
     private LiveData<Resource<Response<EditCaseData>>> mEditCaseStatus;
-
+    private MutableLiveData<List<Attachment>> mAttachmentsLiveData = new MutableLiveData<>();
+    private SingleLiveEvent<Void> mScrollAttachmentsToLast = new SingleLiveEvent<>();
 
     private LiveData<Resource<Case>> mCaseLiveData;
     private LiveData<String> mToken;
@@ -126,6 +129,8 @@ public class CaseEditViewModel extends ViewModel {
                 return;
             }
         });
+
+        mAttachmentsLiveData.setValue(new ArrayList<>());
 
         // Assuming that mCaseLiveData is already being observed
         mDefaultPropSelectionLiveData.addSource(mCaseLiveData, caseResource -> {
@@ -205,6 +210,27 @@ public class CaseEditViewModel extends ViewModel {
         mPersons = mRepository.getPeople(false);
     }
 
+    public void addAttachment(Uri fileUri) {
+        Attachment at = new Attachment();
+        at.setUri(fileUri);
+        mAttachmentsLiveData.getValue().add(at);
+        // Trigger update
+        mAttachmentsLiveData.setValue(mAttachmentsLiveData.getValue());
+        mScrollAttachmentsToLast.call();
+    }
+
+    public void removeAttachment(int index) {
+        mAttachmentsLiveData.getValue().remove(index);
+        // Trigger update
+        mAttachmentsLiveData.setValue(mAttachmentsLiveData.getValue());
+
+
+    }
+
+    public MutableLiveData<List<Attachment>> getAttachmentsLiveData() {
+        return mAttachmentsLiveData;
+    }
+
     public LiveData<List<String>> getRequiredMergeIns() {
         return mRequiredMergeIns;
     }
@@ -267,6 +293,10 @@ public class CaseEditViewModel extends ViewModel {
 
     public MediatorLiveData<HashMap<PropType, Integer>> getDefaultPropSelectionLiveData() {
         return mDefaultPropSelectionLiveData;
+    }
+
+    public SingleLiveEvent<Void> getScrollAttachmentsToLast() {
+        return mScrollAttachmentsToLast;
     }
 
     @UiThread
