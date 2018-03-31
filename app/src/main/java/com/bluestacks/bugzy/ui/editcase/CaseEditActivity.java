@@ -66,6 +66,7 @@ public class CaseEditActivity extends BaseActivity {
     private CaseEventsAdapter mAdapter;
     private List<Project> mProjects;
     private List<Category> mCategories;
+    private AlertDialog mCloseDialog;
 
 
     @Inject
@@ -343,6 +344,26 @@ public class CaseEditActivity extends BaseActivity {
         return dialog;
     }
 
+    private AlertDialog getCloseDialog() {
+        BugzyAlertDialog dialog = new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        dialog.setTitle("Are you sure?");
+        dialog.setMessage("Your case hasn\'t been submitted yet, are you sure you want to leave?");
+        dialog.setPositiveButtonText("Yes");
+        dialog.setNegativeButtonText("No");
+        dialog.setOnPositiveButtonClickListener(view -> {
+            if (mCloseDialog != null && mCloseDialog.isShowing()) {
+                mCloseDialog.dismiss();
+            }
+            finish();
+        });
+        dialog.setOnNegativeButtonClickListener(view -> {
+            if (mCloseDialog != null && mCloseDialog.isShowing()) {
+                mCloseDialog.dismiss();
+            }
+        });
+        return dialog;
+    }
+
     private void showSnackbar(String message) {
         Snackbar.make(mProjectContainer, message, Snackbar.LENGTH_INDEFINITE)
                 .setAction("OK", view -> {
@@ -409,6 +430,11 @@ public class CaseEditActivity extends BaseActivity {
     @OnClick(R.id.container_status)
     void onStatusSpinnerClicked() {
         mStatusesSpinner.performClick();
+    }
+
+    @OnClick(R.id.btn_cancel)
+    void onCancelClicked() {
+        this.onBackPressed();
     }
 
     @OnClick(R.id.btn_save)
@@ -592,7 +618,6 @@ public class CaseEditActivity extends BaseActivity {
     public void setInteractionEnabled(boolean enabled) {
         mSaveButton.setEnabled(enabled);
         mCancelButton.setEnabled(enabled);
-
     }
 
     @Override
@@ -600,6 +625,20 @@ public class CaseEditActivity extends BaseActivity {
         super.onDestroy();
         if (mCaseErrorAlertDialog != null && mCaseErrorAlertDialog.isShowing()) {
             mCaseErrorAlertDialog.dismiss();
+        }
+        if (mCloseDialog != null && mCloseDialog.isShowing()) {
+            mCloseDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO: Show the dialogs with ViewModel instead
+        if (mCloseDialog == null) {
+            mCloseDialog = getCloseDialog();
+        }
+        if (mCloseDialog != null && !mCloseDialog.isShowing()) {
+            mCloseDialog.show();
         }
     }
 }
