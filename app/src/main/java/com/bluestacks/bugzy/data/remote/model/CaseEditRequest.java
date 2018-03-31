@@ -3,6 +3,10 @@ package com.bluestacks.bugzy.data.remote.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.bluestacks.bugzy.data.model.Attachment;
+
+import android.net.Uri;
+
 import java.util.List;
 
 public class CaseEditRequest {
@@ -48,8 +52,39 @@ public class CaseEditRequest {
     @SerializedName("tags")
     List<String> tags;
 
+    @SerializedName("nFileCount")
+    int fileCount;
+
     @SerializedName("sEvent")
     private String eventText;
+
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public int getFileCount() {
+        return fileCount;
+    }
+
+    public void setFileCount(int fileCount) {
+        this.fileCount = fileCount;
+    }
+
+    private transient List<Attachment> mAttachments;
+
+    public List<Attachment> getAttachments() {
+        return mAttachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        mAttachments = attachments;
+    }
 
     public int getBugId() {
         return bugId;

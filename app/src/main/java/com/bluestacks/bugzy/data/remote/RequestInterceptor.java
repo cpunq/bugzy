@@ -30,6 +30,10 @@ public class RequestInterceptor implements Interceptor {
             return chain.proceed(chain.request());
         }
         RequestBody requestBody = this.processApplicationJsonRequestBody(chain.request().body(), token);
+        if (requestBody == null) {
+            // Proceeding with the existing request if requestbody comes out to be null
+            return chain.proceed(chain.request());
+        }
         Request.Builder requestBuilder = chain.request().newBuilder();
         Request newRequest = requestBuilder
                 .post(requestBody)

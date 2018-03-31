@@ -179,7 +179,7 @@ public class CaseEditViewModel extends ViewModel {
             });
         });
         mEditCaseStatus = Transformations.switchMap(mEditCaseRequest, val -> {
-            return mCasesRepository.editCase(val.first, val.second);
+            return mCasesRepository.editCase(val.first, val.second, mAttachmentsLiveData.getValue());
         });
 
         mRequiredMergeIns = Transformations.switchMap(mCaseLiveData, caseStatus -> {

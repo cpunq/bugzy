@@ -25,9 +25,14 @@ import com.bluestacks.bugzy.data.remote.model.SearchCasesRequest;
 
 import android.arch.lifecycle.LiveData;
 
+import java.util.List;
+
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface FogbugzApiService {
 
@@ -70,21 +75,22 @@ public interface FogbugzApiService {
     @POST("/api/listCategories")
     LiveData<ApiResponse<Response<ListCategoriesData>>> getCategories(@Body Request request);
 
+    @Multipart
     @POST("/api/edit")
-    Call<Response<EditCaseData>> editCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> editCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
     @POST("/api/new")
-    Call<Response<EditCaseData>> newCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> newCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
     @POST("/api/resolve")
-    Call<Response<EditCaseData>> resolveCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> resolveCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
     @POST("/api/close")
-    Call<Response<EditCaseData>> closeCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> closeCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
     @POST("/api/reopen")
-    Call<Response<EditCaseData>> reopenCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> reopenCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
     @POST("/api/reactivate")
-    Call<Response<EditCaseData>> reactivateCase(@Body CaseEditRequest request);
+    Call<Response<EditCaseData>> reactivateCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 }

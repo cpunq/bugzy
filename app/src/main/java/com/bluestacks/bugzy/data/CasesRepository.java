@@ -3,11 +3,13 @@ package com.bluestacks.bugzy.data;
 
 import com.google.gson.Gson;
 
+import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.BugzyTypeConverters;
 import com.bluestacks.bugzy.data.local.db.CaseDao;
 import com.bluestacks.bugzy.data.local.db.MiscDao;
+import com.bluestacks.bugzy.data.model.Attachment;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
@@ -27,13 +29,18 @@ import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.webkit.MimeTypeMap;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,6 +49,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 
 import static com.bluestacks.bugzy.data.CasesRepository.Sorting.AREA;
@@ -393,7 +403,7 @@ public class CasesRepository {
         });
     }
 
-    public LiveData<Resource<Response<EditCaseData>>> editCase(final CaseEditRequest request, int mode) {
+    public LiveData<Resource<Response<EditCaseData>>> editCase(final CaseEditRequest request, int mode, List<Attachment> attachments) {
         NetworkBoundTask<Response<EditCaseData>> task =  new NetworkBoundTask<Response<EditCaseData>>(mAppExecutors, mGson) {
             @Override
             public void saveCallResult(@NonNull Response<EditCaseData> result) {
@@ -406,27 +416,60 @@ public class CasesRepository {
             @NonNull
             @Override
             protected Call<Response<EditCaseData>> createCall() {
+                List<MultipartBody.Part> fileParts = new ArrayList<>();
+                int i = 0;
+                for (Attachment attachment : attachments) {
+                    fileParts.add(prepareFilePart("File" + i, attachment.getUri()));
+                    i++;
+                }
+                request.setFileCount(fileParts.size());
+                request.setToken(mPrefs.getString(PrefsHelper.Key.ACCESS_TOKEN));
+
                 switch (mode) {
                     case CaseEditActivity.MODE_EDIT:
                     case CaseEditActivity.MODE_ASSIGN:
-                        return mApiService.editCase(request);
+                       return mApiService.editCase(request, fileParts);
                     case CaseEditActivity.MODE_NEW:
-                        return mApiService.newCase(request);
+                        return mApiService.newCase(request, fileParts);
                     case CaseEditActivity.MODE_CLOSE:
-                        return mApiService.closeCase(request);
+                        return mApiService.closeCase(request, fileParts);
                     case CaseEditActivity.MODE_RESOLVE:
-                        return mApiService.resolveCase(request);
+                        return mApiService.resolveCase(request, fileParts);
                     case CaseEditActivity.MODE_REACTIVATE:
-                        return mApiService.reactivateCase(request);
+                        return mApiService.reactivateCase(request, fileParts);
                     case CaseEditActivity.MODE_REOPEN:
-                        return mApiService.reopenCase(request);
+                        return mApiService.reopenCase(request, fileParts);
                     default:
-                        return mApiService.editCase(request);
+                        return mApiService.editCase(request, fileParts);
                 }
             }
         };
         mAppExecutors.networkIO().execute(task);
         return task.asLiveData();
+    }
+
+    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
+        File file = new File(fileUri.getPath());
+
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse(getMimeType(fileUri.getPath())),
+                        file
+                );
+
+        // MultipartBody.Part is used to send also the actual file name
+        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+    }
+
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 
     public LiveData<List<String>> getRequiredMergeIns() {

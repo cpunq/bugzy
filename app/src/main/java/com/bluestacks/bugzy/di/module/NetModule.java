@@ -14,13 +14,14 @@ import com.bluestacks.bugzy.utils.LiveDataCallAdapterFactory;
 
 import android.app.Application;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -57,7 +58,8 @@ public class NetModule {
     @Provides @Singleton
     FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
+        httpClient.writeTimeout(2, TimeUnit.MINUTES);
+        httpClient.readTimeout(2, TimeUnit.DAYS.MINUTES);
 
 
         Retrofit.Builder builder = new Retrofit.Builder()
