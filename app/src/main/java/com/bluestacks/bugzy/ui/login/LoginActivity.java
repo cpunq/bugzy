@@ -39,11 +39,11 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
         mLoginViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
-
         onViewsReady();
     }
 
@@ -99,5 +99,10 @@ public class LoginActivity extends BaseActivity {
         Intent mHome  = new Intent(this, HomeActivity.class);
         startActivity(mHome);
         this.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

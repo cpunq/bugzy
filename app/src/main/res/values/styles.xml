@@ -5,6 +5,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowContentTransitions">true</item>
+
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
         <item name="android:textColorPrimary">#000000</item>
@@ -13,6 +15,7 @@
 
     <style name="LoginTheme" parent="AppTheme">
         <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Large</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
