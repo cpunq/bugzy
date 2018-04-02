@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/diagonal_background">
-<ImageView
-    android:layout_width="180dp"
-    android:layout_height="180dp"
-    android:src="@drawable/bug"
-    android:transitionName="bug"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="50dp"
-    android:id="@+id/imageView" />
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/app_name"
-              android:textAllCaps="true"
-              android:layout_centerHorizontal="true"
-              android:layout_marginTop="24dp"
-              android:textSize="@dimen/headline"
-              android:fontFamily="@font/open_sans_bold"
-              android:textColor="@android:color/white"
-              android:layout_below="@id/imageView"
-    />
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentTop="true"
+                  android:orientation="vertical"
+                  android:layout_marginBottom="16dp"
+                  android:layout_above="@+id/anchor"
+                  android:background="#3A4750"
+                  android:padding="8dp"
+                  android:gravity="center_horizontal|bottom">
+        <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:src="@drawable/bug"
+                android:transitionName="bug"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@+id/tv_appname"
+                android:id="@+id/imageView" />
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/app_name"
+                  android:textAllCaps="true"
+                  android:layout_marginTop="24dp"
+                  android:textSize="@dimen/headline"
+                  android:fontFamily="@font/open_sans_bold"
+                  android:textColor="@android:color/white"
+                  android:id="@+id/tv_appname"/>
+    </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/login_into_your_account"
-        android:id="@+id/textView"
-        android:textColor="@color/notification_action_color_filter"
-        android:layout_marginTop="128dp"
-        android:layout_below="@+id/imageView"
-        android:layout_centerHorizontal="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/login_into_your_account"
+            android:id="@+id/textView"
+            android:textColor="@color/notification_action_color_filter"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/anchor"
+            android:layout_centerHorizontal="true" />
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,31 +49,38 @@
             android:gravity="center"
             android:text="@string/log_in"
             android:layout_margin="20dp"
-            android:layout_alignParentBottom="true" android:fontFamily="@font/open_sans_semibold"/>
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/open_sans_semibold"/>
+
+    <View android:layout_width="0px"
+          android:layout_height="0px"
+          android:layout_centerInParent="true"
+          android:id="@+id/anchor"/>
+
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/edittext_user_email"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:hint="chapuuser@bluestacks.com"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/edittext_user_email"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="30dp"
+            android:hint="chapuuser@bluestacks.com"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="**********"
-        android:id="@+id/edittext_user_password"
-        android:layout_below="@+id/edittext_user_email"
-        android:layout_centerHorizontal="true" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:hint="**********"
+            android:id="@+id/edittext_user_password"
+            android:layout_below="@+id/edittext_user_email"
+            android:layout_centerHorizontal="true" />
 </RelativeLayout>
