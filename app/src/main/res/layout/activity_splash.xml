@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:ripple="http://schemas.android.com/apk/res-auto"
+                android:clipChildren="false"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_above="@+id/anchor"
+                  android:gravity="bottom|center_horizontal"
+                  android:layout_centerHorizontal="true"
+                  android:clipToPadding="false"
+                  android:layout_marginBottom="-30dp"
+                  android:clipChildren="false"
+                  android:orientation="vertical"
+                  android:id="@+id/container_anim_items">
+
+        <ImageView android:layout_width="120dp"
+                   android:layout_height="120dp"
+                   android:src="@drawable/bug"
+        />
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/app_name"
+                  android:layout_marginTop="36dp"
+                  android:letterSpacing="0.8"
+                  android:textAllCaps="true"
+                  android:textStyle="bold"
+                  android:textSize="24sp"
+        />
+    </LinearLayout>
+
+    <View android:layout_width="0px"
+          android:layout_height="0px"
+          android:layout_centerInParent="true"
+          android:id="@+id/anchor"/>
+
+    <com.gauravbhola.ripplepulsebackground.RipplePulseLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            ripple:rippleColor="@color/colorPrimary"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="96dp"
+            android:layout_centerHorizontal="true"
+            ripple:rippleType="fill"
+            ripple:strokeWidth="2dp"
+            ripple:startRadius="1dp"
+            ripple:endRadius="20dp"
+            ripple:duration="2000"
+            android:id="@+id/layout_ripplepulse"
+    />
+
+</RelativeLayout>

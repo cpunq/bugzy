@@ -6,6 +6,7 @@ import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.bluestacks.bugzy.ui.search.SearchActivity;
+import com.bluestacks.bugzy.ui.splash.SplashActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -29,4 +30,7 @@ public abstract class ActivityBindingModule {
 
     @ContributesAndroidInjector
     abstract CaseEditActivity contributeCaseEditActivity();
+
+    @ContributesAndroidInjector
+    abstract SplashActivity contributeSplashActivity();
 }

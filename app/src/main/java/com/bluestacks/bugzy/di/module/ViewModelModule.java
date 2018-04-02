@@ -8,6 +8,7 @@ import com.bluestacks.bugzy.ui.home.MyCasesViewModel;
 import com.bluestacks.bugzy.ui.home.PeopleViewModel;
 import com.bluestacks.bugzy.ui.login.LoginViewModel;
 import com.bluestacks.bugzy.ui.search.SearchActivityViewModel;
+import com.bluestacks.bugzy.ui.splash.SplashViewModel;
 import com.bluestacks.bugzy.utils.BugzyViewModelFactory;
 import com.bluestacks.bugzy.utils.ViewModelKey;
 
@@ -54,6 +55,12 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CaseEditViewModel.class)
     abstract ViewModel bindCaseEditViewModel(CaseEditViewModel caseEditViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SplashViewModel.class)
+    abstract ViewModel bindSplashViewModel(SplashViewModel splashViewModel);
+
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(BugzyViewModelFactory factory);
