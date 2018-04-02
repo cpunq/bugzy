@@ -33,7 +33,7 @@
 
         <activity
                 android:name=".ui.splash.SplashActivity"
-                android:theme="@style/LoginTheme">
+                android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
