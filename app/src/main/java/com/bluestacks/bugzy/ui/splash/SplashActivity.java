@@ -92,7 +92,6 @@ public class SplashActivity extends BaseActivity {
 
             if (TextUtils.isEmpty(token)) {
                 startLoginActivity();
-//                startActivity(new Intent(this, LoginActivity.class));
             } else {
                 startHomeActivity();
             }
@@ -131,9 +130,7 @@ public class SplashActivity extends BaseActivity {
         Pair<View, String> bug = new Pair<>(mBugView, "bug");
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bug);
         Intent intent = new Intent(this, LoginActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         ActivityCompat.startActivity(this, intent, options.toBundle());
-//        startActivity(new Intent(this, LoginActivity.class));
     }
 
     public void startHomeActivity() {
