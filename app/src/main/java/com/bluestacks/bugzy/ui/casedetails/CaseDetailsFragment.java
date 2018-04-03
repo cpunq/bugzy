@@ -362,18 +362,15 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         mActiveStatus.setText(String.valueOf(mCase.getStatus()));
         Case bug = mCase;
         if(bug.getPriority() <= 3){
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#e74c3c"));
+            mPriorityIndicator.setBackgroundColor(getResources().getColor(R.color.p3));
         } else if(bug.getPriority() == 4) {
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#95a5a6"));
+            mPriorityIndicator.setBackgroundColor(getResources().getColor(R.color.p4));
         }
         else if(bug.getPriority() == 5) {
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#ddb65b"));
+            mPriorityIndicator.setBackgroundColor(getResources().getColor(R.color.p5));
         }
-        else if(bug.getPriority() <= 7) {
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#bdc3c7"));
-        }
-        else {
-            mPriorityIndicator.setBackgroundColor(Color.parseColor("#ecf0f1"));
+        else if(bug.getPriority() <= 6) {
+            mPriorityIndicator.setBackgroundColor(getResources().getColor(R.color.p6));
         }
     }
 

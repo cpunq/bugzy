@@ -16,4 +16,9 @@
 
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#7D7D7D</color>
+
+    <color name="p3">#E74E54</color>
+    <color name="p4">#F1C15E</color>
+    <color name="p5">#E2C075</color>
+    <color name="p6">#C9C9C9</color>
 </resources>

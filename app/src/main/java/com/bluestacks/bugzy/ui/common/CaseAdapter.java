@@ -83,13 +83,11 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
             if (bug.getPriority() <= 3) {
                 mPriority.setBackgroundColor(Color.parseColor("#E74E54"));
             }  else if(bug.getPriority() == 4) {
-                mPriority.setBackgroundColor(Color.parseColor("#95a5a6"));
+                mPriority.setBackgroundColor(Color.parseColor("#F1C15E"));
             } else if(bug.getPriority() == 5) {
-                mPriority.setBackgroundColor(Color.parseColor("#ddb65b"));
-            } else if(bug.getPriority() <= 7) {
-                mPriority.setBackgroundColor(Color.parseColor("#bdc3c7"));
-            } else {
-                mPriority.setBackgroundColor(Color.parseColor("#ecf0f1"));
+                mPriority.setBackgroundColor(Color.parseColor("#E2C075"));
+            } else if(bug.getPriority() <= 6) {
+                mPriority.setBackgroundColor(Color.parseColor("#C9C9C9"));
             }
         }
     }
