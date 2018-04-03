@@ -31,6 +31,7 @@
                   android:textAllCaps="true"
                   android:textStyle="bold"
                   android:textSize="24sp"
+                  android:id="@+id/tv_appname"
         />
     </LinearLayout>
 

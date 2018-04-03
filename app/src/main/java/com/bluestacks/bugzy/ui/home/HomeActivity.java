@@ -77,6 +77,7 @@ public class HomeActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         mHomeViewModel = ViewModelProviders.of(this, mViewModelFactory).get(HomeViewModel.class);

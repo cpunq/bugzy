@@ -7,6 +7,9 @@ import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
 import com.gauravbhola.ripplepulsebackground.RipplePulseLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -45,6 +48,9 @@ public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.iv_bug)
     ImageView mBugView;
+
+    @BindView(R.id.tv_appname)
+    TextView mAppNameView;
 
     @BindView(R.id.container_anim_items)
     LinearLayout mAnimItemsContainer;
@@ -88,7 +94,7 @@ public class SplashActivity extends BaseActivity {
                 startLoginActivity();
 //                startActivity(new Intent(this, LoginActivity.class));
             } else {
-                startActivity(new Intent(this, HomeActivity.class));
+                startHomeActivity();
             }
             finishDelayed();
         });
@@ -128,6 +134,40 @@ public class SplashActivity extends BaseActivity {
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         ActivityCompat.startActivity(this, intent, options.toBundle());
 //        startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    public void startHomeActivity() {
+        AnimatorSet set = new AnimatorSet();
+        Animator a1 = ObjectAnimator.ofFloat(mAppNameView, "alpha", 1f, 0f);
+        Animator a2 = ObjectAnimator.ofFloat(mBugView, "alpha", 1f, 0f);
+        Animator a3 = ObjectAnimator.ofFloat(mRipplePulseLayout, "alpha", 1f, 0f);
+        set.setDuration(200);
+
+        set.playTogether(a1, a2, a3);
+        set.start();
+
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+
     }
 
 }
