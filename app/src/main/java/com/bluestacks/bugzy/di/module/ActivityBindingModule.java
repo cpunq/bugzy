@@ -31,6 +31,6 @@ public abstract class ActivityBindingModule {
     @ContributesAndroidInjector
     abstract CaseEditActivity contributeCaseEditActivity();
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = FragmentBindingModule.class)
     abstract SplashActivity contributeSplashActivity();
 }

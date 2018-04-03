@@ -35,7 +35,7 @@
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/login_button"
+            android:id="@+id/next_button"
             android:gravity="center"
             android:text="@string/log_in"
             android:layout_marginBottom="16dp"
@@ -44,15 +44,15 @@
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/open_sans_semibold"/>
 
-    <android.support.v4.view.ViewPager
+    <com.bluestacks.bugzy.ui.common.NonSwipeableViewPager
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-16dp"
             android:layout_below="@+id/anchor"
             android:id="@+id/view_pager"
-            android:layout_above="@id/login_button">
+            android:layout_above="@id/next_button">
 
-    </android.support.v4.view.ViewPager>
+    </com.bluestacks.bugzy.ui.common.NonSwipeableViewPager>
 
     <View android:layout_width="0px"
           android:layout_height="0px"

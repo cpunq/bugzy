@@ -28,17 +28,11 @@ public class LoginActivity extends BaseActivity {
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
-//    @BindView(R.id.edittext_user_email)
-//    protected EditText mUserEmail;
-//
-//    @BindView(R.id.edittext_user_password)
-//    protected EditText mPassWord;
-
     @BindView(R.id.view_pager)
     protected ViewPager mViewPager;
 
-    @BindView(R.id.login_button)
-    protected Button mLoginButton;
+    @BindView(R.id.next_button)
+    protected Button mNextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +52,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     protected void onViewsReady() {
-//        mLoginViewModel.getSnackBarText().observe(this, s -> Snackbar.make(mUserEmail,"Please enter a correct email", Snackbar.LENGTH_LONG).show());
-//        mLoginButton.setOnClickListener(view -> mLoginViewModel.onLoginButtonClicked(mUserEmail.getText().toString(), mPassWord.getText().toString()));
+        mLoginViewModel.getSnackBarText().observe(this, s -> Snackbar.make(mViewPager, s, Snackbar.LENGTH_LONG).show());
+
+        mNextButton.setOnClickListener(view -> mLoginViewModel.nextClicked());
+
         mLoginViewModel.getCredentialsLiveData().observe(this, stringStringPair -> {
         });
         mLoginViewModel.getLoginState().observe(this, responseResource -> {
@@ -80,23 +76,36 @@ public class LoginActivity extends BaseActivity {
         });
 
         mLoginViewModel.getIsLoggedIn().observe(this, loggedIn -> {
-            if (loggedIn) {
-                // Jump to Homeactivity
-                redirectHome();
+            // Something to do?
+        });
+
+        mLoginViewModel.getLoginStepLiveData().observe(this, step -> {
+            switch (step) {
+                case ORG:
+                    mViewPager.setCurrentItem(0);
+                    break;
+                case CREDENTIALS:
+                    mViewPager.setCurrentItem(1);
+                    break;
+                case THEME:
+                    mViewPager.setCurrentItem(2);
+                    break;
+                case INFO:
+                    mViewPager.setCurrentItem(3);
+                    break;
             }
+
         });
     }
 
     private void setInteractionEnabled(boolean set) {
-        mLoginButton.setEnabled(set);
-//        mPassWord.setEnabled(set);
-//        mUserEmail.setEnabled(set);
+        mNextButton.setEnabled(set);
     }
 
     @UiThread
     private void showMessage(String message) {
-        // Send mLoginButton as the view to find parent from
-        showMessage(mLoginButton, message);
+        // Send mNextButton as the view to find parent from
+        showMessage(mNextButton, message);
     }
 
     @UiThread
@@ -113,6 +122,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (mLoginViewModel.backPressed()) {
+            return;
+        }
         finish();
     }
 }

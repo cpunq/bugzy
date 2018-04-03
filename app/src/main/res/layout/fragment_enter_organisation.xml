@@ -7,6 +7,7 @@
     <ImageView android:layout_width="80dp"
                android:layout_height="80dp"
                android:layout_gravity="center_horizontal"
+               android:id="@+id/iv_org_image"
     />
 
     <TextView android:layout_width="wrap_content"
@@ -22,7 +23,8 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="16dp"
               android:hint="MyOrganisation"
-
+              android:id="@+id/et_org_name"
+              android:inputType="textPersonName"
               android:layout_marginLeft="20dp"
               android:layout_marginRight="20dp"
     />
