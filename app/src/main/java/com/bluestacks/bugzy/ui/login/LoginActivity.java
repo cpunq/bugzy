@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
@@ -23,15 +23,19 @@ import butterknife.ButterKnife;
 
 public class LoginActivity extends BaseActivity {
     private LoginViewModel mLoginViewModel;
+    private LoginPagerAdapter mPagerAdapter;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
-    @BindView(R.id.edittext_user_email)
-    protected EditText mUserEmail;
+//    @BindView(R.id.edittext_user_email)
+//    protected EditText mUserEmail;
+//
+//    @BindView(R.id.edittext_user_password)
+//    protected EditText mPassWord;
 
-    @BindView(R.id.edittext_user_password)
-    protected EditText mPassWord;
+    @BindView(R.id.view_pager)
+    protected ViewPager mViewPager;
 
     @BindView(R.id.login_button)
     protected Button mLoginButton;
@@ -44,12 +48,18 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mLoginViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
+        setupViewPager();
         onViewsReady();
     }
 
+    void setupViewPager() {
+        mPagerAdapter = new LoginPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mPagerAdapter);
+    }
+
     protected void onViewsReady() {
-        mLoginViewModel.getSnackBarText().observe(this, s -> Snackbar.make(mUserEmail,"Please enter a correct email", Snackbar.LENGTH_LONG).show());
-        mLoginButton.setOnClickListener(view -> mLoginViewModel.onLoginButtonClicked(mUserEmail.getText().toString(), mPassWord.getText().toString()));
+//        mLoginViewModel.getSnackBarText().observe(this, s -> Snackbar.make(mUserEmail,"Please enter a correct email", Snackbar.LENGTH_LONG).show());
+//        mLoginButton.setOnClickListener(view -> mLoginViewModel.onLoginButtonClicked(mUserEmail.getText().toString(), mPassWord.getText().toString()));
         mLoginViewModel.getCredentialsLiveData().observe(this, stringStringPair -> {
         });
         mLoginViewModel.getLoginState().observe(this, responseResource -> {
@@ -79,8 +89,8 @@ public class LoginActivity extends BaseActivity {
 
     private void setInteractionEnabled(boolean set) {
         mLoginButton.setEnabled(set);
-        mPassWord.setEnabled(set);
-        mUserEmail.setEnabled(set);
+//        mPassWord.setEnabled(set);
+//        mUserEmail.setEnabled(set);
     }
 
     @UiThread

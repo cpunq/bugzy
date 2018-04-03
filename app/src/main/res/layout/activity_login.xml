@@ -32,25 +32,27 @@
                   android:id="@+id/tv_appname"/>
     </LinearLayout>
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/login_into_your_account"
-            android:id="@+id/textView"
-            android:textColor="@color/notification_action_color_filter"
-            android:layout_marginTop="8dp"
-            android:layout_below="@+id/anchor"
-            android:layout_centerHorizontal="true" />
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/login_button"
             android:gravity="center"
             android:text="@string/log_in"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/open_sans_semibold"/>
+
+    <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-16dp"
+            android:layout_below="@+id/anchor"
+            android:id="@+id/view_pager"
+            android:layout_above="@id/login_button">
+
+    </android.support.v4.view.ViewPager>
 
     <View android:layout_width="0px"
           android:layout_height="0px"
@@ -58,29 +60,4 @@
           android:id="@+id/anchor"/>
 
 
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/edittext_user_email"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="30dp"
-            android:hint="chapuuser@bluestacks.com"
-            android:layout_below="@+id/textView"
-            android:layout_centerHorizontal="true" />
-
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:hint="**********"
-            android:id="@+id/edittext_user_password"
-            android:layout_below="@+id/edittext_user_email"
-            android:layout_centerHorizontal="true" />
 </RelativeLayout>

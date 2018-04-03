@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:gravity="center"
+              android:padding="16dp"
+              android:layout_height="match_parent">
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="8dp"
+              android:text="Priority colors:"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              style="@style/AppTheme.PrimaryBigTextView"
+    />
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_marginTop="16dp"
+                  android:layout_height="wrap_content">
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center_vertical"
+                      android:orientation="horizontal">
+            <ImageView android:layout_width="4dp"
+                       android:layout_height="30dp"
+                       android:background="@color/p3"
+            />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:text="Must fix"
+            />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="4dp"
+                      android:gravity="center_vertical"
+                      android:orientation="horizontal">
+            <ImageView android:layout_width="4dp"
+                       android:layout_height="30dp"
+                       android:background="@color/p4"
+            />
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:text="Priority 4"
+            />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center_vertical"
+                      android:layout_marginTop="4dp"
+                      android:orientation="horizontal">
+
+            <ImageView android:layout_width="4dp"
+                       android:layout_height="30dp"
+                       android:background="@color/p5"
+            />
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:text="Priority 5"
+            />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="4dp"
+                      android:gravity="center_vertical"
+                      android:orientation="horizontal">
+
+            <ImageView android:layout_width="4dp"
+                       android:layout_height="30dp"
+                       android:background="@color/p6"
+            />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:text="Priority 6 and below"
+            />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
