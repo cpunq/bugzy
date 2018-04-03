@@ -1,7 +1,5 @@
 package com.bluestacks.bugzy.ui.login;
 
-import com.google.gson.Gson;
-
 import com.bluestacks.bugzy.data.Repository;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
@@ -50,7 +48,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     @Inject
-    public LoginViewModel(Repository repository, Gson gson) {
+    public LoginViewModel(Repository repository) {
         mRepository = repository;
         mSnackBarText = new SingleLiveEvent<>();
         mAccessTokenLiveData = new MutableLiveData<>();
@@ -67,7 +65,7 @@ public class LoginViewModel extends ViewModel {
         });
 
         mLoginState = Transformations.switchMap(mCredentialsLiveData, pair -> {
-            return Transformations.map(mRepository.login(pair.first, pair.second), v -> {
+            return Transformations.map(mRepository.login(pair.first, pair.second, mOrganisation), v -> {
                 if (v.status == Status.SUCCESS) {
                     // If login success, go to theme step
                     mLoginStepLiveData.setValue(LoginStep.THEME);

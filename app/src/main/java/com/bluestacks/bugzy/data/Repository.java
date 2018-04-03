@@ -18,6 +18,7 @@ import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
 import com.bluestacks.bugzy.data.model.Resource;
@@ -70,6 +71,7 @@ public class Repository {
     private MiscDao mMiscDao;
     private BugzyDb db;
     private SearchSuggestionRepository mSsRespository;
+    private HostSelectionInterceptor mHostSelectionInterceptor;
 
 
     private MediatorLiveData<Resource<List<Area>>> mAreasPublicLiveData = new MediatorLiveData<>();
@@ -90,7 +92,7 @@ public class Repository {
     private LiveData<Resource<List<CaseStatus>>> mFetchStatusesLiveData;
 
     @Inject
-    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository) {
+    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository, HostSelectionInterceptor interceptor) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mGson = gson;
@@ -98,6 +100,7 @@ public class Repository {
         mMiscDao = miscDao;
         db = databaseObject;
         mSsRespository = ssRepository;
+        mHostSelectionInterceptor = interceptor;
 
         mToken = new MutableLiveData<String>() {
             @Override
@@ -147,11 +150,14 @@ public class Repository {
         }.asLiveData();
     }
 
-    public LiveData<Resource<Response<LoginData>>> login(String email, String password) {
+    public LiveData<Resource<Response<LoginData>>> login(String email, String password, String organisation) {
+        mHostSelectionInterceptor.setHost(organisation.toLowerCase()+".manuscript.com");
+
         NetworkBoundTask<Response<LoginData>> task = new NetworkBoundTask<Response<LoginData>>(mAppExecutors, mGson) {
             @Override
             public void saveCallResult(@NonNull Response<LoginData> result) {
                 String token = result.getData().getToken();
+                mPrefs.setString(PrefsHelper.Key.ORGANISATION, organisation.toLowerCase());
                 mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
                 mSsRespository.insertDefaultSearchSuggestions();

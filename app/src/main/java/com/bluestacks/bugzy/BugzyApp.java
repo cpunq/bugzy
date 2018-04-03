@@ -3,9 +3,11 @@ package com.bluestacks.bugzy;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.bluestacks.bugzy.common.Const;
+import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
 import com.bluestacks.bugzy.di.AppInjector;
 import com.bluestacks.bugzy.di.component.DaggerNetComponent;
 import com.bluestacks.bugzy.di.module.AppModule;
@@ -25,10 +27,15 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
 
     @Inject DispatchingAndroidInjector<Service> mServiceDispatchingAndroidInjector;
 
+    @Inject
+    HostSelectionInterceptor mHostSelectionInterceptor;
+
+    @Inject
+    PrefsHelper mPrefsHelper;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "Bugzy App onCreate()");
         DaggerNetComponent.builder()
                 // list of modules that are part of this component need to be created here too
                 .appModule(new AppModule(this)) // This also corresponds to the name of your module: %component_name%Module
@@ -36,6 +43,13 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
                 .build()
                 .inject(this);
         AppInjector.init(this);
+
+        // Setting the host after Dagger initialisation
+        // Beware: diskIO on mainthread ;)
+        String org = mPrefsHelper.getString(PrefsHelper.Key.ORGANISATION);
+        if (!TextUtils.isEmpty(org)) {
+            mHostSelectionInterceptor.setHost(org+".manuscript.com");
+        }
     }
 
     @Override

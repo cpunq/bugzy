@@ -8,6 +8,7 @@ import com.bluestacks.bugzy.data.local.DatabaseHelper;
 import com.bluestacks.bugzy.data.local.InMemoryDb;
 import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
 import com.bluestacks.bugzy.data.remote.RequestInterceptor;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.utils.LiveDataCallAdapterFactory;
@@ -55,8 +56,15 @@ public class NetModule {
         return new InMemoryDb();
     }
 
+    @Provides
+    @Singleton
+    HostSelectionInterceptor provideHostSelectionInterceptor() {
+        return new HostSelectionInterceptor();
+    }
+
+
     @Provides @Singleton
-    FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson) {
+    FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson, HostSelectionInterceptor hostSelectionInterceptor) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.writeTimeout(2, TimeUnit.MINUTES);
         httpClient.readTimeout(2, TimeUnit.DAYS.MINUTES);
@@ -73,6 +81,7 @@ public class NetModule {
                                 new ConnectivityInterceptor(application.getApplicationContext())
                         )
                                 .addInterceptor(new RequestInterceptor(prefsHelper))
+                                .addInterceptor(hostSelectionInterceptor)
                                 .build()
                 )
                 .build();
