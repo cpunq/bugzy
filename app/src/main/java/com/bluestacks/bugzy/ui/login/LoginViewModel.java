@@ -7,7 +7,6 @@ import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.remote.model.LoginData;
-import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 import com.bluestacks.bugzy.utils.Utils;
 
@@ -79,8 +78,13 @@ public class LoginViewModel extends ViewModel {
 
         // OrganisationLogoResource is dependent on the fetchLogoCommand
         mOrganisationLogoResource = Transformations.switchMap(mFetchOrganisationLogoCommand, organisationName -> {
-            // will do som
-            return AbsentLiveData.create();
+            return Transformations.map(mRepository.getCompanyLogo(organisationName), resourceState -> {
+                if (resourceState.status == Status.SUCCESS) {
+                    String logo =  resourceState.data.size() > 0 ? resourceState.data.get(0).getLogo() : "";
+                    return Resource.success(logo);
+                }
+                return new Resource<String>(resourceState.status, "", resourceState.message);
+            });
         });
 
         mLoginStepLiveData.setValue(LoginStep.ORG);
@@ -103,7 +107,7 @@ public class LoginViewModel extends ViewModel {
                 }
                 mFetchOrganisationLogoCommand.setValue(organisationName);
             }
-        }, 2000);
+        }, 1000);
     }
 
     public void nextClicked() {
@@ -180,5 +184,9 @@ public class LoginViewModel extends ViewModel {
 
     public MutableLiveData<String> getUrlMessage() {
         return mUrlMessage;
+    }
+
+    public LiveData<Resource<String>> getOrganisationLogoResource() {
+        return mOrganisationLogoResource;
     }
 }

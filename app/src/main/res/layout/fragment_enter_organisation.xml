@@ -4,11 +4,20 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ImageView android:layout_width="80dp"
-               android:layout_height="80dp"
-               android:layout_gravity="center_horizontal"
-               android:id="@+id/iv_org_image"
-    />
+    <FrameLayout android:layout_width="80dp" android:layout_height="80dp"
+                 android:layout_marginTop="8dp"
+                 android:layout_gravity="center_horizontal">
+        <ImageView android:layout_width="80dp"
+                   android:layout_height="80dp"
+                   android:id="@+id/iv_org_logo"
+        />
+
+        <ProgressBar android:layout_width="24dp"
+                     android:layout_height="24dp"
+                     android:layout_gravity="center"
+                     android:id="@+id/progress_bar_logo"
+        />
+    </FrameLayout>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"

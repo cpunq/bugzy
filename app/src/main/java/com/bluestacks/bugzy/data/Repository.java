@@ -21,6 +21,7 @@ import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.NetworkBoundResource;
 import com.bluestacks.bugzy.data.remote.NetworkBoundTask;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.remote.model.ClearBitCompanyInfo;
 import com.bluestacks.bugzy.data.remote.model.ListAreasData;
 import com.bluestacks.bugzy.data.remote.model.ListCategoriesData;
 import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
@@ -56,6 +57,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 
 @Singleton
@@ -172,6 +174,23 @@ public class Repository {
         mAppExecutors.networkIO().execute(task);
         return task.asLiveData();
     }
+
+    public LiveData<Resource<List<ClearBitCompanyInfo>>> getCompanyLogo(String query) {
+        NetworkBoundTask<List<ClearBitCompanyInfo>> task =  new NetworkBoundTask<List<ClearBitCompanyInfo>>(mAppExecutors, mGson) {
+            @Override
+            public void saveCallResult(@NonNull List<ClearBitCompanyInfo> result) {
+            }
+
+            @NonNull
+            @Override
+            protected Call<List<ClearBitCompanyInfo>> createCall() {
+                return mApiService.getCompanyLogo("https://autocomplete.clearbit.com/v1/companies/suggest", query);
+            }
+        };
+        mAppExecutors.networkIO().execute(task);
+        return task.asLiveData();
+    }
+
 
     public LiveData<Resource<FiltersData>> filters() {
         return new NetworkBoundResource<FiltersData, Response<JsonElement>> (mAppExecutors) {

@@ -3,6 +3,7 @@ package com.bluestacks.bugzy.data.remote;
 import com.google.gson.JsonElement;
 
 import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
+import com.bluestacks.bugzy.data.remote.model.ClearBitCompanyInfo;
 import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.ListAreasData;
 import com.bluestacks.bugzy.data.remote.model.ListCategoriesData;
@@ -30,9 +31,12 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface FogbugzApiService {
 
@@ -93,4 +97,8 @@ public interface FogbugzApiService {
 
     @POST("/api/reactivate")
     Call<Response<EditCaseData>> reactivateCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
+
+
+    @GET
+    Call<List<ClearBitCompanyInfo>> getCompanyLogo(@Url String url, @Query("query") String query);
 }
