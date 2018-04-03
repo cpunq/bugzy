@@ -30,10 +30,12 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<Pair<String, String>> mCredentialsLiveData = new MutableLiveData<>();
     private MutableLiveData<LoginStep> mLoginStepLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mFetchOrganisationLogoCommand = new MutableLiveData<>();
+    private MediatorLiveData<String> mNextButtonText = new MediatorLiveData<>();
     private LiveData<Resource<String>> mOrganisationLogoResource;
     private LiveData<Resource<Response<LoginData>>> mLoginState;
     private MediatorLiveData<Boolean> mIsLoggedIn = new MediatorLiveData<>();
     private MutableLiveData<String> mUrlMessage = new MutableLiveData<>();
+    private SingleLiveEvent<Void> mHomeScreenCommand = new SingleLiveEvent<>();
     private String mPassword;
     private String mEmail;
     private String mOrganisation;
@@ -85,6 +87,23 @@ public class LoginViewModel extends ViewModel {
             });
         });
 
+        mNextButtonText.addSource(mLoginStepLiveData, step -> {
+            switch (step) {
+                case ORG:
+                    mNextButtonText.setValue("Next");
+                    break;
+                case CREDENTIALS:
+                    mNextButtonText.setValue("Login");
+                    break;
+                case THEME:
+                    mNextButtonText.setValue("Next");
+                    break;
+                case INFO:
+                    mNextButtonText.setValue("Show me the Bugz");
+                    break;
+            }
+        });
+
         mLoginStepLiveData.setValue(LoginStep.ORG);
     }
 
@@ -124,6 +143,8 @@ public class LoginViewModel extends ViewModel {
                 mLoginStepLiveData.setValue(LoginStep.INFO);
                 break;
             case INFO:
+                mHomeScreenCommand.call();
+                break;
         }
     }
 
@@ -186,5 +207,13 @@ public class LoginViewModel extends ViewModel {
 
     public LiveData<Resource<String>> getOrganisationLogoResource() {
         return mOrganisationLogoResource;
+    }
+
+    public MediatorLiveData<String> getNextButtonText() {
+        return mNextButtonText;
+    }
+
+    public SingleLiveEvent<Void> getHomeScreenCommand() {
+        return mHomeScreenCommand;
     }
 }

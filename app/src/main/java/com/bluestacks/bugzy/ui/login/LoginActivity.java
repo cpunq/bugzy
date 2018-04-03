@@ -70,8 +70,7 @@ public class LoginActivity extends BaseActivity {
                 return;
             }
             if (responseResource.status == Status.SUCCESS) {
-                // SUCCESS
-                showMessage("Log in success");
+                showMessage("Logged In");
             }
         });
 
@@ -96,6 +95,14 @@ public class LoginActivity extends BaseActivity {
             }
 
         });
+
+        mLoginViewModel.getNextButtonText().observe(this, nextButtonText -> {
+            mNextButton.setText(nextButtonText);
+        });
+
+        mLoginViewModel.getHomeScreenCommand().observe(this, v -> {
+            redirectToHome();
+        });
     }
 
     private void setInteractionEnabled(boolean set) {
@@ -114,7 +121,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     @UiThread
-    private void redirectHome() {
+    private void redirectToHome() {
         Intent mHome  = new Intent(this, HomeActivity.class);
         startActivity(mHome);
         this.finish();
