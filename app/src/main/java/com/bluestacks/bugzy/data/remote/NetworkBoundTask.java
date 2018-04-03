@@ -37,8 +37,8 @@ public abstract class NetworkBoundTask<ResponseType> implements Runnable {
             Response<ResponseType> response = call.execute();
             ApiResponse<ResponseType> apiResponse = new ApiResponse<ResponseType>(response, mGson);
             if (apiResponse.isSuccessful()) {
-                result.postValue(Resource.success(apiResponse.body));
                 saveCallResult(apiResponse.body);
+                result.postValue(Resource.success(apiResponse.body));
             } else {
                 result.postValue(Resource.error(apiResponse.errorMessage, null));
             }
