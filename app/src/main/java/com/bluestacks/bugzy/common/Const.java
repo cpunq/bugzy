@@ -3,6 +3,9 @@ package com.bluestacks.bugzy.common;
 public class Const {
 
     public static final String API_BASE_URL                         = "https://manuscript.com";
+    public static final int LIGHT_THEME = 0;
+    public static final int DARK_THEME  = 1;
+
     public static final int UNKNOWN_ERROR                              = 100;
     public static final int NETWORK_ERROR                           = 111;
     public static final int NO_NETWORK                              = 112;

@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.ui.login;
 
+import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.data.Repository;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
@@ -8,6 +9,7 @@ import com.bluestacks.bugzy.data.remote.model.LoginData;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 import com.bluestacks.bugzy.utils.Utils;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -36,6 +38,8 @@ public class LoginViewModel extends ViewModel {
     private MediatorLiveData<Boolean> mIsLoggedIn = new MediatorLiveData<>();
     private MutableLiveData<String> mUrlMessage = new MutableLiveData<>();
     private SingleLiveEvent<Void> mHomeScreenCommand = new SingleLiveEvent<>();
+    private SingleLiveEvent<Integer> mChangeThemeCommand = new SingleLiveEvent<>();
+    private BugzyApp mApp;
     private String mPassword;
     private String mEmail;
     private String mOrganisation;
@@ -50,7 +54,8 @@ public class LoginViewModel extends ViewModel {
     }
 
     @Inject
-    public LoginViewModel(Repository repository) {
+    public LoginViewModel(Repository repository, Application application) {
+        mApp = (BugzyApp) application;
         mRepository = repository;
         mSnackBarText = new SingleLiveEvent<>();
         mAccessTokenLiveData = new MutableLiveData<>();
@@ -63,6 +68,7 @@ public class LoginViewModel extends ViewModel {
                 mIsLoggedIn.setValue(false);
             } else {
                 mIsLoggedIn.setValue(true);
+                mLoginStepLiveData.setValue(LoginStep.THEME);
             }
         });
 
@@ -148,6 +154,19 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    public void themeChanged(int theme) {
+        if (mApp.getAppliedTheme() == theme) {
+            // If same theme, do nothing
+            return;
+        }
+        mApp.applyTheme(theme);
+        mChangeThemeCommand.call();
+    }
+
+    public int getTheme() {
+        return mApp.getAppliedTheme();
+    }
+
     /**
      * @return true if the back was processed by viewmodel
      */
@@ -215,5 +234,9 @@ public class LoginViewModel extends ViewModel {
 
     public SingleLiveEvent<Void> getHomeScreenCommand() {
         return mHomeScreenCommand;
+    }
+
+    public SingleLiveEvent<Integer> getChangeThemeCommand() {
+        return mChangeThemeCommand;
     }
 }

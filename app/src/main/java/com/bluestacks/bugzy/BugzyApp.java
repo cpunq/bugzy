@@ -13,6 +13,8 @@ import com.bluestacks.bugzy.di.component.DaggerNetComponent;
 import com.bluestacks.bugzy.di.module.AppModule;
 import com.bluestacks.bugzy.di.module.NetModule;
 
+import java.util.Random;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
@@ -22,6 +24,11 @@ import dagger.android.HasServiceInjector;
 
 public class BugzyApp extends Application implements HasActivityInjector, HasServiceInjector {
     public static final String TAG = BugzyApp.class.getName();
+    /**
+     * Can't have this in a Repository, because the Activities need it
+     * even before the setContentView()
+     */
+    private int mAppliedTheme = Const.LIGHT_THEME;
 
     @Inject DispatchingAndroidInjector<Activity> mActivityInjector;
 
@@ -50,6 +57,29 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
         if (!TextUtils.isEmpty(org)) {
             mHostSelectionInterceptor.setHost(org+".manuscript.com");
         }
+
+        // Set the applied theme
+        int theme = mPrefsHelper.getInt(PrefsHelper.Key.THEME, -1);
+        if (theme != -1) {
+            mAppliedTheme = theme;
+        } else {
+            // Randomly generate a theme
+            mAppliedTheme = new Random().nextBoolean() ? Const.DARK_THEME : Const.LIGHT_THEME;
+            mPrefsHelper.setInt(PrefsHelper.Key.THEME, mAppliedTheme);
+        }
+    }
+
+    public int getAppliedTheme() {
+        return mAppliedTheme;
+    }
+
+    /**
+     * Will be called by repository, when theme is changed
+     * @param appliedTheme
+     */
+    public void applyTheme(int appliedTheme) {
+        mAppliedTheme = appliedTheme;
+        mPrefsHelper.setInt(PrefsHelper.Key.THEME, mAppliedTheme);
     }
 
     @Override

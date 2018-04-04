@@ -15,7 +15,8 @@ public class PrefsHelper {
         PERSON_ID,
         ACCESS_TOKEN,
         FILTERS_LIST,
-        ORGANISATION
+        ORGANISATION,
+        THEME
     }
 
     public PrefsHelper(Context context) {

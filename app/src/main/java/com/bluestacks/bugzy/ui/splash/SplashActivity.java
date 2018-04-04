@@ -1,7 +1,9 @@
 package com.bluestacks.bugzy.ui.splash;
 
 
+import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
+import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.home.HomeActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
@@ -20,7 +22,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -58,6 +59,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppliedTheme();
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         mHandler = new Handler();
@@ -67,6 +69,15 @@ public class SplashActivity extends BaseActivity {
         mViewModel = ViewModelProviders.of(this, mVmFactory).get(SplashViewModel.class);
         mViewModel.splashDisplayed();
         subscribeToViewmodel();
+    }
+
+    private void setAppliedTheme() {
+        if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
+            setTheme(R.style.LoginTheme_Dark);
+        } else {
+            // Light Theme
+            setTheme(R.style.LoginTheme);
+        }
     }
 
     public LayoutAnimationController getListAnimationController(long animationDuration) {
@@ -93,7 +104,8 @@ public class SplashActivity extends BaseActivity {
             if (TextUtils.isEmpty(token)) {
                 startLoginActivity();
             } else {
-                startHomeActivity();
+                startLoginActivity();
+//                startHomeActivity();
             }
             finishDelayed();
         });

@@ -13,14 +13,39 @@
         <item name="android:textColorSecondary">#7D7D7D</item>
     </style>
 
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
+        <item name="android:windowContentTransitions">true</item>
+
+        <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
+        <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#7D7D7D</item>
+    </style>
+
+
     <style name="LoginTheme" parent="AppTheme">
         <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Large</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="LoginTheme.Dark" parent="AppTheme.Dark">
+        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Large</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
+    <style name="SplashTheme.Dark" parent="AppTheme.Dark">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
 
     <style name="CaseEditTheme" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>

@@ -17,16 +17,19 @@
     <RadioGroup android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:id="@+id/radio_group_theme"
                 android:gravity="">
 
         <RadioButton android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:textSize="@dimen/subheading"
+                     android:id="@+id/btn_lighttheme"
                      android:text="Light theme"
         />
         <RadioButton android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:textSize="@dimen/subheading"
+                     android:id="@+id/btn_darktheme"
                      android:text="Dark theme"
         />
     </RadioGroup>
