@@ -21,4 +21,9 @@
     <color name="p4">#F1C15E</color>
     <color name="p5">#E2C075</color>
     <color name="p6">#C9C9C9</color>
+
+    <color name="dark1">#000000</color>
+    <color name="dark2">#212121</color>
+    <color name="dark3">#303030</color>
+    <color name="dark4">#424242</color>
 </resources>

@@ -6,6 +6,10 @@
         <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="specialTextColor">@color/colorPrimary</item>
+        <item name="inputPanelColor">@android:color/white</item>
+        <item name="inputTextColor">#8B999F</item>
+
 
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
@@ -19,7 +23,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="inputPanelColor">@color/dark4</item>
+        <item name="inputTextColor">@android:color/white</item>
 
+        <item name="specialTextColor">#CDCDCD</item>
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
@@ -48,9 +55,6 @@
 
 
     <style name="CaseEditTheme" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
         <item name="editTextStyle">@style/CaseEditTheme.EditTextStyle</item>
         <item name="android:textColorPrimary">#000000</item>
@@ -134,7 +138,7 @@
 
     <style name="AppTheme.PrimaryBigTextView" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/headline</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/specialTextColor</item>
         <item name="android:fontFamily">@font/open_sans_bold</item>
     </style>
 
@@ -142,17 +146,17 @@
     <style name="AppTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
         <item name="android:padding">16dp</item>
         <item name="android:textSize">@dimen/body_1</item>
-        <item name="android:background">@android:color/white</item>
+        <item name="android:background">?attr/inputPanelColor</item>
         <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:letterSpacing">0.1</item>
-        <item name="android:textColor">#8B999F</item>
+        <item name="android:textColor">?attr/inputTextColor</item>
     </style>
 
     <style name="CaseEditTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
         <item name="android:padding">16dp</item>
         <item name="android:textSize">@dimen/body_1</item>
-        <item name="android:background">@android:color/white</item>
-        <item name="android:textColor">#8B999F</item>
+        <item name="android:background">?attr/inputPanelColor</item>
+        <item name="android:textColor">?attr/inputTextColor</item>
     </style>
 
 
@@ -191,7 +195,7 @@
         <item name="android:background">@drawable/background_case_prop</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:textColor">#8B999F</item>
+        <item name="android:textColor">?attr/inputTextColor</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 

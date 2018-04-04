@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomTheme">
+        <attr name="specialTextColor" format="color"/>
+        <attr name="inputPanelColor" format="color"/>
+        <attr name="inputTextColor" format="color"/>
+    </declare-styleable>
+</resources>

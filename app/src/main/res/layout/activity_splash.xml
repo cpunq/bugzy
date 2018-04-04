@@ -45,7 +45,7 @@
             android:layout_height="40dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            ripple:rippleColor="@color/colorPrimary"
+            ripple:rippleColor="?attr/specialTextColor"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="96dp"
             android:layout_centerHorizontal="true"
