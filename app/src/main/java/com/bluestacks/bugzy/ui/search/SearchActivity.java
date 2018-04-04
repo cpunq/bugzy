@@ -1,6 +1,8 @@
 package com.bluestacks.bugzy.ui.search;
 
+import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
+import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.Resource;
@@ -76,6 +78,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setAppliedTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
@@ -87,6 +90,16 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
         // Triggers the search change event, which inturn triggers the search history
         mSearchEditText.setText("");
     }
+
+    private void setAppliedTheme() {
+        if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
+            setTheme(R.style.SearchActivityTheme_Dark);
+        } else {
+            // Light Theme
+            setTheme(R.style.SearchActivityTheme);
+        }
+    }
+
 
     private void setupViews() {
         setSupportActionBar(mToolbar);

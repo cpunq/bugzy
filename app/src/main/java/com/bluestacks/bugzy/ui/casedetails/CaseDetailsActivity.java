@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Case;
@@ -28,6 +30,7 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppliedTheme();
         setContentView(R.layout.activity_case_details);
         ButterKnife.bind(this);
 
@@ -45,6 +48,15 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
                     .replace(R.id.container_frame, fragment);
 
             ft.commit();
+        }
+    }
+
+    private void setAppliedTheme() {
+        if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
+            setTheme(R.style.AppTheme_Dark);
+        } else {
+            // Light Theme
+            setTheme(R.style.AppTheme);
         }
     }
 

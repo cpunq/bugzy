@@ -35,7 +35,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.R;
+import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Attachment;
 import com.bluestacks.bugzy.data.model.Case;
@@ -194,6 +196,7 @@ public class CaseEditActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppliedTheme();
         overridePendingTransition(R.anim.enter_slide_up, 0);
         setContentView(R.layout.activity_case_edit);
         ButterKnife.bind(this);
@@ -206,6 +209,15 @@ public class CaseEditActivity extends BaseActivity {
         subscribeToViewModel();
         setupEventsRecyclerView();
         setupAttachmentsRecyclerView();
+    }
+
+    private void setAppliedTheme() {
+        if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
+            setTheme(R.style.CaseEditTheme_Dark);
+        } else {
+            // Light Theme
+            setTheme(R.style.CaseEditTheme);
+        }
     }
 
     private void setupEventsRecyclerView() {

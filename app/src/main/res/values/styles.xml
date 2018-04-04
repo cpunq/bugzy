@@ -22,7 +22,7 @@
 
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
-        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textColorSecondary">#7D7D7D</item>
     </style>
 
@@ -58,6 +58,13 @@
         <item name="android:textColorSecondary">#7D7D7D</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
+      <style name="CaseEditTheme.Dark" parent="AppTheme.Dark">
+        <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
+        <item name="editTextStyle">@style/CaseEditTheme.EditTextStyle</item>
+        <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Small</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 
     <style name="SearchActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -68,6 +75,16 @@
         <item name="android:textColorSecondary">#7D7D7D</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
+    <style name="SearchActivityTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#7D7D7D</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <style name="SearchActivityTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>

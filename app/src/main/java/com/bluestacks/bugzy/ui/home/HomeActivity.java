@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.bluestacks.bugzy.BugzyApp;
+import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.Filter;
@@ -77,6 +79,7 @@ public class HomeActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppliedTheme();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
@@ -84,6 +87,15 @@ public class HomeActivity extends BaseActivity
 
         onViewsReady();
         subscribeToViewModel();
+    }
+
+    private void setAppliedTheme() {
+        if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
+            setTheme(R.style.AppTheme_Dark);
+        } else {
+            // Light Theme
+            setTheme(R.style.AppTheme);
+        }
     }
 
     @Override
