@@ -104,8 +104,8 @@ public class SplashActivity extends BaseActivity {
             if (TextUtils.isEmpty(token)) {
                 startLoginActivity();
             } else {
-                startLoginActivity();
-//                startHomeActivity();
+//                startLoginActivity();
+                startHomeActivity();
             }
             finishDelayed();
         });

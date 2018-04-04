@@ -68,7 +68,7 @@ public class LoginViewModel extends ViewModel {
                 mIsLoggedIn.setValue(false);
             } else {
                 mIsLoggedIn.setValue(true);
-                mLoginStepLiveData.setValue(LoginStep.THEME);
+//                mLoginStepLiveData.setValue(LoginStep.THEME);
             }
         });
 
