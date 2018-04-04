@@ -85,10 +85,7 @@ public class LoginActivity extends BaseActivity {
                 showMessage(responseResource.message);
                 return;
             }
-            if (responseResource.status == Status.SUCCESS) {
-                showMessage("Logged In");
-            }
-        });
+       });
 
         mLoginViewModel.getIsLoggedIn().observe(this, loggedIn -> {
             // Something to do?

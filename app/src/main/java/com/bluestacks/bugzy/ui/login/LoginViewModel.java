@@ -7,6 +7,7 @@ import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.remote.model.LoginData;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
+import com.bluestacks.bugzy.utils.SnackbarMessage;
 import com.bluestacks.bugzy.utils.Utils;
 
 import android.app.Application;
@@ -26,7 +27,7 @@ public class LoginViewModel extends ViewModel {
     public enum LoginStep {
         ORG, CREDENTIALS, THEME, INFO
     }
-    private final SingleLiveEvent<String> mSnackBarText;
+    private final SnackbarMessage<String> mSnackBarText;
     private final MutableLiveData<String> mAccessTokenLiveData;
     private Repository mRepository;
     private MutableLiveData<Pair<String, String>> mCredentialsLiveData = new MutableLiveData<>();
@@ -57,7 +58,7 @@ public class LoginViewModel extends ViewModel {
     public LoginViewModel(Repository repository, Application application) {
         mApp = (BugzyApp) application;
         mRepository = repository;
-        mSnackBarText = new SingleLiveEvent<>();
+        mSnackBarText = new SnackbarMessage<>();
         mAccessTokenLiveData = new MutableLiveData<>();
         mCredentialsLiveData = new MutableLiveData<>();
         mIsLoggedIn = new MediatorLiveData<>();
@@ -77,6 +78,10 @@ public class LoginViewModel extends ViewModel {
                 if (v.status == Status.SUCCESS) {
                     // If login success, go to theme step
                     mLoginStepLiveData.setValue(LoginStep.THEME);
+
+                    if (v.status == Status.SUCCESS) {
+                        mSnackBarText.setValue("Logged In");
+                    }
                 }
                 return v;
             });
