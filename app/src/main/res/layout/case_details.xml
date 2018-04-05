@@ -14,7 +14,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
+            android:background="?attr/secondaryWindowBackground"
             android:descendantFocusability="blocksDescendants"
             android:clipChildren="false"
             android:clipToPadding="false"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:orientation="vertical"
-            android:background="@color/windowBackground"
+            android:background="?android:attr/windowBackground"
             android:padding="0dp">
 
         <LinearLayout
@@ -53,7 +53,7 @@
                     android:id="@+id/textview_bug_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?attr/specialTextColor"
                     android:text="2345"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
@@ -90,7 +90,7 @@
                     android:layout_below="@id/textview_bug_title"
                     android:layout_marginTop="10dp"
                     android:text="undecided"
-                    android:textColor="@color/main_color"
+                    android:textColor="?attr/headerTextColor"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="13dp"
                 android:layout_marginRight="13dp"
-                android:background="@drawable/stroked_container"
+                android:background="?attr/borderedContainer"
                 android:orientation="horizontal"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp">

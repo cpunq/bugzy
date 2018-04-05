@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CustomTheme">
+        <attr name="secondaryWindowBackground" format="color"/>
+        <attr name="borderedContainer" format="integer"/>
+        <attr name="headerTextColor" format="color"/>
         <attr name="specialTextColor" format="color"/>
         <attr name="inputPanelColor" format="color"/>
         <attr name="inputTextColor" format="color"/>

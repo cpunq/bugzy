@@ -20,7 +20,6 @@
                 android:layout_gravity="left"
 
                 android:text="Some date"
-                android:textColor="#181717"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <TextView
@@ -29,14 +28,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="Some "
-                android:textColor="@color/main_color"
+                android:textColor="?attr/headerTextColor"
                 android:ellipsize="end"
                 android:maxLines="5"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/changes"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/specialTextColor"
                 android:textSize="14sp"/>
             <com.bluestacks.bugzy.ui.common.EmailView
                     android:layout_width="match_parent"
@@ -47,7 +46,7 @@
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
-                          android:background="#EDEDF1"
+                          android:background="?android:attr/windowBackground"
                           android:orientation="vertical"
                           android:layout_marginTop="4dp"
                           android:clipToPadding="false"

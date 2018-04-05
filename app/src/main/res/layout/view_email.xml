@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_corner"
                 android:layout_marginTop="8dp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="@dimen/subheading"
                 android:padding="8dp"
                 android:id="@+id/tv_body"/>
