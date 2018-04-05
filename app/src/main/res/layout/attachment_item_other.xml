@@ -19,6 +19,7 @@
               android:singleLine="true"
               android:ellipsize="end"
               android:textSize="@dimen/subheading"
+              android:textColor="@color/textColorSecondary"
               android:id="@+id/tv_filename"
     />
 
