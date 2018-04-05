@@ -16,6 +16,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
+                style="@style/SearchActivityTheme.Toolbar"
                 android:layout_height="wrap_content">
 
             <LinearLayout android:layout_width="fill_parent"
@@ -74,6 +75,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:background="@android:color/white"
+                    android:theme="@style/ThemeOverlay.AppCompat.Light"
                     android:scrollbars="vertical"/>
 
             <android.support.v7.widget.RecyclerView
@@ -83,6 +85,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:background="@android:color/white"
+                    android:theme="@style/ThemeOverlay.AppCompat.Light"
                     android:scrollbars="vertical"/>
 
         </RelativeLayout>

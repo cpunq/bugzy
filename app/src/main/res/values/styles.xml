@@ -98,6 +98,7 @@
     <style name="SearchActivityTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
     <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
