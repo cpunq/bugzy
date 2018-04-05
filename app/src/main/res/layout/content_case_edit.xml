@@ -379,15 +379,18 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
+                            android:id="@+id/label_requiredmerge"
                             android:text="Required merge in"
                     />
                     <Spinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="100dp"
+                            android:layout_marginLeft="16dp"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:textAlignment="textEnd"
+                            android:layout_toRightOf="@+id/label_requiredmerge"
                             android:gravity="end"
                             android:id="@+id/spinner_requiredmerg"
                     />
