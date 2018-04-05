@@ -38,7 +38,7 @@
                     android:gravity="start"
                     android:hint="Title"
                     android:textSize="@dimen/headline"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/specialTextColor"
                     android:scrollHorizontally="false"
                     android:layout_marginBottom="4dp"
                     android:inputType="textMultiLine"
@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:textColor="@color/textColorSecondary"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:text="Project"
                 />
                 <Spinner
@@ -87,6 +87,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:text="Area"
                 />
                 <Spinner
@@ -118,6 +119,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:text="Milestone"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:id="@+id/label_milestone"
                 />
                 <Spinner
@@ -156,6 +158,7 @@
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:text="Category"
                     />
                     <Spinner
@@ -181,6 +184,7 @@
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:text="Status"
                     />
                     <Spinner
@@ -208,6 +212,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:text="Assigned To"
                         android:id="@+id/label_assigned_to"
                 />
@@ -244,6 +249,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:text="Priority"
                 />
                 <Spinner
@@ -266,6 +272,7 @@
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/tv_event_changes"
+                      android:textColor="?android:attr/textColorPrimary"
             />
 
 
@@ -274,6 +281,7 @@
                       android:paddingBottom="8dp"
                       android:text="Tags"
                       android:id="@+id/label_tags"
+                      android:textColor="?android:attr/textColorSecondary"
             />
 
             <EditText
@@ -281,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:gravity="start"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/specialTextColor"
                     android:id="@+id/et_tags"
             />
 
@@ -305,6 +313,7 @@
                         <TextView android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:paddingBottom="8dp"
+                                  android:textColor="?android:attr/textColorSecondary"
                                   android:text="Found In"
                         />
 
@@ -313,7 +322,7 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="textMultiLine"
                                 android:gravity="start"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="?attr/specialTextColor"
                                 android:id="@+id/et_found_in"
                         />
 
@@ -330,6 +339,7 @@
                         <TextView android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:paddingBottom="8dp"
+                                  android:textColor="?android:attr/textColorSecondary"
                                   android:text="Fixed In"
                         />
 
@@ -338,7 +348,7 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="textMultiLine"
                                 android:gravity="start"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="?attr/specialTextColor"
                                 android:id="@+id/et_fixed_in"
                         />
 
@@ -354,6 +364,7 @@
                         <TextView android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:paddingBottom="8dp"
+                                  android:textColor="?android:attr/textColorSecondary"
                                   android:text="Verified In"
                         />
 
@@ -362,7 +373,7 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="textMultiLine"
                                 android:gravity="start"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="?attr/specialTextColor"
                                 android:id="@+id/et_verified_in"
                         />
                     </LinearLayout>
@@ -380,6 +391,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
                             android:id="@+id/label_requiredmerge"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:text="Required merge in"
                     />
                     <Spinner
@@ -406,7 +418,6 @@
                     android:minLines="4"
                     android:gravity="start"
                     android:textSize="@dimen/body_1"
-                    android:textColor="@color/colorPrimary"
                     android:layout_marginTop="8dp"
                     android:inputType="textMultiLine"
             />
@@ -465,7 +476,7 @@
                     android:id="@+id/recycler_view_events"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
+                    android:background="?attr/secondaryWindowBackground"
                     android:descendantFocusability="blocksDescendants"
                     android:clipChildren="false"
                     android:clipToPadding="false"

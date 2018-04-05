@@ -15,6 +15,8 @@
         <item name="borderedContainer">@drawable/stroked_container</item>
         <item name="secondaryWindowBackground">#ffffff</item>
 
+        <item name="casePropBackground">@drawable/background_case_prop</item>
+
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
         <item name="android:textColorPrimary">#000000</item>
@@ -34,6 +36,7 @@
         <item name="headerTextColor">#23AAF6</item>
         <item name="borderedContainer">@drawable/stroked_container_light</item>
         <item name="secondaryWindowBackground">@color/dark34</item>
+        <item name="casePropBackground">@drawable/background_case_prop_dark</item>
 
         <item name="specialTextColor">#CDCDCD</item>
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
@@ -193,7 +196,7 @@
     <style name="CaseEditTheme.CasePropStyle">
         <item name="android:padding">16dp</item>
         <item name="android:textSize">@dimen/body_1</item>
-        <item name="android:background">@drawable/background_case_prop</item>
+        <item name="android:background">?attr/casePropBackground</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:textColor">?attr/inputTextColor</item>
