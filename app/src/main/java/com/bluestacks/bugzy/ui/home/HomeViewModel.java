@@ -22,6 +22,7 @@ public class HomeViewModel extends ViewModel {
     private MediatorLiveData<Resource<FiltersData>> mFiltersState = new MediatorLiveData<>();
     private MediatorLiveData<Resource<Person>> mMyDetailsState = new MediatorLiveData<>();
     private Context mContext;
+    private boolean mSyncServiceStartedOnce;
 
     @Inject
     HomeViewModel(Repository repository, Application application) {
@@ -35,9 +36,11 @@ public class HomeViewModel extends ViewModel {
             }
         });
         mFiltersState.addSource(mRepository.filters(), filtersDataResource -> {
-            if (filtersDataResource.status == Status.SUCCESS) {
+            if (filtersDataResource.status == Status.SUCCESS && !mSyncServiceStartedOnce) {
                 // When filters are received, immediately start syncing other data
+                // For now, lets only do it once for the lifetime of this activity
                 mContext.startService(new Intent(mContext, BugzyDataSyncService.class));
+                mSyncServiceStartedOnce = true;
             }
             mFiltersState.setValue(filtersDataResource);
         });
