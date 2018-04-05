@@ -73,23 +73,15 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-
-    <style name="SearchActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="SearchActivityTheme" parent="AppTheme">
         <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="android:textColorSecondary">#7D7D7D</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
-    <style name="SearchActivityTheme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+    <style name="SearchActivityTheme.Dark" parent="AppTheme.Dark">
         <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:textColorSecondary">#7D7D7D</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
