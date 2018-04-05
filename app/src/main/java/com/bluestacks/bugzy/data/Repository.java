@@ -118,6 +118,19 @@ public class Repository {
         };
     }
 
+    public void logout() {
+        mAppExecutors.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // Remove everything from db and preferences
+                db.clearAllTables();
+                mPrefs.clearAll();
+                mToken.postValue(null);
+            }
+        });
+    }
+
+
     public LiveData<Resource<Response<LoginData>>> temp(String email, String password) {
         return new NetworkBoundResource<Response<LoginData>, Response<LoginData>>(mAppExecutors) {
 

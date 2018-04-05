@@ -44,6 +44,10 @@ public class HomeViewModel extends ViewModel {
         mMyDetailsState.addSource(mRepository.getMyDetails(), personResource -> mMyDetailsState.setValue(personResource));
     }
 
+    public void logout() {
+        mRepository.logout();
+    }
+
     public MediatorLiveData<Boolean> getIsLoggedIn() {
         return mIsLoggedIn;
     }

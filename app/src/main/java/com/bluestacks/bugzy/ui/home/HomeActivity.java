@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -27,6 +28,7 @@ import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.Filter;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
+import com.bluestacks.bugzy.ui.common.BugzyAlertDialog;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
 import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.login.LoginActivity;
@@ -54,9 +56,11 @@ public class HomeActivity extends BaseActivity
     private Fragment mCurrentFragment;
     private List<Filter> mFilters;
     private int mHomeNavItemId = -1;
+    private int mAppliedTheme;
     private HashMap<String, Integer> mNavItemTagMap = new HashMap<>();
     private HashMap<Integer, Filter> mFiltersMap = new HashMap<>();
     private HomeViewModel mHomeViewModel;
+    private AlertDialog mLogoutDialog;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -90,6 +94,7 @@ public class HomeActivity extends BaseActivity
     }
 
     private void setAppliedTheme() {
+        mAppliedTheme = ((BugzyApp)getApplication()).getAppliedTheme();
         if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
             setTheme(R.style.AppTheme_Dark);
         } else {
@@ -313,6 +318,44 @@ public class HomeActivity extends BaseActivity
         }
     }
 
+    /**
+     * A small factory method
+     * @return
+     */
+    private BugzyAlertDialog getDialogInstance() {
+        if (mAppliedTheme == Const.DARK_THEME) {
+            return new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog_Dark);
+        } else {
+            return new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        }
+    }
+
+    private AlertDialog getLogoutDialog() {
+        BugzyAlertDialog dialog = getDialogInstance();
+        dialog.setTitle("Are you sure?");
+        dialog.setMessage("This will remove all your cached data.");
+        dialog.setPositiveButtonText("Logout");
+        dialog.setNegativeButtonText("Cancel");
+        dialog.setOnPositiveButtonClickListener(view -> {
+            mHomeViewModel.logout();
+        });
+        dialog.setOnNegativeButtonClickListener(view -> {
+            if (mLogoutDialog != null && mLogoutDialog.isShowing()) {
+                mLogoutDialog.dismiss();
+            }
+        });
+        dialog.setCancelable(false);
+        return dialog;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mLogoutDialog != null && mLogoutDialog.isShowing()) {
+            mLogoutDialog.dismiss();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -354,6 +397,10 @@ public class HomeActivity extends BaseActivity
                 return true;
             }
             fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
+        } else if (id == R.id.nav_logout){
+            mLogoutDialog = getLogoutDialog();
+            mLogoutDialog.show();
+            return true;
         } else {
             // Else do nothing as of now
             return true;

@@ -74,8 +74,8 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
 
     // Room
-    implementation 'android.arch.persistence.room:runtime:1.0.0'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
+    implementation 'android.arch.persistence.room:runtime:1.1.0-beta1'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.0-beta1'
 
     // UI
     implementation 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'

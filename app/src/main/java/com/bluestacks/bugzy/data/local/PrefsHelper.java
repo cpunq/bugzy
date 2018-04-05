@@ -55,5 +55,8 @@ public class PrefsHelper {
         mPrivatePrefs.edit().putInt(key.name(), value).commit();
     }
 
+    public void clearAll() {
+        mPrivatePrefs.edit().clear().commit();
+    }
 }
 
