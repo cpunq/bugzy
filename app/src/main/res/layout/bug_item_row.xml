@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="BUG ID"
-                android:textColor="#181717"
+                android:textColor="?attr/specialTextColor"
                 android:textSize="@dimen/title"
                 android:textStyle="bold" />
 

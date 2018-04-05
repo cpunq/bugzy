@@ -9,6 +9,8 @@
         <item name="specialTextColor">@color/colorPrimary</item>
         <item name="inputPanelColor">@android:color/white</item>
         <item name="inputTextColor">#8B999F</item>
+        <item name="chipBgColor">@color/chip_bg_light</item>
+        <item name="dividerColor">#1FFFFFFF</item>
 
 
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
@@ -18,6 +20,7 @@
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="dividerColor">#1F000000</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -25,6 +28,7 @@
         <item name="android:windowContentTransitions">true</item>
         <item name="inputPanelColor">@color/dark4</item>
         <item name="inputTextColor">@android:color/white</item>
+        <item name="chipBgColor">@color/chip_bg_dark</item>
 
         <item name="specialTextColor">#CDCDCD</item>
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
