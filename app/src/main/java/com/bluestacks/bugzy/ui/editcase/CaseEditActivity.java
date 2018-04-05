@@ -92,6 +92,7 @@ public class CaseEditActivity extends BaseActivity {
     public static final String PARAM_CASE_ID    = "case_id";
     public static final String PARAM_MODE       = "mode";
 
+    private int mAppliedTheme;
     private CaseEditViewModel mCaseEditViewModel;
     private int mMode;
     private int  mCaseId;
@@ -219,6 +220,7 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     private void setAppliedTheme() {
+        mAppliedTheme = ((BugzyApp)getApplication()).getAppliedTheme();
         if(((BugzyApp)getApplication()).getAppliedTheme() == Const.DARK_THEME)  {
             setTheme(R.style.CaseEditTheme_Dark);
         } else {
@@ -646,8 +648,21 @@ public class CaseEditActivity extends BaseActivity {
         });
     }
 
+    /**
+     * A small factory method
+     * @return
+     */
+    private BugzyAlertDialog getDialogInstance() {
+        if (mAppliedTheme == Const.DARK_THEME) {
+            return new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog_Dark);
+        } else {
+            return new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        }
+    }
+
+
     private AlertDialog getCaseErrorAlertDialog(String message) {
-        BugzyAlertDialog dialog = new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        BugzyAlertDialog dialog = getDialogInstance();
         dialog.setTitle("Error");
         dialog.setMessage("Failed to refresh the Case details.\nDescription: " + message);
         dialog.setPositiveButtonText("Retry");
@@ -665,7 +680,7 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     private AlertDialog getCloseDialog() {
-        BugzyAlertDialog dialog = new BugzyAlertDialog(this, R.style.CaseEditTheme_AlertDialog);
+        BugzyAlertDialog dialog = getDialogInstance();
         dialog.setTitle("Are you sure?");
         dialog.setMessage("Your case hasn\'t been submitted yet, are you sure you want to leave?");
         dialog.setPositiveButtonText("Yes");

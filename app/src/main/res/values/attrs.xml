@@ -11,4 +11,9 @@
         <attr name="chipBgColor" format="color"/>
         <attr name="dividerColor" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="CustomDialog">
+        <attr name="dialogTitleColor" format="color"/>
+        <attr name="dialogMessageColor" format="color"/>
+    </declare-styleable>
 </resources>
