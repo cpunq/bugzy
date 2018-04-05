@@ -10,7 +10,7 @@
         <item name="inputPanelColor">@android:color/white</item>
         <item name="inputTextColor">#8B999F</item>
         <item name="chipBgColor">@color/chip_bg_light</item>
-        <item name="dividerColor">#1FFFFFFF</item>
+        <item name="dividerColor">#1F000000</item>
 
 
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
