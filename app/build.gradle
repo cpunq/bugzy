@@ -6,6 +6,7 @@ def versionMajor = 0
 def versionMinor = 1
 def versionPatch = 0
 
+
 repositories {
     maven {
         url "https://s3.amazonaws.com/repo.commonsware.com"
@@ -38,11 +39,26 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                renameAPK(variant, defaultConfig, "release")
+            }
+        }
+        debug {
+            applicationVariants.all { variant ->
+                renameAPK(variant, defaultConfig, "debug")
+            }
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+def renameAPK(variant, defaultConfig, buildType) {
+    variant.outputs.all { output ->
+        def fileName = appName + "_v" + defaultConfig.versionName + "_" + buildType + ".apk"
+        outputFileName = fileName
     }
 }
 
