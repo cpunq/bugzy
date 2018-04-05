@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CustomTheme">
+        <attr name="networkErrorRes" format="integer"/>
         <attr name="casePropBackground" format="integer"/>
         <attr name="secondaryWindowBackground" format="color"/>
         <attr name="borderedContainer" format="integer"/>

@@ -16,6 +16,7 @@
         <item name="secondaryWindowBackground">#ffffff</item>
 
         <item name="casePropBackground">@drawable/background_case_prop</item>
+        <item name="networkErrorRes">@drawable/img_network_err</item>
 
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
         <item name="editTextStyle">@style/AppTheme.EditTextStyle</item>
@@ -37,6 +38,7 @@
         <item name="borderedContainer">@drawable/stroked_container_light</item>
         <item name="secondaryWindowBackground">@color/dark34</item>
         <item name="casePropBackground">@drawable/background_case_prop_dark</item>
+        <item name="networkErrorRes">@drawable/img_network_err_white</item>
 
         <item name="specialTextColor">#CDCDCD</item>
         <!--<item name="android:buttonStyle">@style/AppTheme.PrimaryButton</item>-->
