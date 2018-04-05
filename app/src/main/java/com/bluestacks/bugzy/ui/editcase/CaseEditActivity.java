@@ -98,6 +98,13 @@ public class CaseEditActivity extends BaseActivity {
     private CaseEventsAdapter mAdapter;
     private AttachmentsAdapter mAttachmentsAdapter;
     private LinearLayoutManager mAttachmentsLayoutManager;
+    private ArrayAdapter<Area> mAreaArrayAdapter;
+    final private List<Area> mAreas = new ArrayList<>();
+    private ArrayAdapter<Milestone> mMilestoneArrayAdapter;
+    final private List<Milestone> mMilestones = new ArrayList<>();
+    private ArrayAdapter<String> mMergeInAdapter;
+    final private List<String> mMergeIns = new ArrayList<>();
+
     private List<Project> mProjects;
     private List<Category> mCategories;
     private AlertDialog mCloseDialog;
@@ -614,6 +621,10 @@ public class CaseEditActivity extends BaseActivity {
             mPrioritySpinner.setSelection(map.get(PRIORITY));
         });
 
+        mCaseEditViewModel.getUpdateRequiredMergeInSelection().observe(this, position -> {
+            mRequiredMergeInSpinner.setSelection(position);
+        });
+
         mCaseEditViewModel.getOpenPeopleSelector().observe(this, v -> {
             mAssignedToSpinner.performClick();
         });
@@ -633,7 +644,6 @@ public class CaseEditActivity extends BaseActivity {
             mAttachmentsAdapter.setList(attachments);
             mAttachmentsAdapter.notifyDataSetChanged();
         });
-
     }
 
     private AlertDialog getCaseErrorAlertDialog(String message) {
@@ -796,17 +806,29 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     public void showMilestones(List<Milestone> milestones) {
-        ArrayAdapter<Milestone> dataAdapter = new ArrayAdapter<Milestone>(this,
-                android.R.layout.simple_spinner_item, milestones);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mMileStoneSpinner.setAdapter(dataAdapter);
+        // Doing this dance for milestones and areas because it was becoming quite cumbersome to maintain
+        // the selections on configuration change
+        mMilestones.clear();
+        mMilestones.addAll(milestones);
+        if (mMilestoneArrayAdapter == null) {
+            mMilestoneArrayAdapter = new ArrayAdapter<Milestone>(this,
+                    android.R.layout.simple_spinner_item, mMilestones);
+            mMilestoneArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mMileStoneSpinner.setAdapter(mMilestoneArrayAdapter);
+        }
+        mMilestoneArrayAdapter.notifyDataSetChanged();
     }
 
     public void showAreas(List<Area> areas) {
-        ArrayAdapter<Area> dataAdapter = new ArrayAdapter<Area>(this,
-                android.R.layout.simple_spinner_item, areas);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mAreaSpinner.setAdapter(dataAdapter);
+        mAreas.clear();
+        mAreas.addAll(areas);
+        if (mAreaArrayAdapter == null) {
+            mAreaArrayAdapter = new ArrayAdapter<Area>(this,
+                    android.R.layout.simple_spinner_item, mAreas);
+            mAreaArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mAreaSpinner.setAdapter(mAreaArrayAdapter);
+        }
+        mAreaArrayAdapter.notifyDataSetChanged();
     }
 
     public void showProjects(List<Project> projects) {
@@ -833,10 +855,16 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     public void showRequiredMergeIns(List<String> list) {
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mRequiredMergeInSpinner.setAdapter(dataAdapter);
+        mMergeIns.clear();
+        mMergeIns.addAll(list);
+
+        if (mMergeInAdapter == null) {
+            mMergeInAdapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, mMergeIns);
+            mMergeInAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mRequiredMergeInSpinner.setAdapter(mMergeInAdapter);
+        }
+        mMergeInAdapter.notifyDataSetChanged();
     }
 
     public void showCategories(List<Category> categories) {

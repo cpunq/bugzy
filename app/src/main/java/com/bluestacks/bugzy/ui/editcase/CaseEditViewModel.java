@@ -13,6 +13,7 @@ import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Resource;
+import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
 import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.Response;
@@ -45,6 +46,9 @@ public class CaseEditViewModel extends ViewModel {
     private CasesRepository mCasesRepository;
     private MutableLiveData<Project> mCurrentProject = new MutableLiveData<>();
     private MutableLiveData<Category> mCurrentCategory = new MutableLiveData<>();
+    private boolean mDefaultSelectionsMade = false;
+    private boolean mMergeInSelectionMade = false;
+    private SingleLiveEvent<Integer> mUpdateRequiredMergeInSelection = new SingleLiveEvent<>();
 
     private MutableLiveData<Pair<Integer, Integer>> mParamsLiveData = new MutableLiveData<>();
     private LiveData<Resource<List<Area>>> mAreas;
@@ -77,7 +81,6 @@ public class CaseEditViewModel extends ViewModel {
         STATUS,
         ASSIGNEDTO,
         PRIORITY,
-        REQUIRED_MERGE_IN,
     }
 
     @Inject
@@ -142,7 +145,14 @@ public class CaseEditViewModel extends ViewModel {
                 return;
             }
             // TODO: make sure, you disable the interactions, until this step completes
-            updateDefaultSelections(caseResource.data, mParamsLiveData.getValue().first);
+            if (caseResource.data != null && !mDefaultSelectionsMade) {
+                updateDefaultSelections(caseResource.data, mParamsLiveData.getValue().first);
+            }
+            if (caseResource.status == Status.SUCCESS && !mDefaultSelectionsMade) {
+                updateDefaultSelections(caseResource.data, mParamsLiveData.getValue().first);
+                // Never update the selections from this point onwards, it might over-write user's selection
+                mDefaultSelectionsMade = true;
+            }
         });
 
         mAreas = Transformations.switchMap(mCurrentProject, val -> {
@@ -193,13 +203,18 @@ public class CaseEditViewModel extends ViewModel {
                     }
                     return l;
                 }
-                List<String> list = new ArrayList<>();
+                final List<String> list = new ArrayList<>();
                 for (String entry : v) {
                     if (!TextUtils.isEmpty(entry)) {
                         list.add(entry);
                     }
                 }
-                return list;
+                if (caseStatus != null && caseStatus.data != null && !mMergeInSelectionMade) {
+                    // Deferred means it is async
+                    deferredUpdateRequiredMergeInSelection(caseStatus.data, list);
+                    mMergeInSelectionMade = true;
+                }
+               return list;
             });
 
         });
@@ -209,6 +224,24 @@ public class CaseEditViewModel extends ViewModel {
         mPriorities =  mRepository.getPriorities(false);
         mPersons = mRepository.getPeople(false);
     }
+
+    public SingleLiveEvent<Integer> getUpdateRequiredMergeInSelection() {
+        return mUpdateRequiredMergeInSelection;
+    }
+
+    private void deferredUpdateRequiredMergeInSelection(final Case kase, List<String> list) {
+        mAppExecutors.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (kase == null) {
+                    return;
+                }
+                int index = getRequiredMergeInPosition(kase.getRequiredMergeIn(), list);
+                mUpdateRequiredMergeInSelection.postValue(index);
+            }
+        });
+    }
+
 
     public void addAttachment(Uri fileUri) {
         Attachment at = new Attachment();
@@ -321,10 +354,22 @@ public class CaseEditViewModel extends ViewModel {
                     map.put(PropType.ASSIGNEDTO, getIndex(kase.getPersonAssignedToId(), getPersons()));
                 }
                 map.put(PropType.PRIORITY, getIndex(kase.getPriority(), getPriorities()));
-                map.put(PropType.REQUIRED_MERGE_IN, getIndex(kase.getPriority(), getPriorities()));
                 mDefaultPropSelectionLiveData.postValue(map);
             }
         });
+    }
+
+    private int getRequiredMergeInPosition(String requiredMergeForCase,  List<String> requiredMergeIns) {
+        List<String> branches = requiredMergeIns;
+        if (branches == null || branches.size() == 0) {
+            return 0;
+        }
+        for (int i = 0 ; i < branches.size() ; i ++) {
+            if (branches.get(i).equals(requiredMergeForCase)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     public SingleLiveEvent<Void> getOpenPeopleSelector() {
