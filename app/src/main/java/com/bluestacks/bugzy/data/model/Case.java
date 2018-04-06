@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import android.arch.persistence.room.Entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 
@@ -83,6 +84,17 @@ public class Case implements Serializable {
 
     @SerializedName("tags")
     List<String> tags;
+
+    @SerializedName("dtLastUpdated")
+    Date lastUpdatedAt;
+
+    public Date getLastUpdatedAt() {
+        return lastUpdatedAt;
+    }
+
+    public void setLastUpdatedAt(Date lastUpdatedAt) {
+        this.lastUpdatedAt = lastUpdatedAt;
+    }
 
     public int getIxBug() {
         return ixBug;

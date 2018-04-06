@@ -43,6 +43,7 @@ import android.webkit.MimeTypeMap;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -93,8 +94,9 @@ public class CasesRepository {
             "sArea",
             "ixArea",
             "sCategory",
-            "ixCategory"
-    };
+            "ixCategory",
+            "dtLastUpdated"
+};
 
     private String[] mColsForCaseDetails =new String[]{
             "sTitle",
@@ -113,6 +115,7 @@ public class CasesRepository {
             "ixArea",
             "sCategory",
             "ixCategory",
+            "dtLastUpdated",
 
             // New cols
             "events",
@@ -295,6 +298,12 @@ public class CasesRepository {
                         return AbsentLiveData.create();
                     }
                     return Transformations.map(mCaseDao.loadCasesById(filterCasesData.getCaseIds()), kases -> {
+                        Collections.sort(kases, new Comparator<Case>() {
+                            @Override
+                            public int compare(Case aCase, Case t1) {
+                                return Long.compare(t1.getLastUpdatedAt().getTime(), aCase.getLastUpdatedAt().getTime());
+                            }
+                        });
                         filterCasesData.setCases(kases);
                         return filterCasesData;
                     });
