@@ -6,6 +6,7 @@ import com.bluestacks.bugzy.utils.OnItemClickListener;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,20 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
+public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int BUG = 0;
+    private static final int HEADER = 1;
+
     private OnItemClickListener mItemClickListener;
     private List<Case> mBugs;
+    private Spannable mHeaderText = null;
 
     public CaseAdapter(OnItemClickListener listener) {
         mItemClickListener = listener;
+    }
+
+    public void setHeaderText(Spannable text) {
+        mHeaderText = text;
     }
 
     public CaseAdapter(List<Case> bugs, OnItemClickListener listener) {
@@ -32,7 +41,13 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
     }
 
     @Override
-    public CaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == HEADER) {
+            View inflatedView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_cases_header, parent, false);
+            final HeaderHolder h = new HeaderHolder(inflatedView);
+            return h;
+        }
         View inflatedView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.bug_item_row, parent, false);
         final CaseHolder holder = new CaseHolder(inflatedView);
@@ -42,7 +57,7 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
                 int pos = holder.getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION) {
                     if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(pos);
+                        mItemClickListener.onItemClick(getBugPosition(pos));
                     }
                 }
             }
@@ -50,15 +65,53 @@ public class CaseAdapter extends RecyclerView.Adapter<CaseAdapter.CaseHolder> {
         return holder;
     }
 
+    int getBugPosition(int itemPosition) {
+        if (mHeaderText == null) {
+            return itemPosition;
+        } else {
+            return itemPosition - 1;
+        }
+    }
+
     @Override
-    public void onBindViewHolder(CaseHolder holder, int position) {
-        Case bug = mBugs.get(position);
-        holder.bindData(bug);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof HeaderHolder) {
+            ((HeaderHolder) holder).bind(mHeaderText);
+        }
+        if (holder instanceof CaseHolder) {
+            Case bug = mBugs.get(getBugPosition(position));
+            ((CaseHolder) holder).bindData(bug);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mBugs == null ? 0 : mBugs.size();
+        return mBugs == null ? 0 : mHeaderText == null ? mBugs.size() : mBugs.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mHeaderText == null) {
+            // Bug always
+            return BUG;
+        }
+        if (position == 0) {
+            return HEADER;
+        }
+        return BUG;
+    }
+
+    public static class HeaderHolder extends RecyclerView.ViewHolder {
+        TextView mTextView;
+
+        public HeaderHolder(View v) {
+            super(v);
+            mTextView = (TextView) v;
+        }
+
+        public void bind(Spannable text) {
+            mTextView.setText(text);
+        }
     }
 
     public static class CaseHolder extends RecyclerView.ViewHolder{
