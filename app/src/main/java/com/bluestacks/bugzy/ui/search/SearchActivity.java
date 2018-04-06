@@ -8,6 +8,7 @@ import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
 import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.remote.model.ListCasesData;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.CaseAdapter;
@@ -17,6 +18,7 @@ import com.bluestacks.bugzy.utils.OnItemClickListener;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -27,7 +29,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -212,7 +218,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
 
     private void subscribeToViewModel() {
         mViewModel.getSearchResponse().observe(this, searchResource -> {
-            Resource<List<Case>> resource = searchResource.getResource();
+            Resource<ListCasesData> resource = searchResource.getResource();
             if (resource.status == Status.ERROR) {
                 showError(resource.message);
                 return;
@@ -266,8 +272,30 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener 
         });
     }
 
+    private Spannable getHeaderText(ListCasesData casesData) {
+        String casesCountString = casesData.getCount() +" cases";
+        String finalString = "Showing " + casesCountString +" of " + casesData.getTotalHits() + " total";
+        Spannable spannable = new SpannableString(finalString);
+
+        TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.headerTextColor});
+        int color = a.getColor(0, 0);
+
+        spannable.setSpan(new ForegroundColorSpan(color),
+                finalString.indexOf(casesCountString),
+                finalString.indexOf(casesCountString) + casesCountString.length() ,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new RelativeSizeSpan(1.2f),
+                finalString.indexOf(casesCountString),
+                finalString.indexOf(casesCountString) + casesCountString.length() ,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
+    }
+
     @UiThread
-    protected void showCases(List<Case> cases) {
+    protected void showCases(ListCasesData caseData) {
+        List<Case> cases = caseData.getCases();
+        mAdapter.setHeaderText(getHeaderText(caseData));
+
         if (cases.size() == 0) {
             mCases = null;
             mErrorView.showMessage("No cases found");

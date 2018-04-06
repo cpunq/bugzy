@@ -97,6 +97,9 @@ dependencies {
     implementation 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
     implementation 'com.gauravbhola.ripplepulsebackground:library:1.0.0'
 
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+
     implementation 'com.flipboard:bottomsheet-core:1.5.3'
     implementation 'com.flipboard:bottomsheet-commons:1.5.3'
 

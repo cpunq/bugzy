@@ -61,6 +61,9 @@ public interface FogbugzApiService {
     @POST("/api/searchCases")
     LiveData<ApiResponse<Response<ListCasesData>>> searchCases(@Body SearchCasesRequest request);
 
+    @POST("/api/searchCases")
+    Call<Response<ListCasesData>> searchCasesCall(@Body SearchCasesRequest request);
+
     @POST("/api/listAreas")
     LiveData<ApiResponse<Response<ListAreasData>>> getAreas(@Body Request request);
 

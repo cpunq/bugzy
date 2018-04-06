@@ -365,42 +365,58 @@ public class CasesRepository {
         });
     }
 
-    public LiveData<SearchResultsResource<List<Case>>> searchCases(final String query) {
+    public LiveData<SearchResultsResource<ListCasesData>> searchCases(final String query) {
         this.recordResearch(query);
-        return Transformations.map(new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
-            List<Case> mCases = null;
-
+        NetworkBoundTask<Response<ListCasesData>> task = new NetworkBoundTask<Response<ListCasesData>>(mAppExecutors, mGson) {
             @Override
-            protected void saveCallResult(@NonNull Response<ListCasesData> item) {
-                mCases = item.getData().getCases();
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable List<Case> data) {
-                // Fetch always
-                return true;
+            public void saveCallResult(@NonNull Response<ListCasesData> result) {
             }
 
             @NonNull
             @Override
-            protected LiveData<List<Case>> loadFromDb() {
-                return new LiveData<List<Case>>() {
-                    @Override
-                    protected void onActive() {
-                        super.onActive();
-                        setValue(mCases);
-                    }
-                };
+            protected Call<Response<ListCasesData>> createCall() {
+                return mApiService.searchCasesCall(new SearchCasesRequest(mColsForCaseList, query));
             }
-
-            @NonNull
-            @Override
-            protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
-                return mApiService.searchCases(new SearchCasesRequest(mColsForCaseList, query));
-            }
-        }.asLiveData(), v -> {
-            return new SearchResultsResource<>(query, v);
+        };
+        mAppExecutors.networkIO().execute(task);
+        return Transformations.map(task.asLiveData(), v -> {
+            Resource<ListCasesData> resource = new Resource(v.status, v.data == null ? null : v.data.getData(), v.message);
+            return new SearchResultsResource<>(query, resource);
         });
+//        return Transformations.map(new NetworkBoundResource<List<Case>, Response<ListCasesData>>(mAppExecutors) {
+//            List<Case> mCases = null;
+//
+//            @Override
+//            protected void saveCallResult(@NonNull Response<ListCasesData> item) {
+//                mCases = item.getData().getCases();
+//            }
+//
+//            @Override
+//            protected boolean shouldFetch(@Nullable List<Case> data) {
+//                // Fetch always
+//                return true;
+//            }
+//
+//            @NonNull
+//            @Override
+//            protected LiveData<List<Case>> loadFromDb() {
+//                return new LiveData<List<Case>>() {
+//                    @Override
+//                    protected void onActive() {
+//                        super.onActive();
+//                        setValue(mCases);
+//                    }
+//                };
+//            }
+//
+//            @NonNull
+//            @Override
+//            protected LiveData<ApiResponse<Response<ListCasesData>>> createCall() {
+//                return mApiService.searchCases(new SearchCasesRequest(mColsForCaseList, query));
+//            }
+//        }.asLiveData(), v -> {
+//            return new SearchResultsResource<>(query, v);
+//        });
     }
 
     public LiveData<Resource<Response<EditCaseData>>> editCase(final CaseEditRequest request, int mode, List<Attachment> attachments) {

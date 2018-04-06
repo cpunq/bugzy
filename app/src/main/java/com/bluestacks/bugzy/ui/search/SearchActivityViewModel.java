@@ -2,10 +2,10 @@ package com.bluestacks.bugzy.ui.search;
 
 import com.bluestacks.bugzy.data.CasesRepository;
 import com.bluestacks.bugzy.data.SearchSuggestionRepository;
-import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
+import com.bluestacks.bugzy.data.remote.model.ListCasesData;
 import com.bluestacks.bugzy.utils.SingleLiveEvent;
 
 import android.arch.lifecycle.LiveData;
@@ -25,7 +25,7 @@ public class SearchActivityViewModel extends ViewModel {
     public static final String TAG = SearchActivityViewModel.class.getName();
     private CasesRepository mCasesRepository;
     private MutableLiveData<String> mSearchLiveData = new MutableLiveData<>();
-    private MediatorLiveData<SearchResultsResource<List<Case>>> mSearchResponse;
+    private MediatorLiveData<SearchResultsResource<ListCasesData>> mSearchResponse;
     private SingleLiveEvent<Void> mClearSearchEvent = new SingleLiveEvent<>();
     private String mCurrentQuery = null;
     private LiveData<List<SearchSuggestion>> mSearchSuggestions;
@@ -39,7 +39,7 @@ public class SearchActivityViewModel extends ViewModel {
     public SearchActivityViewModel(CasesRepository repository, SearchSuggestionRepository ssRepository) {
         mCasesRepository = repository;
         mSearchSuggestionRepository = ssRepository;
-        LiveData<SearchResultsResource<List<Case>>> tempLiveData = Transformations
+        LiveData<SearchResultsResource<ListCasesData>> tempLiveData = Transformations
                 .switchMap(mSearchLiveData, value -> {
                     return mCasesRepository.searchCases(value);
                 });
@@ -114,7 +114,7 @@ public class SearchActivityViewModel extends ViewModel {
         }
     }
 
-    public LiveData<SearchResultsResource<List<Case>>> getSearchResponse() {
+    public LiveData<SearchResultsResource<ListCasesData>> getSearchResponse() {
         return mSearchResponse;
     }
 
