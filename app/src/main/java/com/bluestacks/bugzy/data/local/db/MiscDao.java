@@ -47,13 +47,13 @@ public abstract class MiscDao {
     @Query("SELECT * from `Milestone` WHERE projectId = :projectId OR projectId = 0")
     public abstract LiveData<List<Milestone>> loadMilestones(int projectId);
 
-    @Query("SELECT * from `Area`")
+    @Query("SELECT * from `Area` ORDER BY area")
     public abstract LiveData<List<Area>> loadAreas();
 
-    @Query("SELECT * from `Area` WHERE projectId = :projectId")
+    @Query("SELECT * from `Area` WHERE projectId = :projectId ORDER BY area")
     public abstract LiveData<List<Area>> loadAreas(int projectId);
 
-    @Query("SELECT * from `Project`")
+    @Query("SELECT * from `Project` ORDER BY project")
     public abstract LiveData<List<Project>> loadProjects();
 
     @Query("SELECT * from `CaseStatus`")
@@ -65,7 +65,7 @@ public abstract class MiscDao {
     @Query("SELECT * from `Priority`")
     public abstract LiveData<List<Priority>> loadPriorities();
 
-    @Query("SELECT * from `Category`")
+    @Query("SELECT * from `Category` ORDER BY name")
     public abstract LiveData<List<Category>> loadCategories();
 
     @Transaction
