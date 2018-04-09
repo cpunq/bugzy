@@ -11,7 +11,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -53,7 +52,7 @@ import butterknife.OnClick;
 public class CaseDetailsFragment extends Fragment implements Injectable {
     public static final String TAG = CaseDetailsFragment.class.getName();
     public interface CaseDetailsFragmentContract {
-        void openImageActivity(String imagePath);
+        void openImageActivity(View view, String imagePath);
     }
     private CaseDetailsFragmentViewModel mViewModel;
     private Case mCase;
@@ -158,7 +157,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
                 final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
                         .replaceAll("&amp;","&");
-                mParentActivity.openImageActivity(img_path);
+                mParentActivity.openImageActivity(view, img_path);
                 return;
             }
             // For other attachments leave things to browser

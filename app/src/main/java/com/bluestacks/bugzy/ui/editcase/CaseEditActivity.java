@@ -16,7 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -92,6 +94,7 @@ public class CaseEditActivity extends BaseActivity {
     public static final String PARAM_CASE_ID    = "case_id";
     public static final String PARAM_MODE       = "mode";
 
+    private String mToken;
     private int mAppliedTheme;
     private CaseEditViewModel mCaseEditViewModel;
     private int mMode;
@@ -236,7 +239,20 @@ public class CaseEditActivity extends BaseActivity {
         mAdapter.setOnAttachmentClickListener(new CaseEventsAdapter.OnAttachmentClickListener() {
             @Override
             public void onAttachmentClick(View v, CaseEvent event, int attachmentPosition) {
-                openImageActivity(event.getsAttachments().get(attachmentPosition).getUrl());
+                Attachment attachment = event.getsAttachments().get(attachmentPosition);
+                String filename = attachment.getFilename().toLowerCase();
+                if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
+                    final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
+                            .replaceAll("&amp;","&");
+                    openImageActivity(v, img_path);
+                    return;
+                }
+                // For other attachments leave things to browser
+                String url = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
+                        .replaceAll("&amp;","&");
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
         mEventsRecyclerView.setAdapter(mAdapter);
@@ -266,7 +282,7 @@ public class CaseEditActivity extends BaseActivity {
                     if (item.getTitle().equals("Remove")) {
                         mCaseEditViewModel.removeAttachment(position);
                     } else {
-                        openImageActivity(mAttachments.get(position).getUri().getPath());
+                        openImageActivity(view, mAttachments.get(position).getUri().getPath());
                     }
                     return true;
                 });
@@ -281,12 +297,15 @@ public class CaseEditActivity extends BaseActivity {
         });
     }
 
-    public void openImageActivity(String filePath) {
+    public void openImageActivity(View v, String filePath) {
+        Pair<View, String> bug = new Pair<>(v, "image");
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bug);
+        Intent intent = new Intent(this, FullScreenImageActivity.class);
         Bundle arg = new Bundle();
         arg.putString("img_path", filePath);
-        Intent i  = new Intent(this, FullScreenImageActivity.class);
-        i.putExtras(arg);
-        this.startActivity(i);
+        intent.putExtras(arg);
+        ActivityCompat.startActivity(this, intent, options.toBundle());
+
     }
 
     @OnClick(R.id.btn_attachments)
@@ -570,6 +589,7 @@ public class CaseEditActivity extends BaseActivity {
             }
         });
         mCaseEditViewModel.getToken().observe(this, token -> {
+            mToken = token;
             mAdapter.setToken(token);
             mAttachmentsAdapter.setToken(token);
         });

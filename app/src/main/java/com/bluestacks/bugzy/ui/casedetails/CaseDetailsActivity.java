@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.common.Const;
@@ -88,11 +92,13 @@ public class CaseDetailsActivity extends BaseActivity implements CaseDetailsFrag
     }
 
     @Override
-    public void openImageActivity(String imagePath) {
+    public void openImageActivity(View view, String imagePath) {
+        Pair<View, String> bug = new Pair<>(view, "image");
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, bug);
+        Intent intent = new Intent(this, FullScreenImageActivity.class);
         Bundle arg = new Bundle();
         arg.putString("img_path", imagePath);
-        Intent i  = new Intent(this, FullScreenImageActivity.class);
-        i.putExtras(arg);
-        this.startActivity(i);
+        intent.putExtras(arg);
+        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 }
