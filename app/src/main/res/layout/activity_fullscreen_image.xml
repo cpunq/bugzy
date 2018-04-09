@@ -7,18 +7,23 @@
              android:background="@android:color/background_dark">
 
 
-    <com.jsibbold.zoomage.ZoomageView
+    <com.github.chrisbanes.photoview.PhotoView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/background_dark"
             android:id="@+id/full_image"/>
 
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent"
-            android:layout_gravity="top">
-    </android.support.v7.widget.Toolbar>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:fitsSystemWindows="true"
+                  android:layout_gravity="top">
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/translucent_toolbar">
+
+        </android.support.v7.widget.Toolbar>
+    </LinearLayout>
 
 </FrameLayout>

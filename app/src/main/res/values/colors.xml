@@ -28,4 +28,6 @@
     <color name="dark3">#303030</color>
     <color name="dark34">#383838</color>
     <color name="dark4">#424242</color>
+
+    <color name="translucent_toolbar">#8B000000</color>
 </resources>

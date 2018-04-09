@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bumptech.glide.Glide;
-import com.jsibbold.zoomage.ZoomageView;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 public class FullScreenImageActivity extends BaseActivity {
 
     @BindView(R.id.full_image)
-    protected ZoomageView mFullImage;
+    protected PhotoView mFullImage;
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
