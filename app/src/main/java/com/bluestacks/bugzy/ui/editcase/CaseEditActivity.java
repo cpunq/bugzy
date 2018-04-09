@@ -607,6 +607,7 @@ public class CaseEditActivity extends BaseActivity {
                 Bundle args = new Bundle();
                 args.putString("bug_id", String.valueOf(status.data.getData().getCase().getIxBug()));
                 args.putSerializable("bug", status.data.getData().getCase());
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.putExtras(args);
                 startActivity(i);
                 finish();
