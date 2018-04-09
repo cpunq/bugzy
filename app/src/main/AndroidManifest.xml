@@ -55,7 +55,7 @@
         </activity>
         <activity
                 android:name=".ui.casedetails.FullScreenImageActivity"
-                android:theme="@style/AppTheme">
+                android:theme="@style/SplashTheme">
         </activity>
         <activity
                 android:name=".ui.search.SearchActivity"
