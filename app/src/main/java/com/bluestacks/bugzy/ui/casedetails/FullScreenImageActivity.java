@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
@@ -14,14 +16,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FullScreenImageActivity extends BaseActivity {
-
     @BindView(R.id.full_image)
-    protected PhotoView mFullImage;
+    protected PhotoView photoView;
 
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
 
     private String mImagePath;
+    private Animation mSlideUp;
+    private Animation mSlideDown;
+    private boolean mToolbarVisible = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,10 +34,32 @@ public class FullScreenImageActivity extends BaseActivity {
         ButterKnife.bind(this);
         setupToolbar();
 
+        mSlideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        mSlideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+
         mImagePath = getIntent().getExtras().getString("img_path");
         Glide.with(getApplicationContext())
                 .load(mImagePath)
-                .into(mFullImage);
+                .into(photoView);
+
+        mSlideUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                getSupportActionBar().hide();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        photoView.setOnPhotoTapListener((view, x, y) -> toggleToolbarVisibility());
     }
 
     private void setupToolbar() {
@@ -53,5 +79,13 @@ public class FullScreenImageActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    public void toggleToolbarVisibility() {
+        this.mToolbarVisible = !this.mToolbarVisible;
+        if (mToolbarVisible) {
+            mToolbar.startAnimation(mSlideDown);
+            getSupportActionBar().show();
+        } else {
+            mToolbar.startAnimation(mSlideUp);
+        }
+    }
 }
