@@ -284,14 +284,15 @@
                       android:textColor="?android:attr/textColorSecondary"
             />
 
-            <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:gravity="start"
-                    android:textColor="?attr/specialTextColor"
-                    android:id="@+id/et_tags"
-            />
+           <com.hootsuite.nachos.NachoTextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:textColor="?attr/specialTextColor"
+                   android:inputType="textMultiLine"
+                   android:gravity="start"
+                   style="?attr/editTextStyle"
+                   android:id="@+id/et_tags"
+           />
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"

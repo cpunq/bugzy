@@ -14,6 +14,7 @@ import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Resource;
 import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.model.Tag;
 import com.bluestacks.bugzy.data.remote.model.CaseEditRequest;
 import com.bluestacks.bugzy.data.remote.model.EditCaseData;
 import com.bluestacks.bugzy.data.remote.model.Response;
@@ -35,7 +36,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,6 +66,7 @@ public class CaseEditViewModel extends ViewModel {
     private LiveData<Resource<Response<EditCaseData>>> mEditCaseStatus;
     private MutableLiveData<List<Attachment>> mAttachmentsLiveData = new MutableLiveData<>();
     private SingleLiveEvent<Void> mScrollAttachmentsToLast = new SingleLiveEvent<>();
+    private LiveData<Resource<List<Tag>>> mTags;
 
     private LiveData<Resource<Case>> mCaseLiveData;
     private LiveData<String> mToken;
@@ -115,6 +116,7 @@ public class CaseEditViewModel extends ViewModel {
 
         mPersons = mRepository.getPeople(false);
         mPriorities =  mRepository.getPriorities(false);
+        mTags = mRepository.getTags(false);
         prepareRequiredMergeIns();
         prepareDefaultPropSelection();
     }
@@ -239,7 +241,7 @@ public class CaseEditViewModel extends ViewModel {
     }
 
     public <T> void updateSelectionForPropType(PropType propType, Resource<List<T>> data) {
-        if (mCaseLiveData.getValue().data == null) {
+        if (mCaseLiveData.getValue() == null || mCaseLiveData.getValue().data == null) {
             return;
         }
         if (data == null) {
@@ -322,44 +324,44 @@ public class CaseEditViewModel extends ViewModel {
 
     public void projectSelected(Project project, int position) {
         mCurrentProject.setValue(project);
-        if (mCaseLiveData.getValue().data != null && getProjects().getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && getProjects().getValue().data != null) {
             mUserPropSelection.put(PropType.PROJECT, getProjects().getValue().data.get(position).getId());
         }
     }
 
     public void categorySelected(Category cat, int pos) {
         mCurrentCategory.setValue(cat);
-        if (mCaseLiveData.getValue().data != null && getCategories().getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && getCategories().getValue().data != null) {
             mUserPropSelection.put(PropType.CATEGORY, getCategories().getValue().data.get(pos).getId());
         }
     }
 
     public void areaSelected(int position) {
-        if (mCaseLiveData.getValue().data != null &&  mAreas.getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null &&  mAreas.getValue().data != null) {
             mUserPropSelection.put(PropType.AREA, mAreas.getValue().data.get(position).getId());
         }
     }
 
     public void mileStoneSelected(int position) {
-        if (mCaseLiveData.getValue().data != null && mMilestones.getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && mMilestones.getValue().data != null) {
             mUserPropSelection.put(PropType.MILESTONE, mMilestones.getValue().data.get(position).getId());
         }
     }
 
     public void statusSelected(int p) {
-        if (mCaseLiveData.getValue().data != null && getStatuses().getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && getStatuses().getValue().data != null) {
             mUserPropSelection.put(PropType.STATUS, getStatuses().getValue().data.get(p).getId());
         }
     }
 
     public void assignedToSelected(int p) {
-        if (mCaseLiveData.getValue().data != null && getPersons().getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && getPersons().getValue().data != null) {
             mUserPropSelection.put(PropType.ASSIGNEDTO, getPersons().getValue().data.get(p).getPersonid());
         }
     }
 
     public void prioritySelected(int p) {
-        if (mCaseLiveData.getValue().data != null && getPriorities().getValue().data != null) {
+        if (mCaseLiveData.getValue() != null && mCaseLiveData.getValue().data != null && getPriorities().getValue().data != null) {
             mUserPropSelection.put(PropType.PRIORITY, getPriorities().getValue().data.get(p).getId());
         }
     }
@@ -489,7 +491,7 @@ public class CaseEditViewModel extends ViewModel {
     }
 
     void saveClicked(String title, Project project, Area area, Milestone milestone, Category category, CaseStatus caseStatus,
-                                                           Person p, Priority priority, String tags, String foundIn, String fixedIn,
+                                                           Person p, Priority priority, List<String> tags, String foundIn, String fixedIn,
                                                            String verifiedIn, String eventContent, String requiredMergeIn) {
         int mode = mParamsLiveData.getValue().first;
 
@@ -506,7 +508,7 @@ public class CaseEditViewModel extends ViewModel {
             request.setStatusId(caseStatus.getId());
             request.setPersonAssignedToId(p.getPersonid());
             request.setPriority(priority.getId());
-            request.setTags(Arrays.asList(tags.split(", ")));
+            request.setTags(tags);
         }
 
         request.setRequiredMergeIn(requiredMergeIn);
@@ -575,5 +577,9 @@ public class CaseEditViewModel extends ViewModel {
 
     public SingleLiveEvent<Void> getOpenPeopleSelector() {
         return mOpenPeopleSelector;
+    }
+
+    public LiveData<Resource<List<Tag>>> getTags() {
+        return mTags;
     }
 }

@@ -52,6 +52,7 @@ import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.model.Tag;
 import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
@@ -62,6 +63,8 @@ import com.bluestacks.bugzy.ui.common.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.commons.ImagePickerSheetView;
+import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.terminator.ChipTerminatorHandler;
 
 import static com.bluestacks.bugzy.ui.editcase.CaseEditViewModel.PropType.*;
 
@@ -105,6 +108,7 @@ public class CaseEditActivity extends BaseActivity {
     private LinearLayoutManager mAttachmentsLayoutManager;
     private ArrayAdapter<Area> mAreaArrayAdapter;
     final private List<Area> mAreas = new ArrayList<>();
+    private ArrayAdapter<Tag> mTagsAdapter;
     private ArrayAdapter<Milestone> mMilestoneArrayAdapter;
     final private List<Milestone> mMilestones = new ArrayList<>();
     private ArrayAdapter<String> mMergeInAdapter;
@@ -156,7 +160,7 @@ public class CaseEditActivity extends BaseActivity {
     TextView mTagsLabel;
 
     @BindView(R.id.et_tags)
-    EditText mTagsView;
+    NachoTextView mTagsView;
 
     @BindView(R.id.spinner_project)
     Spinner mProjectSpinner;
@@ -222,6 +226,7 @@ public class CaseEditActivity extends BaseActivity {
         subscribeToViewModel();
         setupEventsRecyclerView();
         setupAttachmentsRecyclerView();
+        setupTagsView();
     }
 
     private void setAppliedTheme() {
@@ -232,6 +237,11 @@ public class CaseEditActivity extends BaseActivity {
             // Light Theme
             setTheme(R.style.CaseEditTheme);
         }
+    }
+
+    private void setupTagsView() {
+        mTagsView.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
+        mTagsView.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
     }
 
     private void setupEventsRecyclerView() {
@@ -588,6 +598,9 @@ public class CaseEditActivity extends BaseActivity {
                 showStatuses(new ArrayList<CaseStatus>());
             }
         });
+        mCaseEditViewModel.getTags().observe(this, value -> {
+            showTags(value.data);
+        });
         mCaseEditViewModel.getToken().observe(this, token -> {
             mToken = token;
             mAdapter.setToken(token);
@@ -823,7 +836,7 @@ public class CaseEditActivity extends BaseActivity {
                 (CaseStatus)mStatusesSpinner.getSelectedItem(),
                 (Person)mAssignedToSpinner.getSelectedItem(),
                 (Priority)mPrioritySpinner.getSelectedItem(),
-                mTagsView.getText().toString(),
+                mTagsView.getChipValues(),
                 mFoundInView.getText().toString(),
                 mFixedInView.getText().toString(),
                 mVerifiedInView.getText().toString(),
@@ -853,12 +866,19 @@ public class CaseEditActivity extends BaseActivity {
         }
         StringBuilder tagStringBuilder = new StringBuilder();
         for (String tag : tags) {
-            tagStringBuilder.append(tag.toString() + ", ");
-        }
-        if (tags.size() > 0) {
-            tagStringBuilder.replace(tagStringBuilder.length() - 2, tagStringBuilder.length(), "");
+            tagStringBuilder.append(tag.toString() + " ");
         }
         return tagStringBuilder.toString();
+    }
+
+    public void showTags(List<Tag> tags) {
+        if (tags == null) {
+            return;
+        }
+        mTagsAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, tags);
+        mTagsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mTagsView.setAdapter(mTagsAdapter);
     }
 
     public void showMilestones(List<Milestone> milestones) {

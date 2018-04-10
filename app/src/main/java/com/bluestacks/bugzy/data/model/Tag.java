@@ -16,6 +16,11 @@ public class Tag {
     @SerializedName("cTagUses")
     private int uses;
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public int getId() {
         return id;
     }

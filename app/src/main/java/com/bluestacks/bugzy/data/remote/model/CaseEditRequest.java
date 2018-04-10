@@ -49,7 +49,7 @@ public class CaseEditRequest {
     @SerializedName( "ixCategory")
     int categoryId;
 
-    @SerializedName("tags")
+    @SerializedName("sTags")
     List<String> tags;
 
     @SerializedName("nFileCount")
