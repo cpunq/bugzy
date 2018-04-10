@@ -33,4 +33,11 @@ public class Project {
     public String toString() {
         return project;
     }
+
+    public static Project createfromCase(Case caseDetails) {
+        Project p = new Project();
+        p.setId(caseDetails.getProjectId());
+        p.setProject(caseDetails.getProjectName());
+        return p;
+    }
 }

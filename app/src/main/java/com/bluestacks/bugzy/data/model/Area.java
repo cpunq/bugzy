@@ -55,4 +55,13 @@ public class Area {
     public String toString() {
         return area;
     }
+
+    public static Area createfromCase(Case caseDetails) {
+        Area a = new Area();
+        a.setProjectId(caseDetails.getProjectId());
+        a.setProject(caseDetails.getProjectName());
+        a.setId(caseDetails.getProjectAreaId());
+        a.setArea(caseDetails.getProjectArea());
+        return a;
+    }
 }

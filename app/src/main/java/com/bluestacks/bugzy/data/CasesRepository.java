@@ -9,7 +9,12 @@ import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.BugzyTypeConverters;
 import com.bluestacks.bugzy.data.local.db.CaseDao;
 import com.bluestacks.bugzy.data.local.db.MiscDao;
+import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Attachment;
+import com.bluestacks.bugzy.data.model.Category;
+import com.bluestacks.bugzy.data.model.Milestone;
+import com.bluestacks.bugzy.data.model.Person;
+import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
@@ -325,7 +330,13 @@ public class CasesRepository {
             protected void saveCallResult(@NonNull Response<ListCasesData> item) {
                 db.beginTransaction();
                 try {
-                    mCaseDao.upsert(item.getData().getCases().get(0));
+                    // Saving project, area and milestone again in db, because they might be deleted
+                    Case caseDetails = item.getData().getCases().get(0);
+                    mMiscDao.insertProjects(Collections.singletonList(Project.createfromCase(caseDetails)));
+                    mMiscDao.insert(Collections.singletonList(Area.createfromCase(caseDetails)));
+                    mMiscDao.insertMilestones(Collections.singletonList(Milestone.createfromCase(caseDetails)));
+
+                    mCaseDao.upsert(caseDetails);
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();

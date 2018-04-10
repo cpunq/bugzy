@@ -106,7 +106,7 @@ public class CaseEditViewModel extends ViewModel {
             });
         });
         preparePrimaryButtonText();
-        mProjects = mRepository.getProjects(false);
+        mProjects = Transformations.switchMap(mCaseLiveData, val -> mRepository.getProjects(false));
         mAreas = Transformations.switchMap(mCurrentProject, val -> mRepository.getAreas(val.getId()));
         mMilestones = Transformations.switchMap(mCurrentProject, val -> mRepository.getMilestones(val.getId()));
         mCategories =  mRepository.getCategories(false);
@@ -322,14 +322,14 @@ public class CaseEditViewModel extends ViewModel {
 
     public void projectSelected(Project project, int position) {
         mCurrentProject.setValue(project);
-            if (mCaseLiveData.getValue().data != null) {
+        if (mCaseLiveData.getValue().data != null && getProjects().getValue().data != null) {
             mUserPropSelection.put(PropType.PROJECT, getProjects().getValue().data.get(position).getId());
         }
     }
 
     public void categorySelected(Category cat, int pos) {
         mCurrentCategory.setValue(cat);
-        if (mCaseLiveData.getValue().data != null) {
+        if (mCaseLiveData.getValue().data != null && getCategories().getValue().data != null) {
             mUserPropSelection.put(PropType.CATEGORY, getCategories().getValue().data.get(pos).getId());
         }
     }

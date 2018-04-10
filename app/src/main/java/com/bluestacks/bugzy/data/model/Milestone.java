@@ -55,4 +55,13 @@ public class Milestone {
     public String toString() {
         return ("".equals(project.trim()) ? "All Projects" : project) +": " + name;
     }
+
+    public static Milestone createfromCase(Case caseDetails) {
+        Milestone m = new Milestone();
+        m.setProjectId(caseDetails.getProjectId());
+        m.setProject(caseDetails.getProjectName());
+        m.setId(caseDetails.getFixForId());
+        m.setName(caseDetails.getFixFor());
+        return m;
+    }
 }
