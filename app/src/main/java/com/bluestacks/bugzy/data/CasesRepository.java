@@ -3,7 +3,6 @@ package com.bluestacks.bugzy.data;
 
 import com.google.gson.Gson;
 
-import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
 import com.bluestacks.bugzy.data.local.db.BugzyDb;
 import com.bluestacks.bugzy.data.local.db.BugzyTypeConverters;
@@ -11,9 +10,7 @@ import com.bluestacks.bugzy.data.local.db.CaseDao;
 import com.bluestacks.bugzy.data.local.db.MiscDao;
 import com.bluestacks.bugzy.data.model.Area;
 import com.bluestacks.bugzy.data.model.Attachment;
-import com.bluestacks.bugzy.data.model.Category;
 import com.bluestacks.bugzy.data.model.Milestone;
-import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchResultsResource;
@@ -34,11 +31,9 @@ import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
 import com.bluestacks.bugzy.ui.search.AbsentLiveData;
 import com.bluestacks.bugzy.utils.AppExecutors;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
