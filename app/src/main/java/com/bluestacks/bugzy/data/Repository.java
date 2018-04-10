@@ -16,6 +16,7 @@ import com.bluestacks.bugzy.data.model.Milestone;
 import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.Status;
+import com.bluestacks.bugzy.data.model.Tag;
 import com.bluestacks.bugzy.data.remote.ApiResponse;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
 import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
@@ -29,6 +30,7 @@ import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
 import com.bluestacks.bugzy.data.remote.model.ListPrioritiesData;
 import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
 import com.bluestacks.bugzy.data.remote.model.ListStatusesData;
+import com.bluestacks.bugzy.data.remote.model.ListTagsData;
 import com.bluestacks.bugzy.data.remote.model.Request;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.model.Filter;
@@ -58,7 +60,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import okhttp3.MultipartBody;
 import retrofit2.Call;
 
 @Singleton
@@ -81,6 +82,7 @@ public class Repository {
     private MediatorLiveData<Resource<List<Priority>>> mPrioritiesPublicLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<CaseStatus>>> mStatusesPublicLiveData = new MediatorLiveData<>();
     private MediatorLiveData<Resource<List<Category>>> mCategoriesPublicLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Resource<List<Tag>>> mTagsPublicLiveData = new MediatorLiveData<>();
 
 
     private LiveData<Resource<List<Area>>> mFetchAreasLiveData;
@@ -90,6 +92,7 @@ public class Repository {
     private LiveData<Resource<List<Priority>>> mFetchPrioritiesLiveData;
     private LiveData<Resource<List<Category>>> mFetchCategoriesLiveData;
     private LiveData<Resource<List<CaseStatus>>> mFetchStatusesLiveData;
+    private LiveData<Resource<List<Tag>>> mFetchTagsLiveData;
 
     @Inject
     Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository, HostSelectionInterceptor interceptor) {
@@ -702,5 +705,67 @@ public class Repository {
             mStatusesPublicLiveData.setValue(value);
         });
         return mStatusesPublicLiveData;
+    }
+
+    public LiveData<Resource<List<Tag>>> searchTags(String query) {
+        return Transformations.switchMap(getTags(false), alreasResource -> {
+            if(alreasResource.data == null || alreasResource.data.size() == 0) {
+                return alreasResource.asLiveData();
+            }
+            // If the tags are fetched, then get tags for this query
+            return Transformations.map(mMiscDao.searchTags(query), tagsForQuery -> {
+                return new Resource<List<Tag>>(alreasResource.status, tagsForQuery, alreasResource.message);
+            });
+        });
+    }
+
+    public LiveData<Resource<List<Tag>>> getTags(boolean mustFetch) {
+        if (mFetchTagsLiveData != null) {
+            if (mFetchTagsLiveData.getValue().status == Status.LOADING && !mustFetch) {
+                // If the content is in loading state and the request doesn't require us to fetch again
+                return mTagsPublicLiveData;
+            }
+            mTagsPublicLiveData.removeSource(mFetchTagsLiveData);
+            mFetchTagsLiveData = null;
+        }
+        mFetchTagsLiveData = new NetworkBoundResource<List<Tag>, Response<ListTagsData>>(mAppExecutors) {
+            @Override
+            protected void saveCallResult(@NonNull Response<ListTagsData> item) {
+                db.beginTransaction();
+                try {
+                    mMiscDao.insertTags(item.getData().getTags());
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable List<Tag> data) {
+                if (data == null || data.size() == 0) {
+                    return true;
+                }
+                if (mustFetch) {
+                    return true;
+                }
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<Tag>> loadFromDb() {
+                return mMiscDao.loadTags();
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<Response<ListTagsData>>> createCall() {
+                return mApiService.getTags(new Request(""));
+            }
+        }.asLiveData();
+        mTagsPublicLiveData.addSource(mFetchTagsLiveData, value -> {
+            mTagsPublicLiveData.setValue(value);
+        });
+        return mTagsPublicLiveData;
     }
 }

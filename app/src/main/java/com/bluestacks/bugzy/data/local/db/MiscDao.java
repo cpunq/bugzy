@@ -10,6 +10,7 @@ import com.bluestacks.bugzy.data.model.Priority;
 import com.bluestacks.bugzy.data.model.Project;
 import com.bluestacks.bugzy.data.model.RecentSearch;
 import com.bluestacks.bugzy.data.model.SearchSuggestion;
+import com.bluestacks.bugzy.data.model.Tag;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
@@ -39,6 +40,9 @@ public abstract class MiscDao {
     public abstract void insertPriorities(List<Priority> priorities);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertTags(List<Tag> tags);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertCategories(List<Category> categories);
 
     @Query("SELECT * from `Milestone`")
@@ -64,6 +68,12 @@ public abstract class MiscDao {
 
     @Query("SELECT * from `Priority`")
     public abstract LiveData<List<Priority>> loadPriorities();
+
+    @Query("SELECT * from `Tag`")
+    public abstract LiveData<List<Tag>> loadTags();
+
+    @Query("SELECT * from `Tag` WHERE name LIKE :query")
+    public abstract LiveData<List<Tag>> searchTags(String query);
 
     @Query("SELECT * from `Category` ORDER BY name")
     public abstract LiveData<List<Category>> loadCategories();

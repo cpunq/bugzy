@@ -11,6 +11,7 @@ import com.bluestacks.bugzy.data.remote.model.ListMilestonesData;
 import com.bluestacks.bugzy.data.remote.model.ListPrioritiesData;
 import com.bluestacks.bugzy.data.remote.model.ListProjectsData;
 import com.bluestacks.bugzy.data.remote.model.ListStatusesData;
+import com.bluestacks.bugzy.data.remote.model.ListTagsData;
 import com.bluestacks.bugzy.data.remote.model.Request;
 import com.bluestacks.bugzy.data.remote.model.Response;
 import com.bluestacks.bugzy.data.remote.model.FiltersRequest;
@@ -78,6 +79,9 @@ public interface FogbugzApiService {
 
     @POST("/api/listStatuses")
     LiveData<ApiResponse<Response<ListStatusesData>>> getStatuses(@Body Request request);
+
+    @POST("/api/listTags")
+    LiveData<ApiResponse<Response<ListTagsData>>> getTags(@Body Request request);
 
     @POST("/api/listCategories")
     LiveData<ApiResponse<Response<ListCategoriesData>>> getCategories(@Body Request request);
