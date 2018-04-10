@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -108,6 +109,7 @@ public class CaseEditActivity extends BaseActivity {
     final private List<Milestone> mMilestones = new ArrayList<>();
     private ArrayAdapter<String> mMergeInAdapter;
     final private List<String> mMergeIns = new ArrayList<>();
+    private Uri cameraImageUri = null;
 
     private List<Project> mProjects;
     private List<Category> mCategories;
@@ -451,8 +453,6 @@ public class CaseEditActivity extends BaseActivity {
         }
     }
 
-    private Uri cameraImageUri = null;
-
     public void genericError() {
         genericError(null);
     }
@@ -635,13 +635,33 @@ public class CaseEditActivity extends BaseActivity {
         });
 
         mCaseEditViewModel.getDefaultPropSelectionLiveData().observe(this, map -> {
-            mProjectSpinner.setSelection(map.get(PROJECT));
-            mAreaSpinner.setSelection(map.get(AREA));
-            mMileStoneSpinner.setSelection(map.get(MILESTONE));
-            mCategorySpinner.setSelection(map.get(CATEGORY));
-            mStatusesSpinner.setSelection(map.get(STATUS));
-            mAssignedToSpinner.setSelection(map.get(ASSIGNEDTO));
-            mPrioritySpinner.setSelection(map.get(PRIORITY));
+            Log.d(TAG, "Got update: ");
+            for (CaseEditViewModel.PropType key : map.keySet()) {
+                switch (key) {
+                    case PROJECT:
+                        mProjectSpinner.setSelection(map.get(PROJECT));
+                        break;
+                    case AREA:
+                        Log.d(TAG, "Got area update: " + map.get(AREA));
+                        mAreaSpinner.setSelection(map.get(AREA));
+                        break;
+                    case MILESTONE:
+                        mMileStoneSpinner.setSelection(map.get(MILESTONE));
+                        break;
+                    case CATEGORY:
+                        mCategorySpinner.setSelection(map.get(CATEGORY));
+                        break;
+                    case STATUS:
+                        mStatusesSpinner.setSelection(map.get(STATUS));
+                        break;
+                    case ASSIGNEDTO:
+                        mAssignedToSpinner.setSelection(map.get(ASSIGNEDTO));
+                        break;
+                    case PRIORITY:
+                        mPrioritySpinner.setSelection(map.get(PRIORITY));
+                        break;
+                }
+            }
         });
 
         mCaseEditViewModel.getUpdateRequiredMergeInSelection().observe(this, position -> {
@@ -928,7 +948,66 @@ public class CaseEditActivity extends BaseActivity {
         mProjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mCaseEditViewModel.projectSelected(mProjects.get(i));
+                mCaseEditViewModel.projectSelected(mProjects.get(i), i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        mAreaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.areaSelected(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        mMileStoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.mileStoneSelected(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        mStatusesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.statusSelected(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        mAssignedToSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.assignedToSelected(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        mPrioritySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mCaseEditViewModel.prioritySelected(i);
             }
 
             @Override
@@ -940,7 +1019,7 @@ public class CaseEditActivity extends BaseActivity {
         mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mCaseEditViewModel.categorySelected(mCategories.get(i));
+                mCaseEditViewModel.categorySelected(mCategories.get(i), i);
             }
 
             @Override
@@ -975,12 +1054,6 @@ public class CaseEditActivity extends BaseActivity {
             item.setEnabled(true);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        overridePendingTransition(R.anim.enter_slide_up, 0);
     }
 
     @Override
