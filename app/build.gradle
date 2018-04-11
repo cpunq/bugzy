@@ -12,10 +12,10 @@ apply plugin: 'io.fabric'
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
-def versionMajor = 0
-def versionMinor = 1
-def versionPatch = 0
-
+ext.versionMajor = 0
+ext.versionMinor = 1
+ext.versionPatch = 0
+ext.versionClassifier = ""
 
 repositories {
     maven {
@@ -42,8 +42,8 @@ android {
         applicationId "com.bluestacks.bugzy"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode project.ext.versionMajor * 10000 + project.ext.versionMinor * 100 + project.ext.versionPatch
+        versionName generateVersionName()
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
     }
     buildTypes {
@@ -71,6 +71,14 @@ def renameAPK(variant, defaultConfig, buildType) {
         def fileName = appName + "_v" + defaultConfig.versionName + "_" + buildType + ".apk"
         outputFileName = fileName
     }
+}
+
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    if (ext.versionClassifier != null && ext.versionClassifier != "") {
+        versionName += "-" + ext.versionClassifier
+    }
+    return versionName
 }
 
 dependencies {
