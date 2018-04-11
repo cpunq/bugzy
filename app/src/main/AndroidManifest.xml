@@ -74,6 +74,9 @@
                 android:label="@string/title_activity_case_edit"
                 android:theme="@style/CaseEditTheme">
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="015e661863053031d61b4d68e74c5c381e65433f" />
     </application>
 
 </manifest>

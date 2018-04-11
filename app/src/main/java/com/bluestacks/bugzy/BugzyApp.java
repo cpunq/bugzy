@@ -7,12 +7,15 @@ import android.text.TextUtils;
 
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
+import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
 import com.bluestacks.bugzy.di.AppInjector;
 import com.bluestacks.bugzy.di.component.DaggerNetComponent;
 import com.bluestacks.bugzy.di.module.AppModule;
 import com.bluestacks.bugzy.di.module.NetModule;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -58,6 +61,12 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
             mHostSelectionInterceptor.setHost(org+".manuscript.com");
         }
 
+        // Initialise Fabric
+        Fabric.with(this, new Crashlytics());
+        // log user in Crashlytics after DI
+        setCrashlyticsUserIfPresent();
+        Crashlytics.setString("organisation", org);
+
         // Set the applied theme
         int theme = mPrefsHelper.getInt(PrefsHelper.Key.THEME, -1);
         if (theme != -1) {
@@ -67,6 +76,20 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
             mAppliedTheme = new Random().nextBoolean() ? Const.DARK_THEME : Const.LIGHT_THEME;
             mPrefsHelper.setInt(PrefsHelper.Key.THEME, mAppliedTheme);
         }
+    }
+
+    private void setCrashlyticsUserIfPresent() {
+        if (TextUtils.isEmpty(mPrefsHelper.getString(PrefsHelper.Key.USER_EMAIL))) {
+            return;
+        }
+        Person me = new Person();
+        me.setFullname(mPrefsHelper.getString(PrefsHelper.Key.USER_NAME));
+        me.setPersonid(mPrefsHelper.getInt(PrefsHelper.Key.PERSON_ID));
+        me.setEmail(mPrefsHelper.getString(PrefsHelper.Key.USER_EMAIL));
+
+        Crashlytics.setUserIdentifier(me.getPersonid()+ "");
+        Crashlytics.setUserEmail(me.getEmail());
+        Crashlytics.setUserName(me.getFullname());
     }
 
     public int getAppliedTheme() {

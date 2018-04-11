@@ -7,6 +7,7 @@ import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.remote.model.FiltersData;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.utils.BugzyDataSyncService;
+import com.crashlytics.android.Crashlytics;
 
 import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
@@ -44,7 +45,15 @@ public class HomeViewModel extends ViewModel {
             }
             mFiltersState.setValue(filtersDataResource);
         });
-        mMyDetailsState.addSource(mRepository.getMyDetails(), personResource -> mMyDetailsState.setValue(personResource));
+        mMyDetailsState.addSource(mRepository.getMyDetails(), personResource -> {
+            // Setting CrashLytics user
+            if (personResource.status == Status.SUCCESS) {
+                Crashlytics.setUserIdentifier(personResource.data.getPersonid()+ "");
+                Crashlytics.setUserEmail(personResource.data.getEmail());
+                Crashlytics.setUserName(personResource.data.getFullname());
+            }
+            mMyDetailsState.setValue(personResource);
+        });
     }
 
     public void logout() {
