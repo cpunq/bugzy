@@ -14,8 +14,8 @@ def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim
 
 ext.versionMajor = 0
 ext.versionMinor = 1
-ext.versionPatch = 0
-ext.versionClassifier = ""
+ext.versionPatch = 1
+ext.versionClassifier = "beta1"
 
 repositories {
     maven {
