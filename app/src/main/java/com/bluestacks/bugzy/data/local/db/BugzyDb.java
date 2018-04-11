@@ -19,7 +19,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 
 @Database(entities = {Case.class, FilterCasesResult.class, Area.class, Milestone.class, Project.class, SearchSuggestion.class, Person.class,
-        Priority.class, Category.class, CaseStatus.class, RecentSearch.class, Tag.class}, version = 1)
+        Priority.class, Category.class, CaseStatus.class, RecentSearch.class, Tag.class}, version = 2)
 @TypeConverters(BugzyTypeConverters.class)
 public abstract class BugzyDb extends RoomDatabase {
     abstract public CaseDao caseDao();

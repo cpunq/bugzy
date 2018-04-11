@@ -36,6 +36,7 @@ public class AppModule {
     @Singleton
     BugzyDb provideDb(Application app, AppExecutors executors) {
         mDb = Room.databaseBuilder(app, BugzyDb.class, "bugzy.db")
+                .fallbackToDestructiveMigration()
                 .build();
         return mDb;
     }
