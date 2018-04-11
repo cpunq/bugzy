@@ -90,18 +90,23 @@ public interface FogbugzApiService {
     @POST("/api/edit")
     Call<Response<EditCaseData>> editCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
+    @Multipart
     @POST("/api/new")
     Call<Response<EditCaseData>> newCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
+    @Multipart
     @POST("/api/resolve")
     Call<Response<EditCaseData>> resolveCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
+    @Multipart
     @POST("/api/close")
     Call<Response<EditCaseData>> closeCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
+    @Multipart
     @POST("/api/reopen")
     Call<Response<EditCaseData>> reopenCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
+    @Multipart
     @POST("/api/reactivate")
     Call<Response<EditCaseData>> reactivateCase(@Part("request") CaseEditRequest request, @Part List<MultipartBody.Part> attachments);
 
