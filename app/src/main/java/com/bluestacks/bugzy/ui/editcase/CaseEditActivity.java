@@ -174,6 +174,9 @@ public class CaseEditActivity extends BaseActivity {
     @BindView(R.id.spinner_category)
     Spinner mCategorySpinner;
 
+    @BindView(R.id.ll_custom_params)
+    View mCustomParamsLayout;
+
     @BindView(R.id.spinner_assigned_to)
     Spinner mAssignedToSpinner;
 
@@ -246,12 +249,9 @@ public class CaseEditActivity extends BaseActivity {
     }
 
     private void hideCustomFieldsIfRequired() {
-        if ("bluestacks".equals(mCaseEditViewModel.getOrganisation())) {
+        if (!"bluestacks".equals(mCaseEditViewModel.getOrganisation())) {
             // Hiding bluestacks related custom fields
-            mFoundInView.setVisibility(View.GONE);
-            mFixedInView.setVisibility(View.GONE);
-            mVerifiedInView.setVisibility(View.GONE);
-            mRequiredMergeInSpinner.setVisibility(View.GONE);
+            mCustomParamsLayout.setVisibility(View.GONE);
         }
     }
 
