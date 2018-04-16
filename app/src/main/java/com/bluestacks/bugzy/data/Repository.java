@@ -197,6 +197,11 @@ public class Repository {
         return task.asLiveData();
     }
 
+    @Nullable
+    public String getUserOrganisation() {
+        return mPrefs.getString(PrefsHelper.Key.ORGANISATION, null);
+    }
+
     public LiveData<Resource<List<ClearBitCompanyInfo>>> getCompanyLogo(String query) {
         NetworkBoundTask<List<ClearBitCompanyInfo>> task =  new NetworkBoundTask<List<ClearBitCompanyInfo>>(mAppExecutors, mGson) {
             @Override

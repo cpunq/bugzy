@@ -227,6 +227,7 @@ public class CaseEditActivity extends BaseActivity {
         setupEventsRecyclerView();
         setupAttachmentsRecyclerView();
         setupTagsView();
+        hideCustomFieldsIfRequired();
     }
 
     private void setAppliedTheme() {
@@ -242,6 +243,16 @@ public class CaseEditActivity extends BaseActivity {
     private void setupTagsView() {
         mTagsView.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
         mTagsView.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
+    }
+
+    private void hideCustomFieldsIfRequired() {
+        if ("bluestacks".equals(mCaseEditViewModel.getOrganisation())) {
+            // Hiding bluestacks related custom fields
+            mFoundInView.setVisibility(View.GONE);
+            mFixedInView.setVisibility(View.GONE);
+            mVerifiedInView.setVisibility(View.GONE);
+            mRequiredMergeInSpinner.setVisibility(View.GONE);
+        }
     }
 
     private void setupEventsRecyclerView() {

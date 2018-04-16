@@ -30,6 +30,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
@@ -119,6 +120,11 @@ public class CaseEditViewModel extends ViewModel {
         mTags = mRepository.getTags(false);
         prepareRequiredMergeIns();
         prepareDefaultPropSelection();
+    }
+
+    @Nullable
+    public String getOrganisation() {
+        return mRepository.getUserOrganisation();
     }
 
     private void preparePrimaryButtonText() {
