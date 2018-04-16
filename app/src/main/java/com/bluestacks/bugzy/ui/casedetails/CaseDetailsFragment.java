@@ -96,8 +96,8 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
     @BindView(R.id.textview_milestone)
     protected TextView mMileStone;
 
-    @BindView(R.id.textview_required_merge)
-    protected TextView mRequiredMerge;
+    @BindView(R.id.textview_project)
+    protected TextView mProjectView;
 
     @BindView(R.id.button_assign)
     protected ImageButton mAssignButton;
@@ -353,7 +353,7 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
         mBugId.setText(String.valueOf(mCase.getIxBug()));
         mBugTitle.setText(String.valueOf(mCase.getTitle()));
         mAssignedTo.setText(String.valueOf(mCase.getPersonAssignedTo()));
-        mRequiredMerge.setText(mCase.getRequiredMergeIn());
+        mProjectView.setText(mCase.getProjectName());
 
         if (!TextUtils.isEmpty(mCase.getFixFor())) {
             mMileStone.setText(String.valueOf(mCase.getFixFor()));
