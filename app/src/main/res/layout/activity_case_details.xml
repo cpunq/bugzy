@@ -37,7 +37,6 @@
             android:tint="@android:color/white"
             app:fabSize="normal"
             app:elevation="4dp"
-            app:backgroundTint="@color/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay"
             android:src="@drawable/ic_edit_white_24px" />
 
