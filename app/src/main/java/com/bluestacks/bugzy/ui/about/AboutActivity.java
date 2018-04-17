@@ -1,7 +1,7 @@
 package com.bluestacks.bugzy.ui.about;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -10,11 +10,12 @@ import com.bluestacks.bugzy.BugzyApp;
 import com.bluestacks.bugzy.BuildConfig;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
+import com.bluestacks.bugzy.ui.BaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -29,6 +30,13 @@ public class AboutActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setupToolbar();
         setupViews();
+
+        if (savedInstanceState == null) {
+            AboutActivityFragment fragment = AboutActivityFragment.newInstance();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_frame, fragment);
+            ft.commit();
+        }
     }
 
     private void setAppliedTheme() {
@@ -38,11 +46,6 @@ public class AboutActivity extends AppCompatActivity {
             // Light Theme
             setTheme(R.style.AppTheme);
         }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     private void setupToolbar() {

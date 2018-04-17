@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.di.module;
 
+import com.bluestacks.bugzy.ui.about.AboutActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.casedetails.FullScreenImageActivity;
 import com.bluestacks.bugzy.ui.editcase.CaseEditActivity;
@@ -33,4 +34,7 @@ public abstract class ActivityBindingModule {
 
     @ContributesAndroidInjector(modules = FragmentBindingModule.class)
     abstract SplashActivity contributeSplashActivity();
+
+    @ContributesAndroidInjector(modules = FragmentBindingModule.class)
+    abstract AboutActivity contributAboutActivity();
 }

@@ -8,6 +8,7 @@ import com.bluestacks.bugzy.data.local.DatabaseHelper;
 import com.bluestacks.bugzy.data.local.InMemoryDb;
 import com.bluestacks.bugzy.data.remote.ConnectivityInterceptor;
 import com.bluestacks.bugzy.data.remote.FogbugzApiService;
+import com.bluestacks.bugzy.data.remote.GithubApiService;
 import com.bluestacks.bugzy.data.remote.HostSelectionInterceptor;
 import com.bluestacks.bugzy.data.remote.RequestInterceptor;
 import com.bluestacks.bugzy.data.local.PrefsHelper;
@@ -62,6 +63,17 @@ public class NetModule {
         return new HostSelectionInterceptor();
     }
 
+    @Provides @Singleton
+    GithubApiService provideGithubApiService(Gson gson) {
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("https://api.github.com")
+                .addCallAdapterFactory(new LiveDataCallAdapterFactory(gson))
+                .addConverterFactory(GsonConverterFactory.create(gson));;
+        Retrofit retrofit = builder.client(httpClientBuilder.build())
+                .build();
+        return retrofit.create(GithubApiService.class);
+    }
 
     @Provides @Singleton
     FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson, HostSelectionInterceptor hostSelectionInterceptor) {

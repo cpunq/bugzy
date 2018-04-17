@@ -1,5 +1,6 @@
 package com.bluestacks.bugzy.di.module;
 
+import com.bluestacks.bugzy.ui.about.AboutActivityFragment;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsFragment;
 import com.bluestacks.bugzy.ui.home.MyCasesFragment;
 import com.bluestacks.bugzy.ui.home.PeopleFragment;
@@ -33,4 +34,7 @@ public abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract KnowledgeFragment contributeKnowledgeFragment();
+
+    @ContributesAndroidInjector
+    abstract AboutActivityFragment contributeAboutFragment();
 }

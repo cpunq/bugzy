@@ -16,7 +16,8 @@ public class PrefsHelper {
         ACCESS_TOKEN,
         FILTERS_LIST,
         ORGANISATION,
-        THEME
+        THEME,
+        CONTRIBUTORS_JSON
     }
 
     public PrefsHelper(Context context) {
