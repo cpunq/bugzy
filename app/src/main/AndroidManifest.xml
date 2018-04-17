@@ -20,7 +20,6 @@
             android:largeHeap="true"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-
         <provider
                 android:name="android.support.v4.content.FileProvider"
                 android:authorities="com.bluestacks.bugzy.fileprovider"
@@ -28,7 +27,7 @@
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/file_paths"></meta-data>
+                    android:resource="@xml/file_paths"/>
         </provider>
 
         <activity
@@ -40,7 +39,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
                 android:name=".ui.login.LoginActivity"
                 android:theme="@style/LoginTheme">
@@ -74,9 +72,16 @@
                 android:label="@string/title_activity_case_edit"
                 android:theme="@style/CaseEditTheme">
         </activity>
+
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="015e661863053031d61b4d68e74c5c381e65433f" />
+                android:name="io.fabric.ApiKey"
+                android:value="015e661863053031d61b4d68e74c5c381e65433f"/>
+
+        <activity
+                android:name=".ui.about.AboutActivity"
+                android:label="@string/title_activity_about"
+                android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>

@@ -28,6 +28,7 @@ import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.data.model.Status;
 import com.bluestacks.bugzy.data.model.Case;
 import com.bluestacks.bugzy.data.model.Filter;
+import com.bluestacks.bugzy.ui.about.AboutActivity;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsActivity;
 import com.bluestacks.bugzy.ui.common.BugzyAlertDialog;
 import com.bluestacks.bugzy.ui.common.HomeActivityCallbacks;
@@ -399,9 +400,12 @@ public class HomeActivity extends BaseActivity
                 return true;
             }
             fragment = MyCasesFragment.getInstance(f.getFilter(), f.getText());
-        } else if (id == R.id.nav_logout){
+        } else if (id == R.id.nav_logout) {
             mLogoutDialog = getLogoutDialog();
             mLogoutDialog.show();
+            return true;
+        } else if (id == R.id.nav_about) {
+            startActivity(new Intent(this, AboutActivity.class));
             return true;
         } else {
             // Else do nothing as of now
