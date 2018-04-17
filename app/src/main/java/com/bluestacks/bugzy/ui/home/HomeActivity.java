@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bluestacks.bugzy.BugzyApp;
@@ -37,7 +38,8 @@ import com.bluestacks.bugzy.ui.BaseActivity;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.data.model.Person;
 import com.bluestacks.bugzy.ui.search.SearchActivity;
-import com.guardanis.imageloader.ImageRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -418,10 +420,11 @@ public class HomeActivity extends BaseActivity
     @UiThread
     protected void showUserInfo(Person p) {
         String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+p.getPersonid()+"&pg=pgAvatar&pxSize=140";
-        ImageRequest.create(navigationView.getHeaderView(0).findViewById(R.id.pro))
-                .setTargetUrl(img_path)
-                .setFadeTransition(150)
-                .execute();
+        ImageView iv = navigationView.getHeaderView(0).findViewById(R.id.pro);
+        Glide.with(this)
+                .load(img_path)
+                .apply(RequestOptions.circleCropTransform())
+                .into(iv);
         mUserName.setText(p.getFullname());
         mUserEmail.setText(p.getEmail());
     }
