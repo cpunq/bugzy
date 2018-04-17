@@ -86,7 +86,7 @@
         <item name="android:textColorSecondary">#7D7D7D</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
-      <style name="CaseEditTheme.Dark" parent="AppTheme.Dark">
+    <style name="CaseEditTheme.Dark" parent="AppTheme.Dark">
         <item name="toolbarStyle">@style/SearchActivityTheme.Toolbar</item>
         <item name="editTextStyle">@style/CaseEditTheme.EditTextStyle</item>
         <item name="android:buttonStyle">@style/AppTheme.PrimaryButton.Small</item>
@@ -240,15 +240,15 @@
         <item name="dialogMessageColor">#8FFFFFFF</item>
     </style>
 
-      <style name="CaseEditTheme.AlertDialog.Title" parent="android:Widget.TextView">
-          <item name="android:textSize">@dimen/title</item>
-          <item name="android:textStyle">bold</item>
-          <item name="android:textColor">?attr/dialogTitleColor</item>
+    <style name="CaseEditTheme.AlertDialog.Title" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/dialogTitleColor</item>
     </style>
 
-     <style name="CaseEditTheme.AlertDialog.Message" parent="android:Widget.TextView">
-          <item name="android:textSize">@dimen/title</item>
-         <item name="android:textColor">?attr/dialogMessageColor</item>
+    <style name="CaseEditTheme.AlertDialog.Message" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/title</item>
+        <item name="android:textColor">?attr/dialogMessageColor</item>
     </style>
 
 
