@@ -26,7 +26,8 @@
                       android:orientation="vertical"
                       android:layout_above="@+id/anchor"
                       android:background="#3A4750"
-                      android:padding="16dp"
+                      android:paddingTop="4dp"
+                      android:paddingBottom="16dp"
                       android:gravity="center_horizontal">
 
             <ImageView
@@ -47,7 +48,8 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:textSize="@dimen/body_1"
+                      android:textSize="@dimen/subheading"
+                      android:layout_marginTop="8dp"
                       android:id="@+id/tv_version"
             />
         </LinearLayout>
