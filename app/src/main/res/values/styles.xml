@@ -25,7 +25,7 @@
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <item name="dividerColor">#1F000000</item>
+        <item name="dividerColor">#1FFFFFFF</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -251,5 +251,14 @@
         <item name="android:textColor">?attr/dialogMessageColor</item>
     </style>
 
+    <style name="AboutButton" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textSize">@dimen/body_2</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:theme">@style/ColoredRippleOverlay</item>
+    </style>
 
+    <style name="ColoredRippleOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
 </resources>

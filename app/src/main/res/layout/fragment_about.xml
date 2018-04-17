@@ -5,7 +5,112 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:showIn="@layout/activity_about"
         tools:context="com.bluestacks.bugzy.ui.about.AboutActivityFragment">
 
+
+    <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="300dp"
+            android:descendantFocusability="blocksDescendants">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:text="@string/source_code_message"
+            />
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/button_github"
+                    style="@style/AboutButton"
+                    android:text="Github"
+            />
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/AboutButton"
+                    android:id="@+id/button_rate_us"
+                    android:text="Rate Us"
+            />
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/AboutButton"
+                    android:id="@+id/button_report_issue"
+                    android:text="Report Issue"
+            />
+
+
+            <ImageView android:layout_width="match_parent"
+                       android:layout_marginTop="8dp"
+                       android:layout_height="1dp"
+                       android:background="?attr/dividerColor"
+            />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_marginTop="16dp"
+                              android:gravity="center_vertical"
+                              android:orientation="horizontal">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/title"
+                            android:text="Contributors"
+                    />
+
+                    <ProgressBar android:layout_width="16dp"
+                                 android:layout_height="16dp"
+                                 android:layout_marginLeft="8dp"
+                                 android:visibility="gone"
+                                 android:id="@+id/progressbar_contributors"
+                    />
+
+                </LinearLayout>
+                <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="100dp"
+                        android:layout_marginTop="8dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                    <android.support.v7.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="-16dp"
+                            android:layout_marginRight="-16dp"
+                            android:id="@+id/recyclerview_contributors">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <com.bluestacks.bugzy.ui.common.ErrorView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/errorview_contributors">
+                    </com.bluestacks.bugzy.ui.common.ErrorView>
+
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.constraint.ConstraintLayout>
