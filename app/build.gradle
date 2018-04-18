@@ -34,17 +34,17 @@ repositories {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
-
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.bluestacks.bugzy"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode project.ext.versionMajor * 10000 + project.ext.versionMinor * 100 + project.ext.versionPatch
         versionName generateVersionName()
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -85,13 +85,16 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
 
-    // Android support libs
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation('com.mikepenz:aboutlibraries:6.0.8@aar') {
+        transitive = true
+    }
 
-    implementation 'com.android.support:cardview-v7:26.1.0'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:support-v4:26.1.0'
+    // Android support libs
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:cardview-v7:27.1.0'
+    implementation 'com.android.support:recyclerview-v7:27.1.0'
+    implementation 'com.android.support:design:27.1.0'
+    implementation 'com.android.support:support-v4:27.1.0'
 
     // for view injection
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -106,8 +109,8 @@ dependencies {
 
     // Android arch components
     // ViewModel and LiveData
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
 
     // Room
     implementation 'android.arch.persistence.room:runtime:1.1.0-beta1'
