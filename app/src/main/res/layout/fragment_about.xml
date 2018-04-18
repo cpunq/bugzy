@@ -28,7 +28,7 @@
                       android:layout_height="wrap_content"
                       android:layout_marginTop="8dp"
                       android:text="@string/bugzy_desc"
-                      android:textColor="@color/textColorPrimary"
+                      android:textColor="?android:attr/textColorPrimary"
                       android:textSize="@dimen/subheading"
                       android:autoLink="web"
             />
