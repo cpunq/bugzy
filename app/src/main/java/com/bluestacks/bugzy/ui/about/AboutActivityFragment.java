@@ -130,6 +130,13 @@ public class AboutActivityFragment extends Fragment implements Injectable {
         startActivity(i);
     }
 
+    @OnClick(R.id.button_libraries)
+    public void externalLibrariesClicked() {
+        AboutActivityViewModel viewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(AboutActivityViewModel.class);
+        viewModel.navigateToLibraries();
+    }
+
+
     public void showContributors(List<GitUser> contributors) {
         mContributors = contributors;
         showContent();

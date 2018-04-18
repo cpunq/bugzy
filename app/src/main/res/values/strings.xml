@@ -12,9 +12,12 @@
     <string name="title_activity_case_edit">CaseEditActivity</string>
     <string name="title_activity_about">AboutActivity</string>
 
-    <string name="source_code_message">All source code is licensed under MIT.
+    <string name="source_code_message">All source code is licensed under MIT License.
         If you create your own app (free or commercial) that uses some or all of the code from this codebase, you MUST attribute it to the original author, no exceptions.
         You can do so by displaying an "About" or "Licenses" screen in your app that links back to this GitHub
+    </string>
+    <string name="bugzy_desc">
+        Bugzy is an Open Source (Unofficial) android client for Fogbugz made by folks at BlueStacks\nIt uses Fogbugz APIs documented here https://api.manuscript.com
     </string>
     <!--page AND includes the following notice:-->
 </resources>

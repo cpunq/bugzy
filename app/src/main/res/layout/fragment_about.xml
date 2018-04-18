@@ -11,8 +11,7 @@
     <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxWidth="300dp"
-            android:descendantFocusability="blocksDescendants">
+            android:maxWidth="300dp">
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -22,10 +21,40 @@
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
                 android:paddingLeft="16dp"
+                android:descendantFocusability="blocksDescendants"
                 android:paddingRight="16dp">
 
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
+                      android:layout_marginTop="8dp"
+                      android:text="@string/bugzy_desc"
+                      android:autoLink="web"
+            />
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/AboutButton"
+                    android:id="@+id/button_rate_us"
+                    android:text="Rate Us"
+            />
+
+            <ImageView android:layout_width="match_parent"
+                       android:layout_marginTop="8dp"
+                       android:layout_height="1dp"
+                       android:background="?attr/dividerColor"
+            />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/title"
+                    android:layout_marginTop="16dp"
+                    android:text="Open source"
+            />
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="8dp"
                       android:text="@string/source_code_message"
             />
 
@@ -36,13 +65,6 @@
                     style="@style/AboutButton"
                     android:text="Github"
             />
-            <Button android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    style="@style/AboutButton"
-                    android:id="@+id/button_rate_us"
-                    android:text="Rate Us"
-            />
 
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,6 +73,15 @@
                     android:id="@+id/button_report_issue"
                     android:text="Report Issue"
             />
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/AboutButton"
+                    android:id="@+id/button_libraries"
+                    android:text="External Libraries"
+            />
+
 
 
             <ImageView android:layout_width="match_parent"
@@ -100,12 +131,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="-16dp"
                             android:layout_marginRight="-16dp"
+                            android:descendantFocusability="blocksDescendants"
                             android:id="@+id/recyclerview_contributors">
                     </android.support.v7.widget.RecyclerView>
 
                     <com.bluestacks.bugzy.ui.common.ErrorView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+
                             android:id="@+id/errorview_contributors">
                     </com.bluestacks.bugzy.ui.common.ErrorView>
 

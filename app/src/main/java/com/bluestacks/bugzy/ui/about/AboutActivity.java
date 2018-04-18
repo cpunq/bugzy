@@ -1,7 +1,10 @@
 package com.bluestacks.bugzy.ui.about;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -13,11 +16,19 @@ import com.bluestacks.bugzy.BuildConfig;
 import com.bluestacks.bugzy.R;
 import com.bluestacks.bugzy.common.Const;
 import com.bluestacks.bugzy.ui.BaseActivity;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+import com.mikepenz.aboutlibraries.ui.LibsSupportFragment;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AboutActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
+    private AboutActivityViewModel mViewModel;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
 
     @BindView(R.id.appbar_layout)
     AppBarLayout mAppBarLayout;
@@ -42,6 +53,7 @@ public class AboutActivity extends BaseActivity implements AppBarLayout.OnOffset
         ButterKnife.bind(this);
         setupToolbar();
         setupViews();
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(AboutActivityViewModel.class);
 
         if (savedInstanceState == null) {
             AboutActivityFragment fragment = AboutActivityFragment.newInstance();
@@ -49,6 +61,7 @@ public class AboutActivity extends BaseActivity implements AppBarLayout.OnOffset
                     .replace(R.id.container_frame, fragment);
             ft.commit();
         }
+        subscribeToViewModel();
     }
 
     private void setAppliedTheme() {
@@ -58,6 +71,16 @@ public class AboutActivity extends BaseActivity implements AppBarLayout.OnOffset
             // Light Theme
             setTheme(R.style.AppTheme);
         }
+    }
+
+    public void subscribeToViewModel() {
+        mViewModel.getNavigateToLibrariesCommand().observe(this, v -> {
+            LibsSupportFragment fragment = new LibsBuilder()
+                    .supportFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction().replace(R.id.container_frame, fragment);
+            ft.addToBackStack(null);
+            ft.commit();
+        });
     }
 
     private void setupToolbar() {

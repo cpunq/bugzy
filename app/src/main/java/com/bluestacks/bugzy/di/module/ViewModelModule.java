@@ -1,6 +1,7 @@
 package com.bluestacks.bugzy.di.module;
 
 
+import com.bluestacks.bugzy.ui.about.AboutActivityViewModel;
 import com.bluestacks.bugzy.ui.about.AboutFragmentViewModel;
 import com.bluestacks.bugzy.ui.casedetails.CaseDetailsFragmentViewModel;
 import com.bluestacks.bugzy.ui.editcase.CaseEditViewModel;
@@ -66,6 +67,11 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AboutFragmentViewModel.class)
     abstract ViewModel bindAboutFragmentViewModel(AboutFragmentViewModel aboutFragmentViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AboutActivityViewModel.class)
+    abstract ViewModel bindAboutActivityViewModel(AboutActivityViewModel aboutActivityViewModel);
 
 
     @Binds
