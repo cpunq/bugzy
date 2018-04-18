@@ -28,6 +28,8 @@
                       android:layout_height="wrap_content"
                       android:layout_marginTop="8dp"
                       android:text="@string/bugzy_desc"
+                      android:textColor="@color/textColorPrimary"
+                      android:textSize="@dimen/subheading"
                       android:autoLink="web"
             />
             <Button android:layout_width="wrap_content"
@@ -49,6 +51,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/title"
                     android:layout_marginTop="16dp"
+                    android:textColor="?attr/specialTextColor"
                     android:text="Open source"
             />
 
@@ -107,6 +110,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/title"
+                            android:textColor="?attr/specialTextColor"
                             android:text="Contributors"
                     />
 

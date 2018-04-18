@@ -17,7 +17,7 @@
         You can do so by displaying an "About" or "Licenses" screen in your app that links back to this GitHub
     </string>
     <string name="bugzy_desc">
-        Bugzy is an Open Source (Unofficial) android client for Fogbugz made by folks at BlueStacks\nIt uses Fogbugz APIs documented here https://api.manuscript.com
+        Bugzy is an Open Source (Unofficial) android client for Fogbugz made by folks at BlueStacks.\nIt uses Fogbugz APIs documented here https://api.manuscript.com
     </string>
     <!--page AND includes the following notice:-->
 </resources>
