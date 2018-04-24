@@ -79,7 +79,7 @@ public class NetModule {
     FogbugzApiService provideFogBugzService(Application application, PrefsHelper prefsHelper, Gson gson, HostSelectionInterceptor hostSelectionInterceptor) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.writeTimeout(2, TimeUnit.MINUTES);
-        httpClient.readTimeout(2, TimeUnit.DAYS.MINUTES);
+        httpClient.readTimeout(2, TimeUnit.MINUTES);
 
 
         Retrofit.Builder builder = new Retrofit.Builder()
