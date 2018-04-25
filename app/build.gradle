@@ -47,7 +47,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.bluestacks.bugzy"
+        applicationId "in.bugzy"
         minSdkVersion 16
         targetSdkVersion 27
         versionCode project.ext.versionMajor * 10000 + project.ext.versionMinor * 100 + project.ext.versionPatch

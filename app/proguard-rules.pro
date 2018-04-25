@@ -50,8 +50,8 @@
 #}
 
 # keeping model classes
--keep class com.bluestacks.bugzy.data.model.** { <fields>; }
--keep class com.bluestacks.bugzy.data.remote.model.** { <fields>; }
+-keep class in.bugzy.data.model.** { <fields>; }
+-keep class in.bugzy.data.remote.model.** { <fields>; }
 
 
 -keep class com.google.gson.examples.android.model.** { *; }

@@ -11,14 +11,14 @@
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:id="@+id/container_frame"
-                 tools:context="com.bluestacks.bugzy.ui.home.HomeActivity">
+                 tools:context="in.bugzy.ui.home.HomeActivity">
     </FrameLayout>
 
-    <com.bluestacks.bugzy.ui.common.ErrorView
+    <in.bugzy.ui.common.ErrorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/error_view">
-    </com.bluestacks.bugzy.ui.common.ErrorView>
+    </in.bugzy.ui.common.ErrorView>
 
 
 </FrameLayout>

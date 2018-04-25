@@ -44,7 +44,7 @@
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/open_sans_semibold"/>
 
-    <com.bluestacks.bugzy.ui.common.NonSwipeableViewPager
+    <in.bugzy.ui.common.NonSwipeableViewPager
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-16dp"
@@ -52,7 +52,7 @@
             android:id="@+id/view_pager"
             android:layout_above="@id/next_button">
 
-    </com.bluestacks.bugzy.ui.common.NonSwipeableViewPager>
+    </in.bugzy.ui.common.NonSwipeableViewPager>
 
     <View android:layout_width="0px"
           android:layout_height="0px"

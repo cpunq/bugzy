@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:showIn="@layout/activity_case_edit"
-        tools:context="com.bluestacks.bugzy.ui.editcase.CaseEditActivity">
+        tools:context="in.bugzy.ui.editcase.CaseEditActivity">
 
    <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"

@@ -40,10 +40,10 @@
             android:clipToPadding="false"
             android:scrollbars="vertical"/>
 
-    <com.bluestacks.bugzy.ui.common.ErrorView
+    <in.bugzy.ui.common.ErrorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
             android:id="@+id/viewError">
-    </com.bluestacks.bugzy.ui.common.ErrorView>
+    </in.bugzy.ui.common.ErrorView>
 </RelativeLayout>

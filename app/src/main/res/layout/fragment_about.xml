@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.bluestacks.bugzy.ui.about.AboutActivityFragment">
+        tools:context="in.bugzy.ui.about.AboutActivityFragment">
 
 
     <android.support.v4.widget.NestedScrollView
@@ -139,12 +139,12 @@
                             android:id="@+id/recyclerview_contributors">
                     </android.support.v7.widget.RecyclerView>
 
-                    <com.bluestacks.bugzy.ui.common.ErrorView
+                    <in.bugzy.ui.common.ErrorView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
 
                             android:id="@+id/errorview_contributors">
-                    </com.bluestacks.bugzy.ui.common.ErrorView>
+                    </in.bugzy.ui.common.ErrorView>
 
                 </FrameLayout>
             </LinearLayout>
