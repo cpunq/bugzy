@@ -112,6 +112,10 @@ public class AboutActivityFragment extends Fragment implements Injectable {
 
     @OnClick(R.id.button_rate_us)
     public void rateUsClicked() {
+        String url = "https://play.google.com/store/apps/details?id=in.bugzy";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     @OnClick(R.id.button_github)
