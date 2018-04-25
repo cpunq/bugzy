@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -76,6 +75,7 @@ public class AboutActivity extends BaseActivity implements AppBarLayout.OnOffset
     public void subscribeToViewModel() {
         mViewModel.getNavigateToLibrariesCommand().observe(this, v -> {
             LibsSupportFragment fragment = new LibsBuilder()
+                    .withFields(R.string.class.getFields())
                     .supportFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction().replace(R.id.container_frame, fragment);
             ft.addToBackStack(null);
