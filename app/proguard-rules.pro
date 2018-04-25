@@ -40,6 +40,15 @@
 -keepattributes LineNumberTable,SourceFile
 
 
+# For AboutLibraries proper functioning
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+#-keepclasseswithmembers class **.R$* {
+#    public static final int define_*;
+#}
+
 # keeping model classes
 -keep class com.bluestacks.bugzy.data.model.** { <fields>; }
 -keep class com.bluestacks.bugzy.data.remote.model.** { <fields>; }
