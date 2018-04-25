@@ -37,6 +37,15 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
 
+    signingConfigs {
+        release {
+            storeFile file("./bugzy_upload_key")
+            storePassword "bugbug"
+            keyAlias "bugzy"
+            keyPassword "bugbug"
+            v2SigningEnabled false
+        }
+    }
     defaultConfig {
         applicationId "com.bluestacks.bugzy"
         minSdkVersion 16
@@ -52,6 +61,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
