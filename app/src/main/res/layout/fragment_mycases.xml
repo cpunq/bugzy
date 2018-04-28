@@ -2,7 +2,7 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -16,6 +16,9 @@
                 android:id="@+id/recyclerViewSorting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_sort_add"
+                tools:orientation="horizontal"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:paddingLeft="16dp"
@@ -34,6 +37,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:listitem="@layout/bug_item_row"
             android:layout_below="@+id/containerSorting"
             android:layout_alignParentBottom="true"
             android:clipChildren="false"

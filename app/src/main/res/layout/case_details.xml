@@ -14,6 +14,8 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:listitem="@layout/bug_event_row"
+            tools:paddingTop="230dp"
             android:background="?attr/secondaryWindowBackground"
             android:descendantFocusability="blocksDescendants"
             android:clipChildren="false"
@@ -54,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/specialTextColor"
-                    android:text="2345"
+                    tools:text="2345"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
                     android:textSize="30sp" />
@@ -80,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textview_bug_id"
                     android:layout_marginTop="8dp"
-                    android:text="This is a sample bug title"
+                    tools:text="This is a sample bug title"
                     android:textSize="18sp" />
 
             <TextView
@@ -89,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textview_bug_title"
                     android:layout_marginTop="10dp"
-                    android:text=""
+                    tools:text=""
                     android:textColor="?attr/headerTextColor"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -123,6 +125,7 @@
                         android:id="@+id/textview_assigned_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        tools:text="Gaurav Bhola"
                         android:textStyle="bold" />
             </LinearLayout>
 
@@ -152,6 +155,7 @@
                         android:id="@+id/textview_project"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        tools:text="BlueStacks 3"
                         android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

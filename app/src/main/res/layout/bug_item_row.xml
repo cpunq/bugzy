@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -27,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="BUG ID"
+                tools:text="13786"
                 android:textColor="?attr/specialTextColor"
                 android:textSize="@dimen/title"
                 android:textStyle="bold" />
@@ -38,6 +39,7 @@
                   android:textSize="@dimen/subheading"
                   android:ellipsize="end"
                   android:maxLines="2"
+                  tools:text="@tools:sample/lorem/random"
                   style="@style/AppTheme.TextView.Primary"
         />
         <TextView
@@ -45,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:id="@+id/item_footer"
+                tools:text="Assigned to: Gaurav Bhola"
                 style="@style/AppTheme.TextView.Secondary"/>
     </LinearLayout>
 </LinearLayout>

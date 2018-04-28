@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -14,6 +15,7 @@
         android:id="@+id/iv_person"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        tools:src="@tools:sample/avatars"
         android:src="@android:drawable/sym_def_app_icon" />
 
 
@@ -30,6 +32,7 @@
                   android:textSize="@dimen/subheading"
                   android:ellipsize="end"
                   android:maxLines="2"
+                  tools:text="@tools:sample/full_names"
                   style="@style/AppTheme.TextView.Primary"
         />
 
@@ -38,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:id="@+id/tv_email"
+                tools:text="@sample/emails"
                 style="@style/AppTheme.TextView.Secondary"/>
 
     </LinearLayout>
