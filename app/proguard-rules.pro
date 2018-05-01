@@ -35,6 +35,9 @@
     @retrofit.http.* <methods>;
 }
 
+-keep class com.gauravbhola.ripplepulsebackground.RipplePulseLayout$RippleView { *; }
+
+
 # Preserve the line number information for
 # debugging stack traces.
 -keepattributes LineNumberTable,SourceFile
