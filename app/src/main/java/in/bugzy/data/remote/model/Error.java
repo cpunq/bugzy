@@ -5,6 +5,16 @@ public class Error {
    protected String detail;
    protected String code;
 
+   public Error() {
+
+   }
+
+   public Error(String message, String detail, String code) {
+      this.message = message;
+      this.detail = detail;
+      this.code = code;
+   }
+
    public String getMessage() {
       return message;
    }
