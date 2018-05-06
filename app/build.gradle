@@ -54,6 +54,11 @@ android {
         versionName generateVersionName()
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         setProperty("archivesBaseName", appName + "_v" + versionName )
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         debug {
