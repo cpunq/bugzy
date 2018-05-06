@@ -4,8 +4,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import in.bugzy.data.local.DatabaseHelper;
-import in.bugzy.data.local.InMemoryDb;
 import in.bugzy.data.remote.ConnectivityInterceptor;
 import in.bugzy.data.remote.FogbugzApiService;
 import in.bugzy.data.remote.GithubApiService;
