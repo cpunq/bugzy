@@ -51,12 +51,6 @@ public class NetModule {
 
     @Provides
     @Singleton
-    DatabaseHelper provideDatabaseHelper() {
-        return new InMemoryDb();
-    }
-
-    @Provides
-    @Singleton
     HostSelectionInterceptor provideHostSelectionInterceptor() {
         return new HostSelectionInterceptor();
     }
