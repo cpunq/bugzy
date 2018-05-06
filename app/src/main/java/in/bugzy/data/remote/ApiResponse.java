@@ -1,6 +1,7 @@
 package in.bugzy.data.remote;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import in.bugzy.common.Const;
 import in.bugzy.data.remote.model.Error;
@@ -62,6 +63,11 @@ public class ApiResponse<T> {
                     body = null;
 //                    Timber.e(ignored, "error while parsing response");
                     //network error
+                } catch (JsonSyntaxException syntaxException) {
+                    // If theres a syntax exception lets treat it as a network exception as of now
+                    errorMessage = "Oops! We can't reach Fogbugz";
+                    fbCode = Const.NETWORK_ERROR;
+                    body = null;
                 }
             } else {
                 errorMessage = "Oops! We can't reach Fogbugz";
