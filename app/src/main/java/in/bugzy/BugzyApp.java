@@ -3,6 +3,7 @@ package in.bugzy;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
+import android.os.StrictMode;
 import android.text.TextUtils;
 
 import in.bugzy.common.Const;
@@ -75,6 +76,19 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
             // Randomly generate a theme
             mAppliedTheme = new Random().nextBoolean() ? Const.DARK_THEME : Const.LIGHT_THEME;
             mPrefsHelper.setInt(PrefsHelper.Key.THEME, mAppliedTheme);
+        }
+
+        // Set strictmode thread policy for debug builds
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()
+                    .detectCustomSlowCalls()  // Custom slow calls, make use of it :)
+                    .penaltyLog()
+//                    .penaltyDeath()
+                    .build()
+            );
         }
     }
 
