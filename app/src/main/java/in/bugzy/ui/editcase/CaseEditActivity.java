@@ -839,6 +839,7 @@ public class CaseEditActivity extends BaseActivity {
 
     @OnClick(R.id.btn_save)
     void onSaveClicked() {
+        Object requiredMergeInSelection = mRequiredMergeInSpinner.getSelectedItem();
         mCaseEditViewModel.saveClicked(mCaseTitle.getText().toString(),
                 (Project)mProjectSpinner.getSelectedItem(),
                 (Area)mAreaSpinner.getSelectedItem(),
@@ -852,7 +853,7 @@ public class CaseEditActivity extends BaseActivity {
                 mFixedInView.getText().toString(),
                 mVerifiedInView.getText().toString(),
                 mEventContent.getText().toString(),
-                mRequiredMergeInSpinner.getSelectedItem().toString()
+                requiredMergeInSelection != null ? requiredMergeInSelection.toString() : ""
         );
     }
 
