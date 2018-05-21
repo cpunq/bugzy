@@ -1,6 +1,9 @@
 package in.bugzy.data.remote;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,24 +27,29 @@ import android.support.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import in.bugzy.data.model.Resource;
+import in.bugzy.data.remote.model.Error;
 import in.bugzy.util.ApiUtil;
+import in.bugzy.util.CountingAppExecutors;
 import in.bugzy.util.InstantAppExecutors;
 import in.bugzy.utils.AppExecutors;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 @RunWith(Parameterized.class)
 public class NetworkBoundResourceTest {
-    private final boolean useRealExecutors;
-
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
+    private Gson mGson = new GsonBuilder().create();
 
     private NetworkBoundResource<Foo, Foo> networkBoundResource;
+    private CountingAppExecutors mCountingAppExecutors;
 
     private Function<Foo, Void> saveCallResult;
     private Function<Foo, Boolean> shouldFetch;
@@ -49,6 +57,7 @@ public class NetworkBoundResourceTest {
 
     private MutableLiveData<Foo> dbData = new MutableLiveData<>();
     private AtomicBoolean fetchedOnce = new AtomicBoolean(false);
+    private final boolean useRealExecutors;
 
     @Parameterized.Parameters
     public static List<Boolean> param() {
@@ -56,12 +65,18 @@ public class NetworkBoundResourceTest {
     }
 
     public NetworkBoundResourceTest(boolean realExecutors) {
-        useRealExecutors = false;
+        useRealExecutors = realExecutors;
+        if (useRealExecutors){
+            mCountingAppExecutors = new CountingAppExecutors();
+        }
     }
 
     @Before
     public void init() {
-        AppExecutors appExecutors =  new InstantAppExecutors();
+        AppExecutors appExecutors = useRealExecutors
+                ? mCountingAppExecutors.getAppExecutors()
+                : new InstantAppExecutors();
+
         networkBoundResource = new NetworkBoundResource<Foo, Foo>(appExecutors) {
             @Override
             protected void saveCallResult(@NonNull Foo item) {
@@ -89,7 +104,7 @@ public class NetworkBoundResourceTest {
 
     @Test
     public void basicFromNetwork() {
-        AtomicReference<Foo> saved = new AtomicReference<>();
+        AtomicReference<Foo> saved = new AtomicReference<Foo>();
         shouldFetch = Objects::isNull;
         Foo fetchedDbValue = new Foo(1);
         saveCallResult = foo -> {
@@ -101,15 +116,55 @@ public class NetworkBoundResourceTest {
         createCall = (aVoid) -> ApiUtil.createCall(Response.success(networkResult));
         Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
         networkBoundResource.asLiveData().observeForever(observer);
-//        drain();
+
+        drain();
         verify(observer).onChanged(Resource.loading(null));
         reset(observer);
         dbData.setValue(null);
-//        drain();
+        drain();
         assertThat(saved.get(), is(networkResult));
         verify(observer).onChanged(Resource.success(fetchedDbValue));
 
+    }
 
+    @Test
+    public void failureFromNetwork() {
+        AtomicBoolean saved = new AtomicBoolean();
+        shouldFetch = Objects::isNull;
+        Foo fetchedDbValue = new Foo(1);
+        saveCallResult = foo -> {
+            saved.set(true);
+            dbData.setValue(fetchedDbValue);
+            return null;
+        };
+        Error k = new Error("foo", null, "11");
+        String content = "{\"errors\"=["+ mGson.toJson(k) +"]}";
+        ResponseBody body = ResponseBody.create(MediaType.parse("application/json"),content);
+        createCall = (aVoid) -> ApiUtil.createCall(Response.error(500, body));
+
+
+        Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
+        networkBoundResource.asLiveData().observeForever(observer);
+
+        drain();
+        verify(observer).onChanged(Resource.loading(null));
+        reset(observer);
+        dbData.setValue(null);
+        drain();
+        assertThat(saved.get(), is(false));
+        verify(observer).onChanged(Resource.error("foo", null));
+
+    }
+
+    public void drain() {
+        if (!useRealExecutors) {
+            return;
+        }
+        try {
+            mCountingAppExecutors.drainTasks(1, TimeUnit.SECONDS);
+        } catch (Throwable t) {
+            throw new AssertionError(t);
+        }
     }
 
     static class Foo {
