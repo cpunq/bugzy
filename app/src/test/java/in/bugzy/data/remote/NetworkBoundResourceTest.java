@@ -222,10 +222,6 @@ public class NetworkBoundResourceTest {
         dbData.setValue(dbFoo2);
         drain();
         verify(observer).onChanged(Resource.error("Oops! We can't reach Fogbugz", dbFoo2));
-
-        assertThat(saved.get(), is(false));
-        dbData.setValue(dbFoo2);
-
         verifyNoMoreInteractions(observer);
     }
 
