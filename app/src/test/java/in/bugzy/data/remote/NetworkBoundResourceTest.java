@@ -15,6 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -146,6 +147,7 @@ public class NetworkBoundResourceTest {
         Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
         networkBoundResource.asLiveData().observeForever(observer);
 
+        // Drain always before verifying
         drain();
         verify(observer).onChanged(Resource.loading(null));
         reset(observer);
@@ -153,7 +155,78 @@ public class NetworkBoundResourceTest {
         drain();
         assertThat(saved.get(), is(false));
         verify(observer).onChanged(Resource.error("foo", null));
+    }
 
+    @Test
+    public void dbSuccessWithoutNetwork() {
+        AtomicBoolean saved = new AtomicBoolean();
+        shouldFetch = Objects::isNull;
+        saveCallResult = foo -> {
+            saved.set(true);
+            return null;
+        };
+
+        Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
+        networkBoundResource.asLiveData().observeForever(observer);
+
+        drain();
+        verify(observer).onChanged(Resource.loading(null));
+        reset(observer);
+
+        Foo dbFoo = new Foo(1);
+        dbData.setValue(dbFoo);
+
+        drain();
+        verify(observer).onChanged(Resource.success(dbFoo));
+        assertThat(saved.get(), is(false));
+
+        Foo dbFoo2 = new Foo(2);
+        dbData.setValue(dbFoo2);
+
+        drain();
+        verify(observer).onChanged(Resource.success(dbFoo2));
+
+        verifyNoMoreInteractions(observer);
+    }
+
+    @Test
+    public void dbSuccessWithFetchFailure() {
+        Foo dbFoo = new Foo(1);
+        AtomicBoolean saved = new AtomicBoolean();
+        shouldFetch = (foo) -> foo == dbFoo;
+        saveCallResult = foo -> {
+            saved.set(true);
+            return null;
+        };
+
+        Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
+        networkBoundResource.asLiveData().observeForever(observer);
+        MutableLiveData<ApiResponse<Foo>> apiResponseLiveData = new MutableLiveData();
+
+        ResponseBody body = ResponseBody.create(MediaType.parse("text/html"), "error");
+        createCall = (aVoid) -> apiResponseLiveData;
+
+        drain();
+        verify(observer).onChanged(Resource.loading(null));
+        reset(observer);
+
+        dbData.setValue(dbFoo);
+        drain();
+        verify(observer).onChanged(Resource.loading(dbFoo));
+
+        apiResponseLiveData.setValue(new ApiResponse<>(Response.error(400, body), mGson));
+        drain();
+        verify(observer).onChanged(Resource.error("Oops! We can't reach Fogbugz", dbFoo));
+
+        Foo dbFoo2 = new Foo(2);
+        dbData.setValue(dbFoo2);
+        drain();
+        verify(observer).onChanged(Resource.error("Oops! We can't reach Fogbugz", dbFoo2));
+
+        assertThat(saved.get(), is(false));
+        dbData.setValue(dbFoo2);
+
+        verifyNoMoreInteractions(observer);
     }
 
     public void drain() {
