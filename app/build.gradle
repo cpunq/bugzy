@@ -12,10 +12,10 @@ apply plugin: 'io.fabric'
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
-ext.versionMajor = 0
-ext.versionMinor = 1
-ext.versionPatch = 5
-ext.versionClassifier = "SNAPSHOT"
+ext.versionMajor = 1
+ext.versionMinor = 0
+ext.versionPatch = 0
+ext.versionClassifier = ""
 
 repositories {
     maven {
