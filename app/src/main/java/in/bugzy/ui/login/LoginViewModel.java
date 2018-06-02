@@ -141,12 +141,12 @@ public class LoginViewModel extends ViewModel {
     public void nextClicked() {
         switch (mLoginStepLiveData.getValue()) {
             case ORG:
-                if (mOrganisation.indexOf(" ") != -1) {
-                    mSnackBarText.setValue("Spaces are not supported in the organisation name");
-                } else if (!TextUtils.isEmpty(mOrganisation)) {
-                    mLoginStepLiveData.setValue(LoginStep.CREDENTIALS);
-                } else {
+                if (TextUtils.isEmpty(mOrganisation)) {
                     mSnackBarText.setValue("Please enter a valid organisation");
+                } else if (mOrganisation.indexOf(" ") != -1) {
+                    mSnackBarText.setValue("Spaces are not supported in the organisation name");
+                } else {
+                    mLoginStepLiveData.setValue(LoginStep.CREDENTIALS);
                 }
                 break;
             case CREDENTIALS:
