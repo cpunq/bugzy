@@ -190,7 +190,7 @@ public class NetworkBoundResourceTest {
     }
 
     @Test
-    public void dbSuccessWithFetchFailure() {
+    public void dbSuccessWithFetch() {
         Foo dbFoo = new Foo(1);
         AtomicBoolean saved = new AtomicBoolean();
         shouldFetch = (foo) -> foo == dbFoo;
@@ -203,7 +203,6 @@ public class NetworkBoundResourceTest {
         networkBoundResource.asLiveData().observeForever(observer);
         MutableLiveData<ApiResponse<Foo>> apiResponseLiveData = new MutableLiveData();
 
-        ResponseBody body = ResponseBody.create(MediaType.parse("text/html"), "error");
         createCall = (aVoid) -> apiResponseLiveData;
 
         drain();
@@ -214,6 +213,7 @@ public class NetworkBoundResourceTest {
         drain();
         verify(observer).onChanged(Resource.loading(dbFoo));
 
+        ResponseBody body = ResponseBody.create(MediaType.parse("text/html"), "error");
         apiResponseLiveData.setValue(new ApiResponse<>(Response.error(400, body), mGson));
         drain();
         verify(observer).onChanged(Resource.error("Oops! We can't reach Fogbugz", dbFoo));
@@ -222,6 +222,42 @@ public class NetworkBoundResourceTest {
         dbData.setValue(dbFoo2);
         drain();
         verify(observer).onChanged(Resource.error("Oops! We can't reach Fogbugz", dbFoo2));
+        verifyNoMoreInteractions(observer);
+    }
+
+    @Test
+    public void dbSuccessWithRefetch() {
+        Foo dbFoo = new Foo(1);
+        Foo dbFoo2 = new Foo(2);
+        AtomicReference<Foo> saved = new AtomicReference<>();
+        shouldFetch = (foo) -> foo == dbFoo;
+        saveCallResult = foo -> {
+            saved.set(foo);
+            dbData.setValue(dbFoo2);
+            return null;
+        };
+
+        MutableLiveData<ApiResponse<Foo>> apiResponseLiveData = new MutableLiveData();
+        createCall = (aVoid) -> apiResponseLiveData;
+
+
+        Observer<Resource<Foo>> observer = Mockito.mock(Observer.class);
+        networkBoundResource.asLiveData().observeForever(observer);
+
+        drain();
+        verify(observer).onChanged(Resource.loading(null));
+        reset(observer);
+
+        dbData.setValue(dbFoo);
+        drain();
+        verify(observer).onChanged(Resource.loading(dbFoo));
+
+        final Foo networkResult = new Foo(1);
+        apiResponseLiveData.setValue(new ApiResponse<>(Response.success(networkResult), mGson));
+
+        drain();
+        assertThat(saved.get(), is(networkResult));
+        verify(observer).onChanged(Resource.success(dbFoo2));
         verifyNoMoreInteractions(observer);
     }
 

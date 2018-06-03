@@ -10,7 +10,8 @@ import java.util.concurrent.TimeoutException;
 
 import in.bugzy.utils.AppExecutors;
 
-public class CountingAppExecutors extends AppExecutors {
+
+public class CountingAppExecutors {
     private final Object LOCK = new Object();
     private int taskCount = 0;
     protected AppExecutors mAppExecutors;
