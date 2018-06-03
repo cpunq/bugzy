@@ -1,5 +1,7 @@
 package in.bugzy.data.remote;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -13,7 +15,7 @@ public final class HostSelectionInterceptor implements Interceptor {
     this.host = host;
   }
 
-  @Override public okhttp3.Response intercept(Chain chain) throws IOException {
+  @Override public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
     Request request = chain.request();
     String host = this.host;
     if (host != null) {
