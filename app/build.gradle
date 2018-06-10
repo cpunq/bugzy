@@ -34,7 +34,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion "27.0.3"
 
     signingConfigs {
@@ -49,7 +49,7 @@ android {
     defaultConfig {
         applicationId "in.bugzy"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode project.ext.versionMajor * 10000 + project.ext.versionMinor * 100 + project.ext.versionPatch
         versionName generateVersionName()
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
