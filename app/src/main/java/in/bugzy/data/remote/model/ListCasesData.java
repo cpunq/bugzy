@@ -2,7 +2,7 @@ package in.bugzy.data.remote.model;
 
 import in.bugzy.data.model.Case;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

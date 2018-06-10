@@ -3,7 +3,7 @@ package in.bugzy.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import android.arch.persistence.room.Entity;
+import androidx.room.Entity;
 
 @Entity(primaryKeys = "id")
 public class Area {

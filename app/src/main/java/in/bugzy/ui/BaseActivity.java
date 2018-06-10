@@ -2,8 +2,8 @@ package in.bugzy.ui;
 
 
 import in.bugzy.data.local.PrefsHelper;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import javax.inject.Inject;
 import dagger.android.AndroidInjector;

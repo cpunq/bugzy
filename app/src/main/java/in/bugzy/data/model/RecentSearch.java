@@ -1,8 +1,8 @@
 package in.bugzy.data.model;
 
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
+import androidx.room.Entity;
+import androidx.room.Ignore;
 
 import java.util.Date;
 

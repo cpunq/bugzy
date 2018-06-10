@@ -2,7 +2,7 @@ package in.bugzy.ui.common;
 
 import in.bugzy.data.model.Case;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 public interface HomeActivityCallbacks {
     public void setContentFragment(Fragment fragment, boolean addToBackStack, String tag);

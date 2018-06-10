@@ -8,7 +8,7 @@
         tools:showIn="@layout/activity_case_edit"
         tools:context="in.bugzy.ui.editcase.CaseEditActivity">
 
-   <android.support.v4.widget.NestedScrollView
+   <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:descendantFocusability="blocksDescendants"
             android:layout_height="match_parent">
@@ -460,7 +460,7 @@
 
             </LinearLayout>
 
-           <android.support.v7.widget.RecyclerView
+           <androidx.recyclerview.widget.RecyclerView
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:layout_marginRight="-16dp"
@@ -470,10 +470,10 @@
                    android:clipToPadding="false"
                    android:clipChildren="false"
                    android:id="@+id/recyclerview_attachments">
-           </android.support.v7.widget.RecyclerView>
+           </androidx.recyclerview.widget.RecyclerView>
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_events"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -491,6 +491,6 @@
                     android:scrollbars="vertical" />
 
         </LinearLayout>
-   </android.support.v4.widget.NestedScrollView>
+   </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

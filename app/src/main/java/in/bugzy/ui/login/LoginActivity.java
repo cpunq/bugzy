@@ -2,13 +2,13 @@ package in.bugzy.ui.login;
 
 
 import android.app.Application;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.UiThread;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.widget.Button;
 

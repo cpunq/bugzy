@@ -2,7 +2,7 @@ package in.bugzy.data.remote;
 
 import in.bugzy.data.model.GitUser;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import retrofit2.http.GET;

@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken;
 
 import in.bugzy.data.model.CaseEvent;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

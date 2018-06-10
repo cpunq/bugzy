@@ -2,8 +2,8 @@ package in.bugzy.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 @Entity
 public class Person {

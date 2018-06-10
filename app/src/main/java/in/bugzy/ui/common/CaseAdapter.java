@@ -5,7 +5,7 @@ import in.bugzy.data.model.Case;
 import in.bugzy.utils.OnItemClickListener;
 
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;

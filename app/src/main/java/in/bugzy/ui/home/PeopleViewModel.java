@@ -5,8 +5,8 @@ import in.bugzy.data.Repository;
 import in.bugzy.data.model.Resource;
 import in.bugzy.data.model.Person;
 
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 

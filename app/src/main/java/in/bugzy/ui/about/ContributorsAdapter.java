@@ -9,8 +9,8 @@ import com.bumptech.glide.request.RequestOptions;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;

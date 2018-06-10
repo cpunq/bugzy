@@ -2,7 +2,7 @@ package in.bugzy.utils;
 
 import in.bugzy.data.Repository;
 
-import android.arch.lifecycle.LifecycleService;
+import androidx.lifecycle.LifecycleService;
 import android.content.Intent;
 import android.util.Log;
 

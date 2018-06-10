@@ -3,7 +3,7 @@ package in.bugzy.ui.about;
 
 import in.bugzy.utils.SingleLiveEvent;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import javax.inject.Inject;
 

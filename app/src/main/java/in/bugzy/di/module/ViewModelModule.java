@@ -14,8 +14,8 @@ import in.bugzy.ui.splash.SplashViewModel;
 import in.bugzy.utils.BugzyViewModelFactory;
 import in.bugzy.utils.ViewModelKey;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import dagger.Binds;
 import dagger.Module;

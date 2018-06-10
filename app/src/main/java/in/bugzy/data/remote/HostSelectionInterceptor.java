@@ -1,6 +1,6 @@
 package in.bugzy.data.remote;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import okhttp3.HttpUrl;

@@ -20,8 +20,8 @@ package in.bugzy.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import in.bugzy.data.remote.ApiResponse;
 import retrofit2.Response;

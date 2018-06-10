@@ -4,8 +4,8 @@ import in.bugzy.R;
 import in.bugzy.data.model.SearchSuggestion;
 import in.bugzy.utils.OnItemClickListener;
 
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

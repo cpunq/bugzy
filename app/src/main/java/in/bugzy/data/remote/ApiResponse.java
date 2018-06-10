@@ -6,7 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import in.bugzy.common.Const;
 import in.bugzy.data.remote.model.Error;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.io.IOException;
 
 

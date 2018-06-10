@@ -7,7 +7,7 @@ import in.bugzy.data.model.Attachment;
 import com.bumptech.glide.Glide;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;

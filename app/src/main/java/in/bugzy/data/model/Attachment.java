@@ -2,7 +2,7 @@ package in.bugzy.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import android.arch.persistence.room.Ignore;
+import androidx.room.Ignore;
 import android.net.Uri;
 
 import java.io.Serializable;

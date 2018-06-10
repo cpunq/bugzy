@@ -12,11 +12,11 @@
                   android:translationZ="-4dp"
                   android:clipToPadding="false"
                   android:layout_alignParentTop="true">
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewSorting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_sort_add"
                 tools:orientation="horizontal"
                 android:clipChildren="false"
@@ -33,7 +33,7 @@
         />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

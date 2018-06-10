@@ -14,9 +14,9 @@ import in.bugzy.data.model.RecentSearch;
 import in.bugzy.data.model.SearchSuggestion;
 import in.bugzy.data.model.Tag;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 @Database(entities = {Case.class, FilterCasesResult.class, Area.class, Milestone.class, Project.class, SearchSuggestion.class, Person.class,
         Priority.class, Category.class, CaseStatus.class, RecentSearch.class, Tag.class}, version = 2)

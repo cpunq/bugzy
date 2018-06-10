@@ -6,7 +6,7 @@ import in.bugzy.data.local.db.MiscDao;
 import in.bugzy.utils.AppExecutors;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import javax.inject.Singleton;
 
