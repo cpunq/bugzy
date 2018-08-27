@@ -60,6 +60,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import in.bugzy.utils.BugzyUrlGenerator;
 import retrofit2.Call;
 
 @Singleton
@@ -73,6 +74,7 @@ public class Repository {
     private BugzyDb db;
     private SearchSuggestionRepository mSsRespository;
     private HostSelectionInterceptor mHostSelectionInterceptor;
+    private BugzyUrlGenerator mBugzyUrlGenerator;
 
 
     private MediatorLiveData<Resource<List<Area>>> mAreasPublicLiveData = new MediatorLiveData<>();
@@ -95,7 +97,7 @@ public class Repository {
     private LiveData<Resource<List<Tag>>> mFetchTagsLiveData;
 
     @Inject
-    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository, HostSelectionInterceptor interceptor) {
+    Repository(AppExecutors appExecutors, FogbugzApiService apiService, Gson gson, PrefsHelper prefs, MiscDao miscDao, BugzyDb databaseObject, SearchSuggestionRepository ssRepository, HostSelectionInterceptor interceptor, BugzyUrlGenerator urlGenerator) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mGson = gson;
@@ -104,6 +106,7 @@ public class Repository {
         db = databaseObject;
         mSsRespository = ssRepository;
         mHostSelectionInterceptor = interceptor;
+        mBugzyUrlGenerator = urlGenerator;
 
         mToken = new MutableLiveData<String>() {
             @Override
@@ -167,6 +170,7 @@ public class Repository {
     }
 
     public LiveData<Resource<Response<LoginData>>> login(String email, String password, String organisation) {
+
         mHostSelectionInterceptor.setHost(organisation.toLowerCase()+".manuscript.com");
 
         NetworkBoundTask<Response<LoginData>> task = new NetworkBoundTask<Response<LoginData>>(mAppExecutors, mGson) {
@@ -177,6 +181,10 @@ public class Repository {
                 mPrefs.setString(PrefsHelper.Key.ACCESS_TOKEN, token);
                 mPrefs.setBoolean(PrefsHelper.Key.USER_LOGGED_IN, true);
                 mSsRespository.insertDefaultSearchSuggestions();
+
+                mBugzyUrlGenerator.setToken(token);
+                mBugzyUrlGenerator.setOrganisationName(organisation);
+
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -279,6 +287,7 @@ public class Repository {
             @Override
             protected void saveCallResult(@NonNull Response<MyDetailsData> item) {
                 Person me = item.getData().getPerson();
+                mBugzyUrlGenerator.setPersonId(me.getPersonid());
                 mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
                 mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
                 mPrefs.setInt(PrefsHelper.Key.PERSON_ID, me.getPersonid());

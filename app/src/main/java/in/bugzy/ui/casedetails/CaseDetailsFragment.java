@@ -48,6 +48,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import in.bugzy.utils.BugzyUrlGenerator;
 
 public class CaseDetailsFragment extends Fragment implements Injectable {
     public static final String TAG = CaseDetailsFragment.class.getName();
@@ -155,16 +156,12 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
             Attachment attachment = event.getsAttachments().get(attachmentPosition);
             String filename = attachment.getFilename().toLowerCase();
             if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
-                final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
-                        .replaceAll("&amp;","&");
-                mParentActivity.openImageActivity(view, img_path);
+                mParentActivity.openImageActivity(view, attachment.getFullUrl());
                 return;
             }
             // For other attachments leave things to browser
-            String url = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
-                    .replaceAll("&amp;","&");
             Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
+            i.setData(Uri.parse(attachment.getFullUrl()));
             startActivity(i);
         });
         prepareActionsButtons();

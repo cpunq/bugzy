@@ -16,6 +16,8 @@ import in.bugzy.di.module.AppModule;
 import in.bugzy.di.module.NetModule;
 
 import com.crashlytics.android.Crashlytics;
+
+import in.bugzy.utils.BugzyUrlGenerator;
 import io.fabric.sdk.android.Fabric;
 import java.util.Random;
 
@@ -44,6 +46,10 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
     @Inject
     PrefsHelper mPrefsHelper;
 
+    @Inject
+    BugzyUrlGenerator mBugzyUrlGenerator;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -65,7 +71,7 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
         // Initialise Fabric
         Fabric.with(this, new Crashlytics());
         // log user in Crashlytics after DI
-        setCrashlyticsUserIfPresent();
+        setCrashlyticsUserIfPresent(org);
         Crashlytics.setString("organisation", org);
 
         // Set the applied theme
@@ -92,7 +98,7 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
         }
     }
 
-    private void setCrashlyticsUserIfPresent() {
+    private void setCrashlyticsUserIfPresent(String organisationName) {
         if (TextUtils.isEmpty(mPrefsHelper.getString(PrefsHelper.Key.USER_EMAIL))) {
             return;
         }
@@ -100,6 +106,12 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
         me.setFullname(mPrefsHelper.getString(PrefsHelper.Key.USER_NAME));
         me.setPersonid(mPrefsHelper.getInt(PrefsHelper.Key.PERSON_ID));
         me.setEmail(mPrefsHelper.getString(PrefsHelper.Key.USER_EMAIL));
+
+        String token = mPrefsHelper.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
+
+        mBugzyUrlGenerator.setOrganisationName(organisationName);
+        mBugzyUrlGenerator.setPersonId(me.getPersonid());
+        mBugzyUrlGenerator.setToken(token);
 
         Crashlytics.setUserIdentifier(me.getPersonid()+ "");
         Crashlytics.setUserEmail(me.getEmail());

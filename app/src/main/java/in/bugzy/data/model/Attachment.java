@@ -17,6 +17,9 @@ public class Attachment implements Serializable {
     @Ignore
     Uri uri;
 
+    @Ignore
+    String fullUrl;
+
     public String getFilename() {
         return filename;
     }
@@ -39,5 +42,13 @@ public class Attachment implements Serializable {
 
     public void setUri(Uri uri) {
         this.uri = uri;
+    }
+
+    public String getFullUrl() {
+        return fullUrl;
+    }
+
+    public void setFullUrl(String fullUrl) {
+        this.fullUrl = fullUrl;
     }
 }
