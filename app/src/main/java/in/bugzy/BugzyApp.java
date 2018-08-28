@@ -110,7 +110,6 @@ public class BugzyApp extends Application implements HasActivityInjector, HasSer
         String token = mPrefsHelper.getString(PrefsHelper.Key.ACCESS_TOKEN, "");
 
         mBugzyUrlGenerator.setOrganisationName(organisationName);
-        mBugzyUrlGenerator.setPersonId(me.getPersonid());
         mBugzyUrlGenerator.setToken(token);
 
         Crashlytics.setUserIdentifier(me.getPersonid()+ "");

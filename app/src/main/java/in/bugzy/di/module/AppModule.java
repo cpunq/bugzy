@@ -57,6 +57,6 @@ public class AppModule {
     @Provides
     @Singleton
     BugzyUrlGenerator provideUrlGenerator() {
-        return new BugzyUrlGenerator("", 0, "");
+        return new BugzyUrlGenerator("", "");
     }
 }

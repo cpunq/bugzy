@@ -287,7 +287,6 @@ public class Repository {
             @Override
             protected void saveCallResult(@NonNull Response<MyDetailsData> item) {
                 Person me = item.getData().getPerson();
-                mBugzyUrlGenerator.setPersonId(me.getPersonid());
                 mPrefs.setString(PrefsHelper.Key.USER_NAME, me.getFullname());
                 mPrefs.setString(PrefsHelper.Key.USER_EMAIL, me.getEmail());
                 mPrefs.setInt(PrefsHelper.Key.PERSON_ID, me.getPersonid());

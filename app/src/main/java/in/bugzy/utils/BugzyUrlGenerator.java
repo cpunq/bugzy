@@ -1,28 +1,18 @@
 package in.bugzy.utils;
 
-
-
-import android.support.annotation.Nullable;
-
 import in.bugzy.data.model.Attachment;
 
 public class BugzyUrlGenerator {
     private String mOrganisationName;
-    private int mPersonId;
     private String mToken;
 
-    public BugzyUrlGenerator(String organisationName, int personId, String token) {
+    public BugzyUrlGenerator(String organisationName, String token) {
         mOrganisationName = organisationName;
-        mPersonId = personId;
         mToken = token;
     }
 
     public void setOrganisationName(String organisationName) {
         mOrganisationName = organisationName;
-    }
-
-    public void setPersonId(@Nullable int personId) {
-        mPersonId = personId;
     }
 
     public String getAttachmentUrl(Attachment attachment) {
