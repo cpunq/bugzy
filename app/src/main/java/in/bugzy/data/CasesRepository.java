@@ -324,8 +324,8 @@ public class CasesRepository {
     }
 
     private LiveData<Case> injectFullAttachmentUrls(LiveData<Case> input) {
-        return Transformations.map(input, v -> {
-            if (v.getCaseevents() != null) {
+        return Transformations.map(input, (Case v) -> {
+            if ((v != null) && (v.getCaseevents() != null)) {
                 for (CaseEvent event : v.getCaseevents()) {
                     if (event.getsAttachments() != null) {
                         for (Attachment att : event.getsAttachments()) {
