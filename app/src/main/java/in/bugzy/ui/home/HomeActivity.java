@@ -49,6 +49,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.bugzy.utils.BugzyUrlGenerator;
 
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeActivityCallbacks {
@@ -67,6 +68,9 @@ public class HomeActivity extends BaseActivity
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
+
+    @Inject
+    BugzyUrlGenerator mUrlGenerator;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -423,10 +427,10 @@ public class HomeActivity extends BaseActivity
 
     @UiThread
     protected void showUserInfo(Person p) {
-        String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+p.getPersonid()+"&pg=pgAvatar&pxSize=140";
         ImageView iv = navigationView.getHeaderView(0).findViewById(R.id.pro);
+        String url = mUrlGenerator.getPersonImageUrl(p.getPersonid());
         Glide.with(this)
-                .load(img_path)
+                .load(url)
                 .apply(RequestOptions.circleCropTransform())
                 .into(iv);
         mUserName.setText(p.getFullname());

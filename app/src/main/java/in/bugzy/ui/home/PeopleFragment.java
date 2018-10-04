@@ -26,6 +26,7 @@ import in.bugzy.ui.common.Injectable;
 import in.bugzy.ui.common.HomeActivityCallbacks;
 import in.bugzy.R;
 import in.bugzy.data.model.Person;
+import in.bugzy.utils.BugzyUrlGenerator;
 import in.bugzy.utils.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -45,6 +46,9 @@ public class PeopleFragment extends Fragment implements Injectable {
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
+
+    @Inject
+    BugzyUrlGenerator mUrlGenerator;
 
     @BindView(R.id.recyclerView)
     protected RecyclerView mRecyclerView;
@@ -215,9 +219,9 @@ public class PeopleFragment extends Fragment implements Injectable {
         public void bindData(Person person) {
             mNameView.setText(String.valueOf(person.getFullname()));
             mEmailView.setText(person.getEmail());
-            String img_path = "https://bluestacks.fogbugz.com/default.asp?ixPerson="+person.getPersonid()+"&pg=pgAvatar&pxSize=60";
-            if (!TextUtils.isEmpty(img_path)) {
-                Glide.with(mFragment).load(img_path)
+            String imageUrl = mUrlGenerator.getPersonImageUrl(person.getPersonid());
+            if (!TextUtils.isEmpty(imageUrl)) {
+                Glide.with(mFragment).load(imageUrl)
                         .apply(RequestOptions.circleCropTransform())
                         .thumbnail(Glide.with(mFragment).load(R.drawable.avatar_placeholder))
                         .into(mImageView);

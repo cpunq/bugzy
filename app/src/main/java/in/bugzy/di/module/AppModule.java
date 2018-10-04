@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import in.bugzy.utils.BugzyUrlGenerator;
 
 /**
  * Provide application-level dependencies
@@ -51,5 +52,11 @@ public class AppModule {
     @Singleton
     MiscDao provideMiscDao(BugzyDb db) {
         return db.miscDao();
+    }
+
+    @Provides
+    @Singleton
+    BugzyUrlGenerator provideUrlGenerator() {
+        return new BugzyUrlGenerator("", "");
     }
 }

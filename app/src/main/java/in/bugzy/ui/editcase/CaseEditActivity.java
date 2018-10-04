@@ -265,16 +265,12 @@ public class CaseEditActivity extends BaseActivity {
                 Attachment attachment = event.getsAttachments().get(attachmentPosition);
                 String filename = attachment.getFilename().toLowerCase();
                 if (filename.endsWith("png") || filename.endsWith("jpg") || filename.endsWith("jpeg")) {
-                    final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
-                            .replaceAll("&amp;","&");
-                    openImageActivity(v, img_path);
+                    openImageActivity(v, attachment.getFullUrl());
                     return;
                 }
                 // For other attachments leave things to browser
-                String url = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken)
-                        .replaceAll("&amp;","&");
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(attachment.getFullUrl()));
                 startActivity(i);
             }
         });

@@ -150,8 +150,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .into(view);
                 return;
             }
-            final String img_path = ("https://bluestacks.fogbugz.com/" + attachment.getUrl() + "&token=" + mToken).replaceAll("&amp;","&");
-            Glide.with(mContext).load(img_path)
+            Glide.with(mContext).load(attachment.getFullUrl())
                     .thumbnail(Glide.with(mContext).load(R.drawable.loading_ring))
                     .into(view);
         }

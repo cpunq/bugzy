@@ -10,6 +10,7 @@ import in.bugzy.data.local.db.CaseDao;
 import in.bugzy.data.local.db.MiscDao;
 import in.bugzy.data.model.Area;
 import in.bugzy.data.model.Attachment;
+import in.bugzy.data.model.CaseEvent;
 import in.bugzy.data.model.Milestone;
 import in.bugzy.data.model.Project;
 import in.bugzy.data.model.RecentSearch;
@@ -50,6 +51,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import in.bugzy.utils.BugzyUrlGenerator;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -76,6 +78,7 @@ public class CasesRepository {
     private BugzyDb db;
     private CaseDao mCaseDao;
     private MiscDao mMiscDao;
+    private BugzyUrlGenerator mUrlGenerator;
     private Gson mGson;
 
     private String[] mColsForCaseList =new String[]{
@@ -144,7 +147,7 @@ public class CasesRepository {
 
 
     @Inject
-    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database, MiscDao miscDao, Gson gson) {
+    CasesRepository(AppExecutors appExecutors, FogbugzApiService apiService, PrefsHelper prefs, CaseDao caseDao, BugzyDb database, MiscDao miscDao, Gson gson, BugzyUrlGenerator urlGenerator) {
         mAppExecutors = appExecutors;
         mApiService = apiService;
         mPrefs = prefs;
@@ -152,6 +155,7 @@ public class CasesRepository {
         mMiscDao = miscDao;
         db = database;
         mGson = gson;
+        mUrlGenerator = urlGenerator;
     }
 
     @WorkerThread
@@ -319,6 +323,21 @@ public class CasesRepository {
         }.asLiveData());
     }
 
+    private LiveData<Case> injectFullAttachmentUrls(LiveData<Case> input) {
+        return Transformations.map(input, (Case v) -> {
+            if ((v != null) && (v.getCaseevents() != null)) {
+                for (CaseEvent event : v.getCaseevents()) {
+                    if (event.getsAttachments() != null) {
+                        for (Attachment att : event.getsAttachments()) {
+                            att.setFullUrl(mUrlGenerator.getAttachmentUrl(att));
+                        }
+                    }
+                }
+            }
+            return v;
+        });
+    }
+
     public LiveData<Resource<Case>> caseDetails(final Case kase) {
         return new NetworkBoundResource<Case, Response<ListCasesData>>(mAppExecutors) {
             @Override
@@ -347,7 +366,7 @@ public class CasesRepository {
             @NonNull
             @Override
             protected LiveData<Case> loadFromDb() {
-                return mCaseDao.loadCaseById(kase.getIxBug());
+                return injectFullAttachmentUrls(mCaseDao.loadCaseById(kase.getIxBug()));
             }
 
             @NonNull
