@@ -21,8 +21,9 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <provider
-                android:name="android.support.v4.content.FileProvider"
-                android:authorities="in.bugzy.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+
+        android:authorities="in.bugzy.fileprovider"
                 android:exported="false"
                 android:grantUriPermissions="true">
             <meta-data

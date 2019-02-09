@@ -182,7 +182,8 @@ public class CaseDetailsFragment extends Fragment implements Injectable {
 
     public Snackbar getSyncSnackbar() {
         Snackbar bar = Snackbar.make(getView(), "Syncing case details..", Snackbar.LENGTH_INDEFINITE);
-        ViewGroup contentLay = (ViewGroup) bar.getView().findViewById(android.support.design.R.id.snackbar_text).getParent();
+        ViewGroup contentLay = (ViewGroup) bar.getView().findViewById(R.id.snackbar_text).getParent();
+
         ProgressBar item = new ProgressBar(getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(inDp(24), inDp(24));
         params.gravity = Gravity.CENTER_VERTICAL;
